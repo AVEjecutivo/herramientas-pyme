@@ -3,111 +3,239 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flujo de caja a 13 semanas · AVE</title>
-<meta name="description" content="Proyecte su caja semana a semana durante los próximos tres meses, a partir de su saldo, sus facturas por cobrar y por pagar y sus gastos fijos. Gratis.">
+<meta name="description" content="Proyecte su caja semana a semana durante los próximos tres meses, a partir de su saldo, sus facturas por cobrar y por pagar y sus gastos fijos. Gratis y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/flujo.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/flujo.html"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Flujo de caja a 13 semanas"><meta property="og:description" content="Proyecte su caja semana a semana durante los próximos tres meses, a partir de su saldo, sus facturas por cobrar y por pagar y sus gastos fijos. Gratis.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Flujo de caja a 13 semanas"><meta property="og:description" content="Proyecte su caja semana a semana durante los próximos tres meses, a partir de su saldo, sus facturas por cobrar y por pagar y sus gastos fijos. Gratis y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · Entender la caja</p>
-<h1>Flujo de caja a 13 semanas</h1>
-<p class="lead">La pregunta que todo dueño se hace: <b>¿cuánta plata voy a tener?</b> Con su saldo de hoy, las facturas por cobrar y por pagar y sus gastos fijos, esta herramienta proyecta la caja semana a semana durante los próximos tres meses y le muestra la semana más estrecha.</p>
-<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+<main class="wrap" id="contenido">
+<style>
+  .fijos-bloque{max-width:900px;margin:8px 0 18px}
+  .fijos-bloque .nota{margin:0 0 8px}
+  .fijos-bloque .btn{margin-top:2px}
+  .fijo .con-prefijo{min-width:0}
+  .fijo .f-c{display:block;min-width:0}
+  .fijo .f-et{display:none;font-size:.78rem;font-weight:600;color:var(--tinta-2);margin-bottom:3px}
+  /* Teléfono: el concepto arriba y, debajo, monto, día y quitar: el monto se lee completo. */
+  @media (max-width:480px){
+    .fijos-enc{display:none}
+    .fijo{grid-template-columns:minmax(0,1fr) 5.2em 44px;gap:6px 8px;align-items:end;padding-bottom:10px;border-bottom:1px solid var(--linea)}
+    .fijo .f-nombre{grid-column:1/-1}
+    .fijo .f-et{display:block}
+  }
+</style>
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Flujo de caja</p>
+  <h1>¿Cuánta plata voy a tener?</h1>
+  <p class="lead">Suba su Registro de Ventas y su Registro de Compras (y la cartola, si la tiene). Verá su caja semana a semana durante los próximos tres meses y cuál es la semana más estrecha.</p>
+</header>
+
+<div id="fuentes"></div>
 
 <div class="campos">
-  <div class="campo"><label>Facturas de venta y de compra</label>
-    <label class="zona" id="zona"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Registros de Ventas y Compras</b><span id="n">CSV del SII, XML o tabla del extractor</span></label>
-    <small>Si además subió la cartola en la herramienta de cuadratura, use la tabla de facturas que descargó ahí: ya trae marcadas las pagadas.</small></div>
+  <div class="campo"><label for="saldo" id="saldo-lbl">Saldo en banco hoy</label><div class="con-prefijo"><input id="saldo" data-monto placeholder="0"></div><small id="saldo-nota">Escríbalo tal como está hoy en su cuenta.</small></div>
+  <div class="campo"><label for="inicio">Proyectar desde</label><input type="date" id="inicio"></div>
 </div>
-<div class="campos">
-  <div class="campo"><label for="saldo">Saldo en banco hoy ($)</label><input type="number" id="saldo" value="0"></div>
-  <div class="campo"><label for="inicio">Fecha de inicio</label><input type="date" id="inicio"></div>
-  <div class="campo"><label for="pc">Plazo de cobro a clientes (días)</label><input type="number" id="pc" value="30"></div>
-  <div class="campo"><label for="pp">Plazo de pago a proveedores (días)</label><input type="number" id="pp" value="30"></div>
-  <div class="campo"><label for="tv">% que espera cobrar de lo ya vencido</label><input type="number" id="tv" value="100" min="0" max="100"><small>Lo vencido se proyecta en la primera semana.</small></div>
-  <div class="campo"><label for="rut">RUT de su empresa</label><input type="text" id="rut" placeholder="Solo si sube XML"></div>
-</div>
-<div class="campo"><label for="fijos">Gastos fijos mensuales (uno por línea: concepto; monto; día del mes)</label>
-<textarea id="fijos" style="min-height:110px">Remuneraciones; 0; 30
-Arriendo; 0; 5
-Imposiciones; 0; 13</textarea><small>Reemplace los montos por los suyos. Las facturas de compra ya incluyen a sus proveedores; aquí van los pagos sin factura.</small></div>
-<div class="acciones"><button class="btn" id="calcular" disabled>Proyectar</button><button class="btn sec" id="muestra" type="button">Probar con datos de ejemplo</button></div>
 
-<div id="estado" class="estado"></div>
-<div id="resultado" hidden>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
   <div class="cifras" id="cifras"></div>
   <div id="grafico"></div>
+  <section class="fijos-bloque" aria-labelledby="fijos-t">
+    <h2 id="fijos-t">Sus gastos fijos</h2>
+    <p class="nota">Son los pagos que no llevan factura: sueldos, arriendo, imposiciones, créditos. Los proveedores ya vienen en las facturas de compra, no los repita aquí.</p>
+    <div class="fijos" id="fijos"></div>
+    <button type="button" class="btn plano" id="agregar-fijo">Agregar gasto</button>
+  </section>
+  <details class="ajustes"><summary>Ajustar supuestos</summary>
+    <div class="campos">
+      <div class="campo"><label for="pc">Plazo de cobro a clientes (días)</label><input type="number" id="pc" value="30" min="0" inputmode="numeric"></div>
+      <div class="campo"><label for="pp">Plazo de pago a proveedores (días)</label><input type="number" id="pp" value="30" min="0" inputmode="numeric"></div>
+      <div class="campo"><label for="tv">% que espera cobrar de lo ya vencido</label><input type="number" id="tv" value="100" min="0" max="100" inputmode="numeric"><small>Lo vencido se proyecta en la primera semana.</small></div>
+    </div>
+  </details>
   <div class="acciones" id="descargas"></div>
   <div id="tabla"></div>
-  <p class="estado">Supuestos explícitos: cada factura se cobra o paga al cumplirse el plazo indicado; lo vencido entra en la primera semana. Cámbielos arriba y vuelva a proyectar.</p>
+  <p class="nota">Supuestos explícitos: cada factura se cobra o se paga al cumplirse el plazo indicado; lo vencido entra en la primera semana, en la proporción que usted espera cobrar. Cámbielos en «Ajustar supuestos» y la proyección se recalcula sola.</p>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <script type="module">
-import { flujoCaja } from "./lib/ave-herramientas.js";
-import { $, zonaCarga, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, hoyISO, archivoMuestra } from "./lib/ui.js";
-import { leerFacturas } from "./lib/entradas.js";
+import { $, estado, notaCuentas, plural, fmtCLP, fmtFecha, hoyISO, titular, cifras, rotuloEjemplo, graficoColumnas, mostrarTabla, botonesDescarga, siguientes, invitacion, num, ponerMonto, activarMontos, esc } from "./lib/ui.js";
+import { montarFuentes } from "./lib/fuentes.js";
+import { calcCaja, porDefecto } from "./lib/respuestas.js";
+import { guardarAjustes } from "./lib/sesion.js";
+import { icono } from "./lib/catalogo.js";
+
 const est = $("#estado");
-$("#inicio").value = hoyISO();
-let archivos = [], res = null;
-zonaCarga($("#zona"), fs => { archivos = fs; $("#n").textContent = fs.map(f => f.name).join(", "); $("#calcular").disabled = false; });
+let d = null, refAnterior, sembrado = "", silencio = false, saldoManual = false;
+
 const COLS = ["semana", "desde", "hasta", "saldo_inicial", "cobros", "pagos_proveedores", "gastos_fijos", "saldo_final"];
 const ETQ = { semana: "Semana", desde: "Desde", hasta: "Hasta", saldo_inicial: "Saldo inicial", cobros: "Cobros", pagos_proveedores: "Pagos a proveedores", gastos_fijos: "Gastos fijos", saldo_final: "Saldo final" };
+const INICIALES = [{ nombre: "Remuneraciones", monto: "", dia: 30 }, { nombre: "Arriendo", monto: "", dia: 5 }, { nombre: "Imposiciones", monto: "", dia: 13 }];
+const ddmm = iso => iso.slice(8, 10) + "-" + iso.slice(5, 7);
+const rangoSemana = s => `${ddmm(s.desde)} al ${ddmm(s.hasta)}`;
 
-function grafico(semanas) {
-  const W = 720, H = 200, P = 34;
-  const vals = semanas.map(s => s.saldo_final), max = Math.max(...vals, 0), min = Math.min(...vals, 0);
-  const y = v => P / 2 + (H - P) * (max - v) / ((max - min) || 1);
-  const bw = (W - P) / semanas.length;
-  const barras = semanas.map((s, i) => { const y0 = y(0), y1 = y(s.saldo_final); return `<rect x="${P + i * bw + 3}" y="${Math.min(y0, y1)}" width="${bw - 6}" height="${Math.max(Math.abs(y1 - y0), 1)}" fill="${s.saldo_final < 0 ? "var(--error)" : "var(--cobre)"}" rx="2"><title>Semana ${s.semana}: ${fmtCLP(s.saldo_final)}</title></rect><text x="${P + i * bw + bw / 2}" y="${H - 2}" font-size="10" text-anchor="middle" fill="var(--tinta-2)">${s.semana}</text>`; }).join("");
-  return `<figure class="pz" style="max-width:none"><svg viewBox="0 0 ${W} ${H + 8}" role="img" aria-label="Saldo final por semana"><line x1="${P}" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="var(--linea)"/>${barras}</svg><figcaption>Saldo al cierre de cada semana</figcaption></figure>`;
-}
+$("#agregar-fijo").innerHTML = icono("mas") + "Agregar gasto";
 
-async function calcular() {
-  estado(est, "Leyendo archivos…");
-  const { facturas, problemas, sinLibro } = await leerFacturas(archivos, $("#rut").value);
-  if (sinLibro) { estado(est, `${sinLibro} factura(s) no se pudieron clasificar como venta o compra. Ingrese el RUT de su empresa.`, "alerta"); return; }
-  const gastosFijos = $("#fijos").value.split(/\n/).map(l => l.split(";").map(s => s.trim())).filter(p => p.length >= 2 && Number(p[1]))
-    .map(([nombre, monto, dia]) => ({ nombre, monto: Number(monto), dia: Number(dia) || 1 }));
-  res = flujoCaja({ saldoInicial: Number($("#saldo").value), fechaInicio: $("#inicio").value, porCobrar: facturas.filter(f => f.libro === "ventas"), porPagar: facturas.filter(f => f.libro === "compras"), gastosFijos, plazoCobro: Number($("#pc").value), plazoPago: Number($("#pp").value), tasaCobroVencidas: Number($("#tv").value) / 100 });
-  const s = res.semanas;
-  const negativas = s.filter(x => x.saldo_final < 0).length;
-  $("#cifras").innerHTML = [["Saldo hoy", fmtCLP(Number($("#saldo").value))], ["Saldo en 13 semanas", fmtCLP(s.at(-1).saldo_final)], [`Saldo más bajo (semana ${res.semanaMinima})`, fmtCLP(res.saldoMinimo)], ["Semanas con saldo negativo", negativas]]
-    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
-  $("#grafico").innerHTML = grafico(s);
-  mostrarTabla($("#tabla"), s, COLS, { etiquetas: ETQ, numericas: COLS.slice(3), claseFila: x => x.saldo_final < 0 ? "baja" : "" });
-  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Flujo 13 semanas", filas: res.semanas, columnas: COLS, etiquetas: ETQ }] }), "flujo-caja-ave");
-  estado(est, negativas ? `Atención: la caja queda negativa en ${negativas} semana(s). Conviene adelantar cobros o renegociar pagos.` : problemas.join(" ") || "Listo.", negativas ? "alerta" : "ok");
-  $("#resultado").hidden = false;
-  invitacion($("#invitacion"), "¿Le gustaría ver esta proyección actualizada cada mañana?");
+// ── Editor de gastos fijos ─────────────────────────────────────
+function filaFijo(g, n) {
+  const nom = (g.nombre || "").trim();
+  return `<div class="fijo">
+    <label class="f-c f-nombre"><span class="f-et" aria-hidden="true">Concepto</span><input type="text" data-nombre aria-label="Concepto del gasto ${n}" value="${esc(g.nombre)}" autocomplete="off" placeholder="Concepto"></label>
+    <label class="f-c"><span class="f-et" aria-hidden="true">Monto mensual</span><div class="con-prefijo"><input data-monto data-m aria-label="Monto mensual del gasto ${n}" value="${g.monto ? Math.round(g.monto) : ""}" placeholder="0"></div></label>
+    <label class="f-c"><span class="f-et" aria-hidden="true">Día</span><input type="number" data-dia min="1" max="31" inputmode="numeric" aria-label="Día del mes del gasto ${n}" value="${esc(g.dia)}"></label>
+    <button type="button" class="quitar" aria-label="${esc(nom ? "Quitar gasto " + nom : "Quitar gasto " + n)}">${icono("x")}</button>
+  </div>`;
 }
-$("#calcular").onclick = calcular;
-$("#muestra").onclick = async () => {
-  archivos = await Promise.all(["muestras/registros/RegistroVentas_SII_ejemplo.csv", "muestras/registros/RegistroCompras_SII_ejemplo.csv"].map(archivoMuestra));
-  $("#n").textContent = archivos.map(f => f.name).join(", ");
-  $("#saldo").value = 2450000; $("#inicio").value = "2026-07-09"; $("#tv").value = 70;
-  $("#fijos").value = "Remuneraciones; 4620000; 28\nArriendo; 850000; 26\nImposiciones; 1390000; 2\nCuota crédito; 1180000; 6";
-  $("#calcular").disabled = false; calcular();
+function pintarFijos(lista) {
+  $("#fijos").innerHTML = `<div class="fijo fijos-enc" aria-hidden="true"><span>Concepto</span><span>Monto</span><span>Día del mes</span><span></span></div>` + lista.map((g, i) => filaFijo(g, i + 1)).join("");
+  activarMontos($("#fijos"));
+}
+function leerFijos() {
+  return [...$("#fijos").querySelectorAll(".fijo:not(.fijos-enc)")].map(f => ({
+    nombre: f.querySelector("[data-nombre]").value.trim(), monto: num(f.querySelector("[data-m]")), dia: Math.min(31, Math.max(1, Number(f.querySelector("[data-dia]").value) || 1))
+  })).filter(g => g.nombre || g.monto).map(g => ({ ...g, nombre: g.nombre || "Gasto fijo" }));
+}
+$("#agregar-fijo").onclick = () => {
+  const crudas = $("#fijos").querySelectorAll(".fijo:not(.fijos-enc)").length;
+  $("#fijos").insertAdjacentHTML("beforeend", filaFijo({ nombre: "", monto: "", dia: 1 }, crudas + 1));
+  activarMontos($("#fijos"));
+  $("#fijos").lastElementChild.querySelector("[data-nombre]").focus();
 };
+$("#fijos").addEventListener("click", ev => {
+  const q = ev.target.closest(".quitar"); if (!q) return;
+  const fila = q.closest(".fijo");
+  // El foco pasa a la fila siguiente (o a la anterior si era la última; al botón si no queda ninguna).
+  const filas = [...$("#fijos").querySelectorAll(".fijo:not(.fijos-enc)")], i = filas.indexOf(fila);
+  const destino = filas[i + 1] || filas[i - 1];
+  fila.remove(); calcular();
+  (destino ? destino.querySelector("[data-nombre]") : $("#agregar-fijo")).focus();
+});
+$("#fijos").addEventListener("input", ev => {
+  if (ev.target.matches("[data-nombre]")) {
+    const f = ev.target.closest(".fijo"), nom = ev.target.value.trim();
+    f.querySelector(".quitar").setAttribute("aria-label", nom ? "Quitar gasto " + nom : "Quitar gasto");
+  }
+  calcular();
+});
+
+// ── Cálculo ────────────────────────────────────────────────────
+
+function calcular() {
+  if (silencio) return;
+  if (!d || (!d.tiene.ventas && !d.tiene.compras)) {
+    $("#resultado").hidden = true;
+    estado(est, d && !d.vacia ? "Para proyectar la caja falta al menos el Registro de Ventas o el de Compras." : "");
+    return;
+  }
+  const manual = saldoManual;
+  const fijos = leerFijos();
+  const op = { fijos, inicio: $("#inicio").value || d.fechaRef || hoyISO(), plazoCobro: num("#pc"), plazoPago: num("#pp"), tasaVencidas: Math.min(100, Math.max(0, num("#tv"))) };
+  if (manual) op.saldo = num("#saldo");
+  guardarAjustes({ saldo: manual ? op.saldo : null, fijos, plazoCobro: op.plazoCobro, plazoPago: op.plazoPago, tasaVencidas: op.tasaVencidas });
+  sembrado = JSON.stringify(fijos);
+  const res = calcCaja(d, op);
+  const s = res.semanas, e = res.entrada;
+  const saldoHoy = e.saldoInicial;
+  const deCartola = !manual && res.saldoDeCartola;
+  const fechaSaldo = res.saldoFecha ? fmtFecha(res.saldoFecha) : "";
+  // El campo dice de cuándo es el saldo: el de la cartola es el del último movimiento, no el de hoy.
+  $("#saldo-lbl").textContent = deCartola && fechaSaldo ? `Saldo al ${fechaSaldo} (último de su cartola)` : "Saldo en banco hoy";
+  const sumaCuentas = deCartola ? notaCuentas(porDefecto(d).cuentas) : "";
+  $("#saldo-nota").textContent = deCartola ? ("Viene del último saldo de la cartola. Si escribe otro, se usa el suyo." + (sumaCuentas ? " " + sumaCuentas + "." : "")) : res.sinSaldo ? "Sin la cartola, escriba aquí su saldo para proyectar la caja." : "Escríbalo tal como está hoy en su cuenta.";
+  rotuloEjemplo($("#rotulo"), d.ejemplo);
+
+  const min = s.find(x => x.semana === res.semanaMinima) || s[0];
+  const primeraRoja = s.find(x => x.saldo_final < 0);
+  const fin = s.at(-1);
+  const suma = k => s.reduce((t, x) => t + x[k], 0);
+  // Qué falta: sin saldo no hay "caja en rojo" que decir; sin uno de los registros, la proyección es parcial.
+  const parcial = res.faltaVentas ? "Falta el Registro de Ventas: la proyección solo considera pagos (proveedores y gastos fijos), no lo que le deben sus clientes."
+    : res.faltaCompras ? "Falta el Registro de Compras: la proyección solo considera cobros y gastos fijos, no lo que usted debe a sus proveedores." : "";
+  const nota = [];
+  if (!res.sinSaldo) nota.push(`Parte con ${fmtCLP(saldoHoy)}${deCartola && fechaSaldo ? ` (su saldo al ${fechaSaldo})` : ""} y terminaría la semana ${fin.semana} con ${fmtCLP(fin.saldo_final)}.`);
+  if (parcial) nota.push(parcial);
+  if (res.sinFijos) nota.push("Todavía no incluye sueldos ni otros gastos fijos: agréguelos en «Sus gastos fijos» y se recalcula; el saldo real sería menor.");
+  if (res.conCartola) nota.push("Ya se descontaron las facturas que la cartola muestra pagadas.");
+  const sv = res.sinVerificarVenta;
+  if (sv && sv.n > 0 && s[0].cobros > 0) nota.push(`En los cobros de la primera semana hay ${plural(sv.n, "factura anterior", "facturas anteriores")} al ${fmtFecha(res.cartolaDesde)} (${fmtCLP(sv.monto)}), donde empieza su cartola: con estos archivos no se puede saber si ya se pagaron.`);
+  if (primeraRoja && !res.sinSaldo) nota.push("Conviene adelantar cobros o renegociar pagos.");
+  if (res.sinSaldo) {
+    titular($("#titular"), `Para proyectar su caja falta su <b>saldo en el banco</b>: escríbalo arriba, o suba la cartola, y se calcula solo.`,
+      [`Con las facturas y los gastos fijos, las próximas ${s.length} semanas moverían su caja en ${fmtCLP(fin.saldo_final)} (se cuenta desde $0, porque falta el saldo).`, ...nota].join(" "));
+    cifras($("#cifras"), [["Cobros de las próximas " + s.length + " semanas", fmtCLP(suma("cobros"))], ["Pagos a proveedores", fmtCLP(suma("pagos_proveedores"))], ["Gastos fijos", fmtCLP(suma("gastos_fijos"))], [`Variación en ${s.length} semanas`, fmtCLP(fin.saldo_final)]]);
+  } else {
+    titular($("#titular"),
+      primeraRoja
+        ? `La caja queda en rojo en la semana <b class="mal">${primeraRoja.semana}</b>. Su punto más bajo es <b class="mal">${fmtCLP(res.saldoMinimo)}</b>, en la semana ${min.semana} (${rangoSemana(min)}).`
+        : `Su caja no baja de <b>${fmtCLP(res.saldoMinimo)}</b>: el punto más bajo llega en la semana ${min.semana} (${rangoSemana(min)}).`,
+      nota.join(" "));
+    cifras($("#cifras"), [[deCartola && fechaSaldo ? `Saldo al ${fechaSaldo}` : "Saldo hoy", fmtCLP(saldoHoy)], [`Saldo en ${s.length} semanas`, fmtCLP(fin.saldo_final), fin.saldo_final < 0 ? "error" : ""], [`Saldo más bajo (semana ${res.semanaMinima})`, fmtCLP(res.saldoMinimo), res.saldoMinimo < 0 ? "error" : ""], ["Semanas con saldo negativo", res.negativas, res.negativas ? "error" : ""]]);
+  }
+  graficoColumnas($("#grafico"), s.map(x => ({ x: String(x.semana), valor: x.saldo_final, titulo: `Semana ${x.semana} · ${rangoSemana(x)}` })), { titulo: res.sinSaldo ? "Caja acumulada de cada semana, desde $0 (falta el saldo en banco)" : "Saldo al cierre de cada semana", destacar: s.indexOf(min) });
+  mostrarTabla($("#tabla"), s, COLS, { etiquetas: ETQ, titulo: "Proyección semana a semana", numericas: COLS.slice(3), claseFila: x => !res.sinSaldo && x.saldo_final < 0 ? "baja" : "" });
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Flujo 13 semanas", filas: s, columnas: COLS, etiquetas: ETQ }] }), "flujo-caja-ave");
+  siguientes($("#siguientes"), ["cobranza", "presupuesto", "f29"]);
+  invitacion($("#invitacion"), "¿Le gustaría ver esta proyección actualizada cada mañana?");
+  $("#resultado").hidden = false;
+  // El estado va en una línea sobria; solo se marca como alerta lo que impide leer la proyección tal cual.
+  if (res.sinSaldo) estado(est, "Falta el saldo en banco para proyectar la caja.", "alerta");
+  else if (parcial) estado(est, res.faltaVentas ? "Falta el Registro de Ventas: la proyección es parcial." : "Falta el Registro de Compras: la proyección es parcial.", "alerta");
+  else estado(est, `Proyección de ${s.length} semanas desde el ${fmtFecha(e.fechaInicio)}.`, "ok");
+}
+
+$("#saldo").addEventListener("input", () => { if (!silencio) saldoManual = $("#saldo").value.trim() !== ""; });
+["saldo", "inicio", "pc", "pp", "tv"].forEach(id => $("#" + id).addEventListener("input", () => calcular()));
+
+function sincronizar() {
+  silencio = true;
+  const def = porDefecto(d);
+  if (d.fechaRef !== refAnterior) { $("#inicio").value = d.fechaRef || hoyISO(); refAnterior = d.fechaRef; }
+  else if (!$("#inicio").value) $("#inicio").value = def.hoy;
+  const a = d.ajustes || {};
+  saldoManual = a.saldo != null;
+  if (a.saldo != null) ponerMonto("#saldo", a.saldo);
+  else if (d.tiene.cartola) ponerMonto("#saldo", def.saldo);
+  else ponerMonto("#saldo", "");
+  $("#pc").value = def.plazoCobro; $("#pp").value = def.plazoPago; $("#tv").value = def.tasaVencidas;
+  const fuente = Array.isArray(a.fijos) ? a.fijos : INICIALES, clave = JSON.stringify(fuente);
+  if (clave !== sembrado) { pintarFijos(fuente); sembrado = clave; }
+  silencio = false;
+}
+
+montarFuentes($("#fuentes"), {
+  usa: ["ventas", "compras", "cartola"],
+  opcional: { cartola: "descuenta lo ya pagado y trae su saldo de hoy" },
+  alCambiar(datos) { d = datos; sincronizar(); calcular(); }
+});
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

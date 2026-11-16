@@ -3,92 +3,161 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clasificador de gastos · AVE</title>
-<meta name="description" content="Clasifique automáticamente los movimientos de su cartola o sus facturas de compra por categoría y vea en qué se va la plata. Gratis.">
+<title>Gastos: ¿en qué se va la plata? · AVE</title>
+<meta name="description" content="Clasifique los movimientos de su cartola o sus facturas de compra por categoría y vea en qué se va la plata, con reglas claras que usted puede modificar. Gratis y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/gastos.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/gastos.html"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Clasificador de gastos"><meta property="og:description" content="Clasifique automáticamente los movimientos de su cartola o sus facturas de compra por categoría y vea en qué se va la plata. Gratis.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Gastos: ¿en qué se va la plata?"><meta property="og:description" content="Clasifique los movimientos de su cartola o sus facturas de compra por categoría y vea en qué se va la plata, con reglas claras que usted puede modificar. Gratis y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · En qué se va la plata</p>
-<h1>Clasificador de gastos: en qué se va la plata</h1>
-<p class="lead">Suba su cartola o su Registro de Compras. Cada movimiento queda con una categoría —remuneraciones, impuestos, arriendo, proveedores, combustible…— según reglas claras que usted puede ver y modificar. Sin IA: la misma regla da siempre el mismo resultado.</p>
-<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+<main class="wrap" id="contenido">
+<style>.cifra .v .pal{font-family:var(--texto);font-variant-numeric:normal;letter-spacing:0}</style>
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Gastos</p>
+  <h1>¿En qué se va la plata?</h1>
+  <p class="lead">Suba su cartola o su Registro de Compras. Cada movimiento queda con una categoría —remuneraciones, impuestos, arriendo, proveedores, combustible…— y verá cuál pesa más en el gasto.</p>
+</header>
 
-<label class="zona" id="zona"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls"><b>Arrastre aquí su cartola o su Registro de Compras</b><span>CSV o Excel</span></label>
-<p class="muestra"><button type="button" id="muestra">Probar con una cartola de ejemplo</button> (datos ficticios).</p>
-<details><summary>Ver y modificar las reglas de clasificación</summary>
-  <p>Una regla por línea: <code>palabras clave separadas por coma → Categoría</code>. Se revisan en orden y gana la primera que calce. Sus reglas se aplican antes que las predeterminadas.</p>
-  <textarea id="reglas" placeholder="copec, shell → Combustible y peajes&#10;juan pérez → Honorarios"></textarea>
+<div id="fuentes"></div>
+
+<details class="ajustes" id="det-reglas"><summary>Ver y modificar las reglas de clasificación</summary>
+  <p>No usa IA: la misma regla da siempre el mismo resultado. Una regla por línea: <code>palabras clave separadas por coma → Categoría</code>. Se revisan en orden y gana la primera que calce. Sus reglas se aplican antes que las predeterminadas.</p>
+  <div class="campo"><label for="reglas">Sus reglas</label><textarea id="reglas" placeholder="copec, shell → Combustible y peajes&#10;juan pérez → Honorarios"></textarea></div>
   <div class="acciones"><button class="btn sec" id="aplicar" type="button">Aplicar reglas</button></div>
+  <p class="aviso alerta" id="reglas-error" role="alert" hidden></p>
   <div id="predeterminadas" class="estado"></div>
 </details>
 
-<div id="estado" class="estado"></div>
-<div id="resultado" hidden>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
+  <div class="acciones" id="fuente-sel" role="group" aria-label="Qué documento clasificar" hidden>
+    <div class="segmento"><button type="button" id="f-cartola" aria-pressed="true">Cartola</button><button type="button" id="f-compras" aria-pressed="false">Registro de Compras</button></div>
+  </div>
   <div class="cifras" id="cifras"></div>
   <div id="barras"></div>
   <div class="acciones" id="descargas"></div>
+
   <h2>Detalle</h2>
   <div id="tabla"></div>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <script type="module">
-import { clasificar, leerReglas, REGLAS_GASTO, leerCartola, leerRegistroSII } from "./lib/ave-herramientas.js";
-import { $, zonaCarga, leerTabular, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
-const est = $("#estado");
-let base = [], res = null, esCartola = true;
-$("#predeterminadas").innerHTML = "<b>Reglas predeterminadas:</b><br>" + REGLAS_GASTO.map(r => `${r.palabras.join(", ")} → <b>${r.categoria}</b>`).join("<br>");
+import { leerReglas, REGLAS_GASTO } from "./lib/ave-herramientas.js";
+import { $, esc, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, fmtPct, titular, cifras, rotuloEjemplo, barrasH, siguientes, plural } from "./lib/ui.js";
+import { montarFuentes } from "./lib/fuentes.js";
+import { calcGastos } from "./lib/respuestas.js";
+import { guardarAjustes } from "./lib/sesion.js";
 
-async function cargar(archivos) {
-  base = [];
-  for (const a of archivos) {
-    const t = await leerTabular(a);
-    const c = leerCartola(t, a.name);
-    if (c.movimientos.length) { base.push(...c.movimientos); esCartola = true; continue; }
-    const r = leerRegistroSII(t, "compras", a.name);
-    if (r.length) { base.push(...r.map(f => ({ ...f, fecha: f.fecha_emision }))); esCartola = false; continue; }
-    estado(est, `${a.name}: no se reconoció como cartola ni como Registro de Compras.`, "error");
+const est = $("#estado");
+let d = null, fuente = "";
+
+/**
+ * Las reglas del usuario con la fuente elegida. Una palabra clave corta con
+ * caracteres como + * ? ( rompe la búsqueda de la biblioteca: se detecta qué
+ * regla es, se dice junto al campo y se calcula sin ella.
+ */
+function clasificarSeguro(texto) {
+  const reglas = leerReglas(texto), malas = [];
+  let buenas = reglas;
+  try { return { res: calcGastos(d, { fuente, reglas }), malas }; }
+  catch {
+    buenas = reglas.filter(r => { try { calcGastos(d, { fuente, reglas: [r] }); return true; } catch { malas.push(r); return false; } });
   }
-  if (base.length) aplicar();
+  return { res: calcGastos(d, { fuente, reglas: buenas }), malas };
 }
-function aplicar() {
-  res = clasificar(base, { reglas: [...leerReglas($("#reglas").value), ...REGLAS_GASTO] });
-  const gastos = res.resumen.filter(r => r.categoria !== "Ingresos");
-  const total = gastos.reduce((s, r) => s + r.monto, 0);
-  const sin = res.filas.filter(f => f.categoria === "Sin clasificar").length;
-  $("#cifras").innerHTML = [["Total de gastos", fmtCLP(total)], ["Categorías", gastos.length], ["Mayor categoría", gastos[0] ? gastos[0].categoria : "—"], ["Sin clasificar", sin]]
-    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
-  $("#barras").innerHTML = `<div class="tabla" style="max-height:none;padding:12px 14px">` + gastos.map(r => `<div style="display:grid;grid-template-columns:minmax(120px,210px) 1fr auto;gap:10px;align-items:center;margin:5px 0;font-size:.88rem"><span>${r.categoria}</span><span style="background:var(--cobre-sup);border-radius:2px;height:14px"><span style="display:block;height:100%;width:${(r.monto / (gastos[0].monto || 1) * 100).toFixed(1)}%;background:var(--cobre);border-radius:2px"></span></span><span class="num">${fmtCLP(r.monto)} · ${(r.monto / (total || 1) * 100).toFixed(1)}%</span></div>`).join("") + "</div>";
-  const cols = esCartola ? ["fecha", "descripcion", "cargo", "abono", "categoria", "regla"] : ["fecha", "razon_social_emisor", "folio", "monto_neto", "monto_total", "categoria", "regla"];
-  mostrarTabla($("#tabla"), res.filas, cols, { claseFila: f => f.categoria === "Sin clasificar" ? "media" : "" });
+
+$("#predeterminadas").innerHTML = "<b>Reglas predeterminadas:</b><br>" + REGLAS_GASTO.map(r => `${esc(r.palabras.join(", "))} → <b>${esc(r.categoria)}</b>`).join("<br>");
+
+function calcular() {
+  if (!d || (!d.tiene.cartola && !d.tiene.compras)) {
+    $("#resultado").hidden = true;
+    estado(est, d && !d.vacia ? "Para clasificar los gastos falta la cartola o el Registro de Compras." : "");
+    return;
+  }
+  const ambas = d.tiene.cartola && d.tiene.compras;
+  if (!fuente || !d.tiene[fuente]) fuente = d.tiene.cartola ? "cartola" : "compras";
+  const { res, malas } = clasificarSeguro($("#reglas").value);
+  const err = $("#reglas-error");
+  err.hidden = !malas.length;
+  err.innerHTML = malas.length ? `${malas.length === 1 ? "Esta regla tiene" : "Estas reglas tienen"} caracteres que no se pueden buscar (como + * ? o paréntesis), y no se aplicó${malas.length === 1 ? "" : "ron"}: <b>${esc(malas.map(r => r.palabras.join(", ") + " → " + r.categoria).join(" · "))}</b>. Escriba la palabra sin esos caracteres.` : "";
+  if (malas.length) $("#det-reglas").open = true;
+  rotuloEjemplo($("#rotulo"), d.ejemplo);
+
+  $("#fuente-sel").hidden = !ambas;
+  $("#f-cartola").setAttribute("aria-pressed", String(fuente === "cartola"));
+  $("#f-compras").setAttribute("aria-pressed", String(fuente === "compras"));
+
+  const { gastos, total, sinClasificar: sin } = res;
+  const origen = fuente === "cartola" ? "la cartola" : "el Registro de Compras";
+  const mayor = gastos[0];
+  const aviso = sin ? `${plural(sin, "movimiento quedó", "movimientos quedaron")} sin clasificar: agregue una regla en «Ver y modificar las reglas de clasificación» y se ordenan solos.` : "Todo quedó clasificado.";
+  if (mayor && total > 0) {
+    titular($("#titular"), `Lo que más pesa en ${origen} es <b>${esc(mayor.categoria)}</b>: <b>${fmtCLP(mayor.monto)}</b>, el ${fmtPct(mayor.monto / total * 100)} del gasto.`, aviso);
+  } else {
+    titular($("#titular"), `No hay gastos que clasificar en ${origen}.`, aviso);
+  }
+
+  cifras($("#cifras"), [["Total de gastos", fmtCLP(total)], ["Categorías", gastos.length], ["Mayor categoría", `<span class="pal">${mayor ? esc(mayor.categoria) : "—"}</span>`], ["Sin clasificar", sin, sin ? "alerta" : ""]]);
+  if (gastos.length) barrasH($("#barras"), gastos.map(r => ({ etiqueta: r.categoria, valor: r.monto, tono: r.categoria === "Sin clasificar" ? "suave" : "" })), { titulo: "Gasto por categoría", total });
+  else $("#barras").innerHTML = "";
+
+  const cols = fuente === "cartola" ? ["fecha", "descripcion", "cargo", "abono", "categoria", "regla"] : ["fecha", "razon_social_emisor", "folio", "monto_neto", "monto_total", "categoria", "regla"];
+  mostrarTabla($("#tabla"), res.filas, cols, { titulo: "Movimientos clasificados", claseFila: f => f.categoria === "Sin clasificar" ? "media" : "", chips: { categoria: v => v === "Sin clasificar" ? "alerta" : "" } });
+  // Los chips sin tono solo deben marcar "Sin clasificar": el resto se ve como texto.
+  $("#tabla").querySelectorAll(".chip:not(.alerta)").forEach(c => c.replaceWith(document.createTextNode(c.textContent)));
   botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Clasificados", filas: res.filas, columnas: cols }, { nombre: "Resumen", filas: res.resumen, columnas: ["categoria", "movimientos", "monto"] }] }), "gastos-clasificados-ave");
-  estado(est, sin ? `${sin} movimiento(s) quedaron sin clasificar: agregue una regla para ellos.` : "Listo: todo quedó clasificado.", sin ? "alerta" : "ok");
+  siguientes($("#siguientes"), ["presupuesto", "flujo", "cuadratura"]);
+  estado(est, sin ? `${plural(sin, "movimiento quedó", "movimientos quedaron")} sin clasificar: agregue una regla para ellos.` : "Todo quedó clasificado.", sin ? "alerta" : "ok");
   $("#resultado").hidden = false;
   invitacion($("#invitacion"), "Saber en qué se va la plata es el primer paso. El segundo es que se sepa solo, cada mes.");
 }
-zonaCarga($("#zona"), cargar);
-$("#aplicar").onclick = () => base.length && aplicar();
-$("#muestra").onclick = async () => cargar([await archivoMuestra("muestras/cartolas/Cartola_BancoEstado_ejemplo.csv")]);
+
+// Las reglas y la fuente elegida quedan en la sesión: Presupuesto y el Panorama las usan, y se reponen al volver.
+const guardar = () => guardarAjustes({ reglasGasto: $("#reglas").value, fuenteGastos: fuente || null });
+$("#aplicar").onclick = () => { calcular(); guardar(); };
+$("#f-cartola").onclick = () => { fuente = "cartola"; calcular(); guardar(); };
+$("#f-compras").onclick = () => { fuente = "compras"; calcular(); guardar(); };
+
+montarFuentes($("#fuentes"), {
+  usa: ["cartola", "compras"],
+  opcional: { cartola: "con una de las dos basta", compras: "con una de las dos basta" },
+  alCambiar(datos, motivo) {
+    d = datos;
+    // Al abrir, o al cambiar de empresa (ejemplo, quitar documentos), se reponen las reglas guardadas en la sesión.
+    if (motivo === "inicio" || motivo === "ejemplo" || motivo === "vacio") {
+      $("#reglas").value = d.ajustes.reglasGasto || "";
+      fuente = d.ajustes.fuenteGastos || "";
+      if ($("#reglas").value.trim()) $("#det-reglas").open = true;
+    }
+    calcular();
+  }
+});
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

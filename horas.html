@@ -3,73 +3,114 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cuánto le cuesta el desorden · AVE</title>
 <meta name="description" content="Calcule cuántas horas y cuánto dinero se van cada mes en digitar, cuadrar, buscar información y armar planillas. Gratis.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/horas.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/horas.html"><meta property="og:site_name" content="AVE">
 <meta property="og:locale" content="es_CL"><meta property="og:title" content="Cuánto le cuesta el desorden"><meta property="og:description" content="Calcule cuántas horas y cuánto dinero se van cada mes en digitar, cuadrar, buscar información y armar planillas. Gratis.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · Antes de empezar</p>
-<h1>¿Cuánto le cuesta el desorden?</h1>
-<p class="lead">Seis preguntas sobre cómo trabaja hoy su equipo. El resultado son las horas al mes —y su costo— que se van en digitar, cuadrar, buscar y armar planillas. Los números son los suyos: la herramienta no supone nada que usted no haya ingresado.</p>
+<main class="wrap" id="contenido">
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Costo del desorden</p>
+  <h1>¿Cuánto le cuesta el desorden?</h1>
+  <p class="lead">Siete preguntas sobre cómo trabaja hoy su equipo. El resultado son las horas al mes —y su costo— que se van en digitar, cuadrar, buscar y armar planillas. Los números son los suyos: la herramienta no supone nada que usted no haya ingresado.</p>
+</header>
 
-<div class="campos">
-  <div class="campo"><label for="docs">Documentos que se digitan o revisan al mes</label><input type="number" id="docs" min="0" value="0"><small>Facturas, boletas, comprobantes.</small></div>
-  <div class="campo"><label for="min">Minutos por documento</label><input type="number" id="min" min="0" value="0"></div>
-  <div class="campo"><label for="conc">Horas a la semana cuadrando el banco</label><input type="number" id="conc" min="0" step="0.5" value="0"></div>
-  <div class="campo"><label for="inf">Horas al mes armando informes o planillas</label><input type="number" id="inf" min="0" step="0.5" value="0"></div>
-  <div class="campo"><label for="cob">Horas a la semana en seguimiento de cobranza</label><input type="number" id="cob" min="0" step="0.5" value="0"></div>
-  <div class="campo"><label for="bus">Horas a la semana buscando información</label><input type="number" id="bus" min="0" step="0.5" value="0"><small>"¿Me mandas la factura de…?", "¿cuánto nos debe…?"</small></div>
-  <div class="campo"><label for="val">Costo de una hora de esa persona ($)</label><input type="number" id="val" min="0" value="0"><small>Sueldo bruto mensual dividido por 180, aprox.</small></div>
-</div>
-<div class="acciones"><button class="btn" id="calcular">Calcular</button><button class="btn sec" id="ejemplo" type="button">Ver con valores de ejemplo</button></div>
+<style>
+.grupo{border:0;padding:0;margin:0 0 8px;min-width:0;max-width:900px}
+@media (min-width:640px){.grupo .campo label{min-height:2.9em;display:flex;align-items:flex-end}}
+.grupo legend{font-weight:600;font-size:1.08rem;padding:0;margin:0 0 2px}
+</style>
+<fieldset class="grupo">
+  <legend>Su equipo, hoy</legend>
+  <div class="campos">
+    <div class="campo"><label for="docs">Documentos que se digitan o revisan al mes</label><input type="number" id="docs" min="0" value="0" inputmode="numeric"><small>Facturas, boletas, comprobantes.</small></div>
+    <div class="campo"><label for="min">Minutos por documento</label><input type="number" id="min" min="0" value="0" inputmode="numeric"></div>
+    <div class="campo"><label for="conc">Horas a la semana cuadrando el banco</label><input type="number" id="conc" min="0" step="0.5" value="0" inputmode="decimal"></div>
+    <div class="campo"><label for="inf">Horas al mes armando informes o planillas</label><input type="number" id="inf" min="0" step="0.5" value="0" inputmode="decimal"></div>
+    <div class="campo"><label for="cob">Horas a la semana en seguimiento de cobranza</label><input type="number" id="cob" min="0" step="0.5" value="0" inputmode="decimal"></div>
+    <div class="campo"><label for="bus">Horas a la semana buscando información</label><input type="number" id="bus" min="0" step="0.5" value="0" inputmode="decimal"><small>"¿Me mandas la factura de…?", "¿cuánto nos debe…?"</small></div>
+  </div>
+</fieldset>
+<fieldset class="grupo">
+  <legend>Cuánto vale una hora</legend>
+  <div class="campos">
+    <div class="campo"><label for="val">Costo de una hora de esa persona</label><div class="con-prefijo"><input data-monto id="val" value="0"></div><small>Sueldo bruto mensual dividido por 180, aprox.</small></div>
+  </div>
+</fieldset>
+<div class="acciones"><button class="btn" id="calcular" type="button">Ver el resultado</button><button class="btn sec" id="ejemplo" type="button">Ver con valores de ejemplo</button></div>
 
-<div id="resultado" hidden>
-  <p class="estado" id="rotulo"></p>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
   <div class="cifras" id="cifras"></div>
-  <div id="tabla"></div>
+  <div id="barras"></div>
   <div class="acciones" id="descargas"></div>
+  <div id="tabla"></div>
   <div class="gancho" id="lectura"></div>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <script type="module">
 import { calcularHoras } from "./lib/ave-herramientas.js";
-import { $, mostrarTabla, botonesDescarga, invitacion, fmtCLP } from "./lib/ui.js";
-let ejemplo = false;
+import { $, mostrarTabla, botonesDescarga, invitacion, fmtCLP, titular, cifras, barrasH, siguientes, estado, num, ponerMonto, activarMontos } from "./lib/ui.js";
+const EJ = { docs: 150, min: 4, conc: 3, inf: 8, cob: 2, bus: 3, val: 9000 };
+let desdeEjemplo = false;
+/** "ejemplo" si todo sigue igual, "modificado" si quedan valores del ejemplo, "propio" si ya no queda ninguno. */
+const origen = () => {
+  if (!desdeEjemplo) return "propio";
+  const iguales = Object.entries(EJ).filter(([k, v]) => num("#" + k) === v).length;
+  return iguales === Object.keys(EJ).length ? "ejemplo" : iguales ? "modificado" : "propio";
+};
+activarMontos(document);
+const hs = n => n.toLocaleString("es-CL") + " h";
 function calcular() {
-  const r = calcularHoras({ documentosMes: $("#docs").value, minutosPorDocumento: $("#min").value, horasConciliacionSemana: $("#conc").value, horasInformesMes: $("#inf").value, horasCobranzaSemana: $("#cob").value, horasBuscarSemana: $("#bus").value, valorHora: $("#val").value });
-  $("#rotulo").textContent = ejemplo ? "Ejemplo con valores ficticios. Reemplácelos por los de su empresa." : "Calculado con sus respuestas.";
-  $("#cifras").innerHTML = [["Horas al mes", r.horas_mes.toLocaleString("es-CL")], ["Jornadas completas al mes", r.jornadas_mes.toLocaleString("es-CL")], ["Costo al mes", fmtCLP(r.costo_mes)], ["Costo al año", fmtCLP(r.costo_anio)]]
-    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
-  mostrarTabla($("#tabla"), r.partidas, ["tarea", "horas_mes"], { etiquetas: { tarea: "Tarea", horas_mes: "Horas al mes" } });
+  const r = calcularHoras({ documentosMes: num("#docs"), minutosPorDocumento: num("#min"), horasConciliacionSemana: num("#conc"), horasInformesMes: num("#inf"), horasCobranzaSemana: num("#cob"), horasBuscarSemana: num("#bus"), valorHora: num("#val") });
+  if (!r.horas_mes) { $("#resultado").hidden = true; estado($("#estado"), "Ingrese sus números para ver el resultado."); return; }
+  const o = origen();
+  $("#rotulo").innerHTML = o === "ejemplo" ? `<p class="ejemplo"><b>Ejemplo con valores ficticios.</b> Reemplácelos por los de su empresa.</p>`
+    : o === "modificado" ? `<p class="ejemplo"><b>Ejemplo modificado.</b> Quedan valores ficticios: reemplácelos todos por los de su empresa.</p>` : `<p class="nota">Calculado con sus respuestas.</p>`;
+  titular($("#titular"),
+    `Se van <b>${hs(r.horas_mes)}</b> al mes${r.costo_mes ? `, que cuestan <b>${fmtCLP(r.costo_mes)}</b>` : ""}.`,
+    r.costo_mes ? `Son ${fmtCLP(r.costo_anio)} al año.` : "Ingrese el costo de una hora para ver cuánto significa en pesos.");
+  cifras($("#cifras"), [["Horas al mes", r.horas_mes.toLocaleString("es-CL")], ["Jornadas completas al mes", r.jornadas_mes.toLocaleString("es-CL")], ["Costo al mes", fmtCLP(r.costo_mes)], ["Costo al año", fmtCLP(r.costo_anio)]]);
+  barrasH($("#barras"), r.partidas.map(p => ({ etiqueta: p.tarea, valor: p.horas_mes })), { titulo: "Horas al mes según la tarea", total: r.horas_mes, formato: hs });
+  mostrarTabla($("#tabla"), r.partidas, ["tarea", "horas_mes"], { etiquetas: { tarea: "Tarea", horas_mes: "Horas al mes" }, titulo: "Horas al mes por tarea" });
   botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Horas", filas: r.partidas, columnas: ["tarea", "horas_mes"], etiquetas: { tarea: "Tarea", horas_mes: "Horas al mes" } }] }), "costo-del-desorden-ave");
-  $("#lectura").innerHTML = r.horas_mes ? `<b>${r.horas_mes.toLocaleString("es-CL")} horas al mes</b> son ${r.jornadas_mes.toLocaleString("es-CL")} jornadas de alguien de su equipo dedicadas a mover información de un lugar a otro, en vez de usarla para decidir. La mayor parte de ese trabajo se puede ordenar una vez y dejar funcionando.` : "Ingrese sus números para ver el resultado.";
+  $("#lectura").innerHTML = `<b>${r.horas_mes.toLocaleString("es-CL")} horas al mes</b> son ${r.jornadas_mes.toLocaleString("es-CL")} jornadas de alguien de su equipo dedicadas a mover información de un lugar a otro, en vez de usarla para decidir. Conviene mirar qué parte de ese trabajo es repetitiva y se puede ordenar.`;
+  siguientes($("#siguientes"), ["panorama", "guia-ia"]);
+  estado($("#estado"), "");
   $("#resultado").hidden = false;
   invitacion($("#invitacion"), "¿Y si su equipo recuperara ese tiempo y aprendiera a usarlo con IA?");
 }
-$("#calcular").onclick = () => { ejemplo = false; calcular(); };
-$("#ejemplo").onclick = () => { ejemplo = true; Object.entries({ docs: 150, min: 4, conc: 3, inf: 8, cob: 2, bus: 3, val: 9000 }).forEach(([k, v]) => $("#" + k).value = v); calcular(); };
-document.querySelectorAll("input").forEach(i => i.addEventListener("input", () => { ejemplo = false; if (!$("#resultado").hidden) calcular(); }));
+$("#calcular").onclick = calcular;
+$("#ejemplo").onclick = () => { Object.entries(EJ).forEach(([k, v]) => k === "val" ? ponerMonto("#val", v) : $("#" + k).value = v); desdeEjemplo = true; calcular(); };
+document.querySelectorAll("input").forEach(i => i.addEventListener("input", () => { if (!$("#resultado").hidden) calcular(); }));
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Su empresa en una pantalla · AVE</title>
+<meta name="description" content="Suba sus archivos una sola vez y vea juntas las respuestas a seis preguntas de su empresa: cuánta plata tendrá, quién le debe, cuánto IVA pagará, en qué se va la plata, de quién depende y si el banco cuadra con las facturas. Gratis y sin subir sus datos.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/panorama.html">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/panorama.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Su empresa en una pantalla"><meta property="og:description" content="Suba sus archivos una sola vez y vea juntas las respuestas a seis preguntas de su empresa: cuánta plata tendrá, quién le debe, cuánto IVA pagará, en qué se va la plata, de quién depende y si el banco cuadra con las facturas. Gratis y sin subir sus datos.">
+<link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
+</head>
+<body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html" aria-current="page">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
+</div></div>
+<main class="wrap" id="contenido">
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Panorama</p>
+  <h1>Su empresa en una pantalla</h1>
+  <p class="lead">Suba sus archivos una sola vez. Verá juntas las respuestas a seis preguntas, y cada una lo lleva a su herramienta con todo ya cargado.</p>
+</header>
+
+<div id="fuentes"></div>
+
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
+
+  <div class="pan" id="pan">
+    <article class="pan-c" id="p-caja">
+      <header><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M9.3 20V4M14.7 20v-7M20 20V8"/></svg>¿Cuánta plata voy a tener?</header>
+      <div class="cuerpo"></div>
+      <div class="campo" id="p-saldo-campo"><label for="p-saldo" id="p-saldo-lbl">Saldo en banco hoy</label><div class="con-prefijo"><input data-monto id="p-saldo" placeholder="0"></div><small id="p-saldo-nota"></small></div>
+      <a class="pan-ir" href="flujo.html">Ver semana a semana<svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </article>
+
+    <article class="pan-c" id="p-cobranza">
+      <header><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>¿Quién me debe?</header>
+      <div class="cuerpo"></div>
+      <a class="pan-ir" href="cobranza.html">Ver quién y redactar los correos<svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </article>
+
+    <article class="pan-c" id="p-iva">
+      <header><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8z"/><path d="M9.5 14.5l5-5.5"/><circle cx="9.8" cy="9.3" r=".9"/><circle cx="14.2" cy="14.3" r=".9"/></svg>¿Cuánto voy a pagar de IVA?</header>
+      <div class="cuerpo"></div>
+      <a class="pan-ir" href="f29.html">Ver el cálculo completo<svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </article>
+
+    <article class="pan-c" id="p-gastos">
+      <header><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5H12z"/><path d="M15 3.9A8.5 8.5 0 0 1 20.1 9H15z"/></svg>¿En qué se va la plata?</header>
+      <div class="cuerpo"></div>
+      <a class="pan-ir" href="gastos.html">Ver cada categoría<svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </article>
+
+    <article class="pan-c" id="p-clientes">
+      <header><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c.5-3.3 2.8-5 6-5s5.5 1.7 6 5"/><circle cx="17" cy="9.5" r="2.3"/><path d="M17.5 14.4c2 .4 3.2 1.9 3.5 4.1"/></svg>¿De quién dependo?</header>
+      <div class="cuerpo"></div>
+      <a class="pan-ir" href="radiografia.html">Ver clientes y proveedores<svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </article>
+
+    <article class="pan-c" id="p-cuadratura">
+      <header><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>¿Cuadra el banco con las facturas?</header>
+      <div class="cuerpo"></div>
+      <a class="pan-ir" href="cuadratura.html">Ver qué cuadra y qué no<svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </article>
+  </div>
+
+  <p class="nota" id="nota-sesion"></p>
+  <div id="invitacion"></div>
+</section>
+
+<script type="module">
+import { TRAMOS, leerReglas } from "./lib/ave-herramientas.js";
+import { $, estado, notaCuentas, fmtCLP, fmtFecha, fmtPct, hoyISO, nombreMes, plural, num, ponerMonto, rotuloEjemplo, titular, barrasH, invitacion, esc } from "./lib/ui.js";
+import { montarFuentes } from "./lib/fuentes.js";
+import { datos, guardarAjustes, periodo, sesionGuardada } from "./lib/sesion.js";
+import { porDefecto, cuadrar, calcCaja, calcCobranza, calcF29, calcGastos, calcRadiografia } from "./lib/respuestas.js";
+
+const est = $("#estado");
+let d = null, poniendoSaldo = false;
+
+const cuerpo = id => $("#" + id + " .cuerpo");
+const valor = (txt, mal, palabras) => `<p class="pan-v${mal ? " mal" : ""}${palabras ? " pal" : ""}">${txt}</p>`;   // palabras: el valor no es un monto, va en la tipografía de texto
+const frase = s => `<p class="pan-t">${s}</p>`;
+const aparte = s => `<p class="pan-s">${s}</p>`;
+/** Pinta una tarjeta con respuesta. */
+function responder(id, html) { const c = $("#" + id); c.classList.remove("falta"); cuerpo(id).innerHTML = html; return cuerpo(id); }
+/** Pinta una tarjeta a la que le falta un documento: sin valor, solo qué archivo falta. */
+function pedir(id, que) { const c = $("#" + id); c.classList.add("falta"); cuerpo(id).innerHTML = frase(que); return false; }
+
+// 1 · ¿Cuánta plata voy a tener?
+function pintarCaja() {
+  const c = $("#p-caja");
+  if (!d.tiene.ventas && !d.tiene.compras) {
+    $("#p-saldo-campo").hidden = true;
+    return pedir("p-caja", "Para proyectar su caja falta el Registro de Ventas o el de Compras. La cartola sola da el saldo de hoy, no lo que viene.");
+  }
+  $("#p-saldo-campo").hidden = false;
+  // El saldo sale de lo que escribió (guardado en la sesión) o de la cartola; si ninguno existe, no se inventa uno.
+  const res = calcCaja(d, {});
+  const deCartola = res.saldoDeCartola, fechaSaldo = res.saldoFecha ? fmtFecha(res.saldoFecha) : "";
+  $("#p-saldo-lbl").textContent = deCartola && fechaSaldo ? `Saldo al ${fechaSaldo} (último de su cartola)` : "Saldo en banco hoy";
+  $("#p-saldo-nota").textContent = deCartola ? notaCuentas(porDefecto(d).cuentas) : "";
+  if (res.sinSaldo) return pedir("p-caja", "Para proyectar su caja falta su saldo en el banco: escríbalo abajo o suba la cartola, y se calcula solo.");
+  const sem = res.semanas, fin = sem.at(-1).saldo_final, minSem = sem[res.semanaMinima - 1];
+  const mayor = Math.max(...sem.map(s => Math.abs(s.saldo_final)), 1);
+  const barras = sem.map(s => `<i class="${s.semana === res.semanaMinima ? "b" : ""}${s.saldo_final < 0 ? " neg" : ""}" style="height:${Math.max(4, Math.abs(s.saldo_final) / mayor * 100).toFixed(1)}%"></i>`).join("");
+  let html = valor(fmtCLP(res.saldoMinimo), res.saldoMinimo < 0) +
+    frase(`Es su saldo más bajo de las próximas 13 semanas: llega en la semana ${res.semanaMinima} (desde el ${fmtFecha(minSem.desde)}) y al final de las 13 queda en ${fmtCLP(fin)}.`) +
+    `<div class="mini" role="img" aria-label="Saldo al cierre de cada una de las 13 semanas; la más baja está destacada">${barras}</div>`;
+  if (res.sinFijos) html += aparte("Aún no incluye sueldos ni gastos fijos: se agregan en el detalle.");
+  if (res.faltaCompras) html += aparte("Falta el Registro de Compras: solo considera cobros, no lo que usted debe a proveedores.");
+  if (res.faltaVentas) html += aparte("Falta el Registro de Ventas: solo considera pagos, no lo que le deben sus clientes.");
+  c.classList.remove("falta");
+  cuerpo("p-caja").innerHTML = html;
+  return true;
+}
+
+// 2 · ¿Quién me debe?
+function pintarCobranza() {
+  if (!d.tiene.ventas) return pedir("p-cobranza", "Para saber quién le debe falta el Registro de Ventas.");
+  const r = calcCobranza(d);
+  if (!r.detalle.length) { responder("p-cobranza", valor(fmtCLP(0)) + frase("No hay facturas pendientes de cobro.")); return true; }
+  const peor = r.peor ? `El mayor atraso es de ${esc(r.peor.cliente)}: ${plural(r.peor.mayor_atraso, "día", "días")}.` : "";
+  const sv = r.sinVerificar;
+  const sinConfirmar = r.conCartola && sv.n > 0;
+  const t = sinConfirmar
+    ? (r.vencido > 0 ? `Figuran por cobrar, y ${fmtCLP(r.vencido)} con el plazo vencido. ${peor}` : "Figuran por cobrar, y ninguna con el plazo vencido todavía.")
+    : r.vencido > 0 ? `De eso, ${fmtCLP(r.vencido)} ya ${r.vencido === r.total ? "está vencido" : "están vencidos"}. ${peor}` : "Nada está vencido todavía.";
+  const c = responder("p-cobranza", valor(fmtCLP(r.total)) + frase(t) + `<div class="g"></div>` + (r.conCartola ? "" : aparte("Sin la cartola se asume que nada de esto está pagado.")) +
+    (sinConfirmar ? aparte(`${fmtCLP(sv.monto)} son de ${plural(sv.n, "factura anterior", "facturas anteriores")} al ${fmtFecha(r.cartolaDesde)}, donde empieza su cartola: no se puede saber si ya se pagaron. Suba la cartola desde ${nombreMes(sv.desde.slice(0, 7))} para confirmarlo.`) : "") +
+    (r.cartolaDesactualizada ? aparte(`Su cartola llega hasta el ${fmtFecha(r.cartolaHasta)}: los pagos posteriores no están descontados.`) : ""));
+  barrasH($(".g", c), TRAMOS.map((t, i) => ({ etiqueta: t, valor: r.tramos[t], tono: i === 0 ? "suave" : i >= 3 ? "error" : "" })));
+  return true;
+}
+
+// 3 · ¿Cuánto voy a pagar de IVA?
+function pintarIva() {
+  const f = calcF29(d);
+  if (!f) return pedir("p-iva", "Para estimar el IVA faltan el Registro de Ventas y el de Compras.");
+  // Con un solo registro el IVA no es una respuesta: se dice cuál falta.
+  if (f.faltaVentas || f.faltaCompras) return pedir("p-iva", `Para estimar el IVA falta el Registro de ${f.faltaVentas ? "Ventas" : "Compras"}.`);
+  const aFavor = f.iva_a_pagar === 0 && f.remanente_siguiente > 0;
+  const tasa = Number(porDefecto(d).ppm).toLocaleString("es-CL", { maximumFractionDigits: 2 });
+  const html = valor(aFavor ? `${fmtCLP(f.remanente_siguiente)} a favor` : fmtCLP(f.iva_a_pagar)) +
+    frase(aFavor ? `Estimación de ${nombreMes(f.mes)}: el crédito de sus compras supera al IVA de sus ventas, y la diferencia queda a su favor para el mes siguiente.` : `Estimación de ${nombreMes(f.mes)}: IVA de sus ventas menos el de sus compras.`) +
+    aparte(`Con PPM (${tasa}%), el total estimado es ${fmtCLP(f.total_estimado)}; las retenciones de honorarios se agregan en el detalle. Es una estimación: la declaración la valida su contador.`);
+  responder("p-iva", html);
+  return true;
+}
+
+// 4 · ¿En qué se va la plata?
+function pintarGastos() {
+  let g;
+  try { g = calcGastos(d, { fuente: d.ajustes.fuenteGastos, reglas: leerReglas(d.ajustes.reglasGasto || "") }); }
+  catch { g = calcGastos(d, { fuente: d.ajustes.fuenteGastos }); }   // una regla propia que rompe la búsqueda se ignora (se avisa en Gastos)
+  if (!g) return pedir("p-gastos", "Para ver en qué se va la plata falta la cartola del banco o el Registro de Compras.");
+  const n = g.gastos.reduce((s, x) => s + x.movimientos, 0);
+  const origen = g.fuente === "cartola" ? `Total de gastos según la cartola, en ${plural(n, "movimiento", "movimientos")}.` : `Total de gastos según el Registro de Compras, en ${plural(n, "documento", "documentos")}.`;
+  const c = responder("p-gastos", valor(fmtCLP(g.total)) + frase(origen) + `<div class="g"></div>` +
+    (g.sinClasificar ? aparte(`${plural(g.sinClasificar, "movimiento queda", "movimientos quedan")} sin categoría: se asignan en el detalle.`) : ""));
+  barrasH($(".g", c), g.gastos.slice(0, 4).map(x => ({ etiqueta: x.categoria, valor: x.monto })));
+  return true;
+}
+
+// 5 · ¿De quién dependo?
+function pintarClientes() {
+  if (!d.tiene.ventas) return pedir("p-clientes", "Para ver de quién depende falta el Registro de Ventas.");
+  const r = calcRadiografia(d), i = r.indicadores, nombre = r.clientes[0] && r.clientes[0].nombre;
+  responder("p-clientes", valor(fmtPct(i.concentracion_top1), false, true) +
+    frase(`Es lo que pesa ${nombre ? esc(nombre) + ", su principal cliente," : "su principal cliente"} en su venta neta.`) +
+    aparte(`El 80% de la venta lo hacen ${plural(i.clientes_80, "cliente", "clientes")} de ${fmt0(i.clientes)}.`));
+  return true;
+}
+const fmt0 = n => Number(n).toLocaleString("es-CL");
+
+// 6 · ¿Cuadra el banco con las facturas?
+function pintarCuadratura() {
+  const hayFact = d.tiene.ventas || d.tiene.compras;
+  if (!d.tiene.cartola || !hayFact) {
+    return pedir("p-cuadratura", !d.tiene.cartola && !hayFact ? "Para cuadrar el banco con las facturas faltan la cartola del banco y el Registro de Ventas o el de Compras."
+      : !d.tiene.cartola ? "Para cuadrar el banco con las facturas falta la cartola del banco." : "Para cuadrar el banco con las facturas falta el Registro de Ventas o el de Compras.");
+  }
+  const c = cuadrar(d), r = c.resumen;
+  const nSv = c.sinVerificarVenta.n + c.sinVerificarCompra.n;
+  responder("p-cuadratura", valor(`${fmt0(r.movimientos_cruzados)} de ${fmt0(d.movimientos.length)}`, false, true) +
+    frase(`${d.movimientos.length === 1 ? "movimiento" : "movimientos"} del banco ${r.movimientos_cruzados === 1 ? "tiene" : "tienen"} su factura.`) +
+    (nSv ? aparte(`${plural(nSv, "factura pendiente es anterior", "facturas pendientes son anteriores")} al ${fmtFecha(c.cartolaDesde)}, donde empieza la cartola: pudieron pagarse antes.`) : "") +
+    aparte("Los que no la tienen no son necesariamente un problema: los sueldos, los impuestos y las comisiones no llevan factura."));
+  return true;
+}
+
+function pintar() {
+  if (!d || (!d.tiene.ventas && !d.tiene.compras && !d.tiene.cartola)) {
+    $("#resultado").hidden = true;
+    const sinRut = d && d.sinLibro.length > 0 && !d.rut && !d.rutInferido;
+    estado(est, !d || d.vacia ? "" : sinRut ? "Falta el RUT de su empresa para separar ventas de compras." : "Para armar el panorama falta el Registro de Ventas, el de Compras o la cartola del banco.");
+    return;
+  }
+  const n = [pintarCaja(), pintarCobranza(), pintarIva(), pintarGastos(), pintarClientes(), pintarCuadratura()].filter(Boolean).length;
+  rotuloEjemplo($("#rotulo"), d.ejemplo);
+  $("#nota-sesion").textContent = sesionGuardada() ? "Cada respuesta abre su herramienta con los documentos que ya subió: no tiene que cargarlos de nuevo." : "Cada respuesta abre su herramienta, pero este navegador no guarda los documentos entre páginas: tendrá que subirlos de nuevo en cada una.";
+  const fechas = [...d.ventas, ...d.compras].map(f => f.fecha_emision).concat(d.movimientos.map(m => m.fecha));
+  const hoy = porDefecto(d).hoy;
+  titular($("#titular"),
+    n === 6 ? `Las <b>seis respuestas</b>, con ${d.ejemplo ? "los archivos de la empresa de ejemplo" : `los ${plural(d.archivos.length, "archivo", "archivos")} que subió`}.` : `<b>${n} de 6 respuestas</b>, con ${plural(d.archivos.length, "archivo", "archivos")}. Para las demás falta algún documento.`,
+    `Documentos de ${periodo(fechas)}, calculados al ${fmtFecha(hoy)}.`);
+  estado(est, n === 6 ? "Las seis respuestas están listas." : `${n} de 6 respuestas listas. Las demás dicen qué archivo falta.`, "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "Esto es una foto de hoy. ¿Y si la viera así todos los lunes, sin armarla?");
+}
+
+$("#p-saldo").addEventListener("input", () => {
+  if (poniendoSaldo || !d) return;
+  // Vaciar el campo devuelve el saldo de la cartola (null), como en Flujo.
+  guardarAjustes({ saldo: $("#p-saldo").value.trim() === "" ? null : num("#p-saldo") });
+  d = datos();
+  pintarCaja();
+});
+
+montarFuentes($("#fuentes"), {
+  usa: ["ventas", "compras", "cartola"],
+  alCambiar(datos_) {
+    d = datos_;
+    // Solo se rellena con un saldo que existe (escrito por usted o de la cartola): nunca con un 0 inventado.
+    const def = porDefecto(d);
+    poniendoSaldo = true; ponerMonto("#p-saldo", d.ajustes.saldo != null || def.saldoDeCartola ? def.saldo : ""); poniendoSaldo = false;
+    pintar();
+  }
+});
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
+</div></footer>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
+</body>
+</html>

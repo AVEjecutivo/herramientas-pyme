@@ -33,13 +33,20 @@
 
 ## Páginas para personas
 - Índice: https://miavejecutivo.com/herramientas/
+- Panorama (las seis respuestas en una pantalla): https://miavejecutivo.com/herramientas/panorama.html
+- Flujo de caja: https://miavejecutivo.com/herramientas/flujo.html
+- Cobranza: https://miavejecutivo.com/herramientas/cobranza.html
+- Estimador F29: https://miavejecutivo.com/herramientas/f29.html
+- Clasificador de gastos: https://miavejecutivo.com/herramientas/gastos.html
+- Radiografía de ventas y compras: https://miavejecutivo.com/herramientas/radiografia.html
+- Presupuesto de 12 meses: https://miavejecutivo.com/herramientas/presupuesto.html
 - Extractor de facturas: https://miavejecutivo.com/herramientas/facturas.html
 - Cartolas: https://miavejecutivo.com/herramientas/cartola.html
 - Cuadratura banco–facturas: https://miavejecutivo.com/herramientas/cuadratura.html
-- Cobranza: https://miavejecutivo.com/herramientas/cobranza.html
-- Flujo de caja: https://miavejecutivo.com/herramientas/flujo.html
-- Estimador F29: https://miavejecutivo.com/herramientas/f29.html
+- Boletas de honorarios: https://miavejecutivo.com/herramientas/honorarios.html
+- Validador de RUT: https://miavejecutivo.com/herramientas/rut.html
 - Guía para preguntar a sus datos con Copilot o Gemini: https://miavejecutivo.com/herramientas/guia-ia.html
+- Cuánto le cuesta el desorden: https://miavejecutivo.com/herramientas/horas.html
 
 ## Sobre AVE
 El programa de AVE dura 12 meses: los primeros meses AVE levanta y ordena la información de la empresa y genera los informes, capacitando al equipo en todo momento; luego se construye en conjunto, y al final el equipo construye sus propias mejoras de forma autónoma. Los cálculos se hacen con fórmulas en tablas; la IA se usa solo en la parte interpretativa. Contacto: contacto@miavejecutivo.com

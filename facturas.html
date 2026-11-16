@@ -3,45 +3,58 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Extractor de facturas a Excel · AVE</title>
 <meta name="description" content="Suba un lote de facturas electrónicas (XML, PDF o fotografía) y descargue una tabla ordenada en Excel o CSV. Gratis y sin subir sus documentos a ningún servidor.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/facturas.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/facturas.html"><meta property="og:site_name" content="AVE">
 <meta property="og:locale" content="es_CL"><meta property="og:title" content="Extractor de facturas a Excel"><meta property="og:description" content="Suba un lote de facturas electrónicas (XML, PDF o fotografía) y descargue una tabla ordenada en Excel o CSV. Gratis y sin subir sus documentos a ningún servidor.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · Ordenar documentos</p>
-<h1>Extractor de facturas a Excel</h1>
-<p class="lead">Suba un lote de facturas, notas de crédito o guías —en XML, PDF o fotografía— y obtenga una sola tabla con folio, fechas, RUT, razón social, neto, IVA y total, lista para Excel o Google Sheets.</p>
-<div class="privado"><b>●</b><div><b>Sus documentos no salen de este computador.</b> La lectura se hace completa en su navegador. Ningún archivo se sube a un servidor.</div></div>
+<main class="wrap" id="contenido">
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Extractor de facturas</p>
+  <h1>Sus facturas, en una sola tabla</h1>
+  <p class="lead">Suba un lote de facturas, notas de crédito o guías —en XML, PDF o fotografía— y obtenga una sola tabla con folio, fechas, RUT, razón social, neto, IVA y total, lista para Excel o Google Sheets.</p>
+</header>
 
 <label class="zona" id="zona">
-  <input type="file" multiple accept=".xml,.pdf,.png,.jpg,.jpeg,.webp,.csv,.txt">
-  <b>Arrastre aquí sus archivos o haga clic para elegirlos</b>
+  <input type="file" multiple accept=".xml,.pdf,.png,.jpg,.jpeg,.webp,.csv,.txt" aria-label="Elegir archivos">
+  <svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5M7.5 9.5L12 5l4.5 4.5M5 19.5h14"/></svg>
+  <b>Arrastre aquí sus archivos, o haga clic para elegirlos</b>
   <span>XML del SII (lectura exacta) · PDF · fotografías · CSV del Registro de Compras y Ventas</span>
 </label>
-<p class="muestra">¿No tiene archivos a mano? <button type="button" id="muestra">Probar con documentos de ejemplo</button> (datos ficticios).</p>
+<div class="fuentes-pie"><button type="button" class="btn sec" id="muestra">Probar con documentos de ejemplo</button><span class="nota">Son datos ficticios.</span></div>
+<p class="privado"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span><b>Sus documentos no salen de este computador.</b> La lectura se hace completa en su navegador. Ningún archivo se sube a un servidor.</span></p>
 
-<div id="estado" class="estado"></div>
-<div id="resultado" hidden>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
   <div class="cifras" id="cifras"></div>
+  <p class="nota" id="enlace-sesion"></p>
+  <div class="acciones" id="sesion-acc" hidden><button type="button" class="btn plano" id="quitar-docs">Quitar mis documentos</button></div>
   <div class="acciones" id="descargas"></div>
   <div id="ia"></div>
   <div id="tabla"></div>
-  <p class="estado">Las filas en amarillo o rojo no cuadraron por completo: revise esos documentos antes de usarlos. <a href="guia-ia.html">¿Quiere hacerle preguntas a esta tabla con Copilot o Gemini? Vea la guía.</a></p>
+  <p class="nota">Las filas marcadas como "Media" o "Baja" no cuadraron por completo: revise esos documentos antes de usarlos. <a href="guia-ia.html">¿Quiere hacerle preguntas a esta tabla con Copilot o Gemini? Vea la guía.</a></p>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <details>
   <summary>¿Cómo funciona y qué tan exacto es?</summary>
@@ -53,9 +66,10 @@
 
 <script type="module">
 import { leerDTE, leerFacturaTexto, leerRegistroSII, textoInsuficiente, COLUMNAS_FACTURA } from "./lib/ave-herramientas.js";
-import { $, zonaCarga, leerTexto, cargarScript, CDN, IA_URL, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
+import { $, zonaCarga, leerTexto, cargarScript, CDN, IA_URL, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra, titular, cifras, rotuloEjemplo, siguientes, plural } from "./lib/ui.js";
+import { leerSesion, borrarSesion, agregarArchivo } from "./lib/sesion.js";
 
-let filas = [];
+let filas = [], esEjemplo = false, nombreLote = "";
 const originales = new Map();
 const est = $("#estado");
 
@@ -138,7 +152,10 @@ function marcarDuplicados(fs) {
   }
 }
 
-async function cargar(archivos) {
+async function cargar(archivos, ejemplo) {
+  esEjemplo = !!ejemplo;
+  // Cada lote entra a la sesión con su propio nombre, para no reemplazar al anterior.
+  nombreLote = `Extractor de facturas · lote ${leerSesion().archivos.filter(a => a.nombre.startsWith("Extractor de facturas")).length + 1}`;
   filas = [];
   $("#resultado").hidden = true;
   for (let i = 0; i < archivos.length; i++) {
@@ -151,26 +168,56 @@ async function cargar(archivos) {
   mostrar();
 }
 
+
+/** Lo que se leyó con confianza alta y trae folio queda en la sesión para las demás herramientas. */
+function llevarASesion() {
+  const buenas = filas.filter(f => f.confianza === "alta" && f.folio);
+  const porRevisar = filas.length - buenas.length;
+  const nota = $("#enlace-sesion");
+  const botonQuitar = () => { $("#sesion-acc").hidden = !leerSesion().archivos.length; };
+  if (esEjemplo) { nota.textContent = "Los documentos de ejemplo no se llevan a las demás herramientas."; botonQuitar(); return; }
+  if (!buenas.length) { nota.textContent = "Ningún documento quedó disponible para las demás herramientas: todos están por revisar."; botonQuitar(); return; }
+  if (leerSesion().ejemplo) borrarSesion();
+  const { duplicadas } = agregarArchivo({ nombre: nombreLote, tipo: "facturas", facturas: buenas });
+  document.dispatchEvent(new Event("ave:sesion"));
+  const quedaron = buenas.length - duplicadas;
+  nota.textContent = `${plural(quedaron, "documento quedó disponible", "documentos quedaron disponibles")} para las demás herramientas, sin volver a subirlos, como «${nombreLote}»: un lote nuevo se suma a los anteriores.` + (porRevisar ? ` ${plural(porRevisar, "documento por revisar no se llevó", "documentos por revisar no se llevaron")}.` : "");
+  botonQuitar();
+}
+$("#quitar-docs").onclick = () => {
+  borrarSesion(); document.dispatchEvent(new Event("ave:sesion"));
+  $("#enlace-sesion").textContent = "Quitó sus documentos de esta pestaña: las demás herramientas ya no los ven.";
+  $("#sesion-acc").hidden = true;
+};
+
 function mostrar() {
   const suma = c => filas.reduce((s, f) => s + (Number(f[c]) || 0) * (f.tipo_dte === "61" ? -1 : 1), 0);
   const revisar = filas.filter(f => f.confianza !== "alta").length;
-  $("#cifras").innerHTML = [
+  rotuloEjemplo($("#rotulo"), esEjemplo);
+  titular($("#titular"),
+    `Se leyeron <b>${plural(filas.length, "documento", "documentos")}</b> por un total de <b>${fmtCLP(suma("monto_total"))}</b>.`,
+    revisar ? `<b class="mal">${plural(revisar, "documento queda", "documentos quedan")} por revisar</b> antes de usarse: están marcados en la tabla.` : "Todos los documentos cuadraron: ninguno queda por revisar.");
+  cifras($("#cifras"), [
     ["Documentos leídos", filas.length], ["Monto neto", fmtCLP(suma("monto_neto"))],
-    ["IVA", fmtCLP(suma("iva"))], ["Monto total", fmtCLP(suma("monto_total"))], ["Por revisar", revisar]
-  ].map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+    ["IVA", fmtCLP(suma("iva"))], ["Monto total", fmtCLP(suma("monto_total"))], ["Por revisar", revisar, revisar ? "alerta" : ""]
+  ]);
   mostrarTabla($("#tabla"), filas, COLUMNAS_FACTURA, {
+    titulo: "Documentos leídos",
     numericas: ["monto_neto", "monto_exento", "iva", "monto_total"],
-    claseFila: f => f.confianza === "baja" ? "baja" : f.confianza === "media" ? "media" : ""
+    claseFila: f => f.confianza === "baja" ? "baja" : f.confianza === "media" ? "media" : "",
+    chips: { confianza: c => c === "alta" ? "ok" : c === "media" ? "alerta" : "error" }
   });
   botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Facturas", filas, columnas: COLUMNAS_FACTURA }] }), "facturas-ave");
   $("#ia").innerHTML = !revisar ? "" : IA_URL
-    ? `<div class="aviso alerta">${revisar} documento(s) no se pudieron leer por completo con reglas fijas.
+    ? `<div class="aviso alerta">${plural(revisar, "documento no se pudo leer", "documentos no se pudieron leer")} por completo con reglas fijas.
        <p style="margin:.5em 0">Puede intentar leerlos con una IA gratuita. <b>Esos documentos se enviarán a Google</b>: en su plan gratuito, Google puede utilizarlos para mejorar sus modelos. Los demás documentos no se envían.</p>
        <button class="btn sec" id="usar-ia">Autorizo: intentar con IA gratuita</button></div>`
-    : `<div class="aviso alerta">${revisar} documento(s) no se pudieron leer por completo con reglas fijas. Revíselos manualmente o, si tiene el XML de esos documentos, súbalo: es la vía exacta.</div>`;
+    : `<div class="aviso alerta">${plural(revisar, "documento no se pudo leer", "documentos no se pudieron leer")} por completo con reglas fijas. Revíselos manualmente o, si tiene el XML de esos documentos, súbalo: es la vía exacta.</div>`;
   const b = $("#usar-ia");
   if (b) b.onclick = conIA;
-  estado(est, `Listo: ${filas.length} documento(s) en la tabla.`, "ok");
+  llevarASesion();
+  siguientes($("#siguientes"), ["cuadratura", "f29", "radiografia"]);
+  estado(est, `Listo: ${plural(filas.length, "documento", "documentos")} en la tabla.`, "ok");
   $("#resultado").hidden = false;
   invitacion($("#invitacion"), "¿Su equipo hace esto a mano todos los meses?");
 }
@@ -198,18 +245,18 @@ async function conIA() {
   mostrar();
 }
 
-zonaCarga($("#zona"), cargar);
+zonaCarga($("#zona"), archivos => cargar(archivos, false));
 $("#muestra").onclick = async () => {
   const rutas = ["muestras/facturas/dte-envio-ejemplo.xml", "muestras/facturas/factura-ejemplo-1.pdf", "muestras/facturas/factura-ejemplo-2.pdf"];
-  cargar(await Promise.all(rutas.map(archivoMuestra)));
+  cargar(await Promise.all(rutas.map(archivoMuestra)), true);
 };
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

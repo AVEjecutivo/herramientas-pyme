@@ -3,35 +3,45 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pregúntele a sus datos con IA · AVE</title>
 <meta name="description" content="Guía paso a paso para conectar sus tablas a Copilot en Excel o a Gemini en Google Sheets y hacerles preguntas en lenguaje natural.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/guia-ia.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/guia-ia.html"><meta property="og:site_name" content="AVE">
 <meta property="og:locale" content="es_CL"><meta property="og:title" content="Pregúntele a sus datos con IA"><meta property="og:description" content="Guía paso a paso para conectar sus tablas a Copilot en Excel o a Gemini en Google Sheets y hacerles preguntas en lenguaje natural.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" aria-current="page" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · Usar sus datos con IA</p>
-<h1>Pregúntele a sus datos: conecte sus tablas a Copilot o Gemini</h1>
-<p class="lead">Las tablas que descarga de estas herramientas están preparadas para que un asistente de IA las entienda. Esta guía le muestra, paso a paso, cómo hacerles preguntas en lenguaje natural —"¿qué cliente me debe más hace más de 60 días?"— con el asistente que probablemente ya tiene en su empresa.</p>
+<main class="wrap" id="contenido">
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Pregúntele a sus datos</p>
+  <h1>Pregúntele a sus datos: conecte sus tablas a Copilot o Gemini</h1>
+  <p class="lead">Las tablas que descarga de <a href="./">cualquiera de las herramientas</a> de este sitio están preparadas para que un asistente de IA las entienda. Esta guía le muestra, paso a paso, cómo hacerles preguntas en lenguaje natural —"¿qué cliente me debe más hace más de 60 días?"— con el asistente que probablemente ya tiene en su empresa.</p>
+</header>
+
+<style>.prosa .pasos{padding:0}.prosa .pasos > li{margin-bottom:0}.prosa details{max-width:none}</style>
 
 <h2>¿Qué camino le corresponde?</h2>
 <div class="caminos">
-  <a class="camino tarjeta" href="#copilot"><b>A · Microsoft 365</b>Usa Outlook, Excel y OneDrive. Asistente: <b style="display:inline;color:inherit">Copilot en Excel</b>.</a>
-  <a class="camino tarjeta" href="#gemini"><b>B · Google Workspace</b>Usa Gmail, Drive y Hojas de cálculo. Asistente: <b style="display:inline;color:inherit">Gemini en Hojas de cálculo</b>.</a>
-  <a class="camino tarjeta" href="#gratuito"><b>C · Sin licencia empresarial</b>Un asistente gratuito, adjuntando el archivo. Con resguardos de privacidad.</a>
+  <a class="camino" href="#copilot"><b>A · Microsoft 365</b>Usa Outlook, Excel y OneDrive. Asistente: <b style="display:inline;color:inherit">Copilot en Excel</b>.</a>
+  <a class="camino" href="#gemini"><b>B · Google Workspace</b>Usa Gmail, Drive y Hojas de cálculo. Asistente: <b style="display:inline;color:inherit">Gemini en Hojas de cálculo</b>.</a>
+  <a class="camino" href="#gratuito"><b>C · Sin licencia empresarial</b>Un asistente gratuito, adjuntando el archivo. Con resguardos de privacidad.</a>
 </div>
 
+<div class="prosa">
 <h2 id="preparar">Antes de empezar: descargue su tabla</h2>
 <ol class="pasos">
   <li><h3>Use cualquiera de las herramientas y presione "Descargar Excel"</h3>
@@ -116,7 +126,7 @@
   <li><h3>Haga su pregunta</h3>
     <p>Por ejemplo: <i>"¿Cuál fue el mes con más cargos en la columna Cargo y qué categorías explican ese aumento?"</i>. Gemini puede responder, crear fórmulas, tablas dinámicas y gráficos.</p></li>
 </ol>
-<div class="gancho">Si su empresa ya usa Google Workspace, el ecosistema completo se puede construir ahí mismo: que el Registro de Compras y Ventas y la cartola lleguen solos a una hoja, que los cálculos se hagan con fórmulas y que Gemini solo interprete. Es lo que montamos con nuestros clientes en los dos primeros meses.</div>
+<div class="gancho">Si su empresa ya usa Google Workspace, el ecosistema completo se puede construir ahí mismo: que el Registro de Compras y Ventas y la cartola lleguen solos a una hoja, que los cálculos se hagan con fórmulas y que Gemini solo interprete. Es lo que el programa monta en los dos primeros meses.</div>
 
 <h2 id="gratuito">Camino C · Un asistente gratuito</h2>
 <p>Si su empresa no tiene Copilot ni Gemini, puede usar la versión gratuita de un asistente (ChatGPT, Gemini o Claude) y <b>adjuntar el archivo CSV o Excel</b> en la conversación.</p>
@@ -149,18 +159,22 @@
 
 <h2>Lo que este camino no resuelve</h2>
 <p>La tabla que descargó es una foto de hoy. El mes que viene habrá que descargar, subir y preguntar otra vez, y la calidad de cada respuesta dependerá de que alguien haya armado bien la tabla. Un ecosistema de datos resuelve justamente eso: que la información llegue sola, cuadrada y al día, y que su equipo sepa preguntarle y verificar lo que responde.</p>
+</div>
+
+<div id="siguientes"></div>
 <div id="invitacion"></div>
 
 <script type="module">
-import { $, invitacion } from "./lib/ui.js";
+import { $, invitacion, siguientes } from "./lib/ui.js";
+siguientes($("#siguientes"), ["panorama", "cobranza", "flujo"], "Siga con sus datos");
 invitacion($("#invitacion"), "¿Quiere que su equipo haga esto con datos que se actualizan solos?");
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

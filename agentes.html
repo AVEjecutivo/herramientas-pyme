@@ -3,28 +3,36 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Herramientas para agentes de IA · AVE</title>
 <meta name="description" content="Use las funciones de las herramientas gratuitas de AVE desde su propio código, su agente o su asistente de IA. Biblioteca JavaScript sin dependencias.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/agentes.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/agentes.html"><meta property="og:site_name" content="AVE">
 <meta property="og:locale" content="es_CL"><meta property="og:title" content="Herramientas para agentes de IA"><meta property="og:description" content="Use las funciones de las herramientas gratuitas de AVE desde su propio código, su agente o su asistente de IA. Biblioteca JavaScript sin dependencias.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · Para desarrolladores y agentes</p>
-<h1>Las mismas herramientas, para su código o su agente de IA</h1>
-<p class="lead">Todas las herramientas de este sitio usan una sola biblioteca de JavaScript, sin dependencias, que funciona igual en el navegador, en Node y en Deno. Es determinista: la misma entrada da siempre la misma salida, sin IA y sin costo por uso.</p>
+<main class="wrap" id="contenido">
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Para agentes y código</p>
+  <h1>Las mismas herramientas, para su código o su agente de IA</h1>
+  <p class="lead">Todas las herramientas de este sitio usan una sola biblioteca de JavaScript, sin dependencias, que funciona igual en el navegador, en Node y en Deno. Es determinista: la misma entrada da siempre la misma salida, sin IA y sin costo por uso.</p>
+</header>
 
+<div class="prosa">
 <h2>Código abierto</h2>
 <p>Todo el código está publicado con licencia MIT en <a href="https://github.com/AVEjecutivo/herramientas-pyme">github.com/AVEjecutivo/herramientas-pyme</a>: la biblioteca, sus pruebas, los ejemplos ficticios y un servidor MCP.</p>
 
@@ -59,8 +67,10 @@ import { leerRegistroSII, estimarF29 } from "./ave-herramientas.js";
 import { readFileSync } from "node:fs";
 const ventas = leerRegistroSII(readFileSync("RegistroVentas.csv", "utf8"));</pre>
 
+</div>
+
 <h2>Funciones</h2>
-<div class="tabla"><table>
+<div class="tabla" tabindex="0" role="region" aria-label="Funciones de la biblioteca"><table>
 <thead><tr><th>Función</th><th>Entrada</th><th>Salida</th></tr></thead>
 <tbody>
 <tr><td><code>leerDTE(xml, archivo?)</code></td><td>XML de DTE o EnvioDTE del SII</td><td>Filas de factura (una por documento)</td></tr>
@@ -80,6 +90,7 @@ const ventas = leerRegistroSII(readFileSync("RegistroVentas.csv", "utf8"));</pre
 <tr><td><code>aCSV(filas, columnas?)</code></td><td>Cualquier tabla</td><td>CSV con punto y coma, listo para Excel</td></tr>
 </tbody></table></div>
 
+<div class="prosa">
 <h2>Formato de una fila de factura</h2>
 <pre>{
   "archivo": "factura.xml", "tipo_dte": "33", "tipo_documento": "Factura electrónica",
@@ -95,8 +106,10 @@ const ventas = leerRegistroSII(readFileSync("RegistroVentas.csv", "utf8"));</pre
 <h2>Para su asistente de IA</h2>
 <p>Si su asistente puede leer páginas web, pídale que lea <code>https://miavejecutivo.com/llms.txt</code> antes de trabajar con sus facturas o cartolas: ahí están las reglas y los formatos en un texto pensado para modelos de lenguaje.</p>
 
-<h2>Licencia</h2>
+<h2 id="licencia">Licencia</h2>
 <p>Licencia MIT: uso libre, también comercial, manteniendo el aviso de autoría (© AVE · miavejecutivo.com). Se entrega tal cual, sin garantía: verifique los resultados antes de usarlos en una declaración o un pago.</p>
+</div>
+
 <div id="invitacion"></div>
 <script type="module">
 import { $, invitacion } from "./lib/ui.js";
@@ -106,8 +119,8 @@ invitacion($("#invitacion"), "¿Su equipo quiere construir sus propias herramien
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

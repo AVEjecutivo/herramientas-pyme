@@ -3,59 +3,70 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Presupuesto anual en Excel · AVE</title>
-<meta name="description" content="Arme un presupuesto de 12 meses en Excel, con fórmulas, a partir de su historia real de ventas y gastos. Gratis.">
+<meta name="description" content="Arme un presupuesto de 12 meses en Excel, con fórmulas, a partir de su historia real de ventas y gastos. Gratis y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/presupuesto.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/presupuesto.html"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Presupuesto anual en Excel"><meta property="og:description" content="Arme un presupuesto de 12 meses en Excel, con fórmulas, a partir de su historia real de ventas y gastos. Gratis.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Presupuesto anual en Excel"><meta property="og:description" content="Arme un presupuesto de 12 meses en Excel, con fórmulas, a partir de su historia real de ventas y gastos. Gratis y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · En qué se va la plata</p>
-<h1>Presupuesto de 12 meses, a partir de su historia</h1>
-<p class="lead">Suba su Registro de Ventas y su cartola (o Registro de Compras). La herramienta calcula su promedio mensual de ventas y de cada categoría de gasto, y le entrega un Excel de 12 meses <b>con fórmulas</b>: cambie el crecimiento esperado de una línea y todo se recalcula.</p>
-<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+<main class="wrap" id="contenido">
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Presupuesto</p>
+  <h1>¿Cuánto puedo gastar el próximo año?</h1>
+  <p class="lead">Suba su Registro de Ventas y su cartola (o su Registro de Compras). Se calcula su promedio mensual de ventas y de cada categoría de gasto, y obtiene un Excel de 12 meses <b>con fórmulas</b>: cambie el crecimiento esperado de una línea y todo se recalcula.</p>
+</header>
+
+<div id="fuentes"></div>
 
 <div class="campos">
-  <div class="campo"><label>1. Ventas</label><label class="zona" id="zona-v"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Registro de Ventas</b><span id="n-v">CSV del SII o tabla del extractor</span></label></div>
-  <div class="campo"><label>2. Gastos</label><label class="zona" id="zona-g"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls"><b>Cartola o Registro de Compras</b><span id="n-g">Se clasifican por categoría automáticamente</span></label></div>
+  <div class="campo"><label for="anio">Año a presupuestar</label><input type="number" id="anio" inputmode="numeric"></div>
+  <div class="campo"><label for="crec">Crecimiento mensual de ventas (%)</label><input type="number" id="crec" value="0" step="0.1" inputmode="decimal"><small>Puede cambiarlo línea por línea en el Excel.</small></div>
+  <div class="campo"><label for="infl">Alza mensual de gastos (%)</label><input type="number" id="infl" value="0" step="0.1" inputmode="decimal"></div>
+  <div class="campo" id="g-campo" hidden><span class="f-tit" id="g-tit" style="display:block;font-size:.88rem;font-weight:600;margin-bottom:5px">Calcular los gastos desde</span>
+    <div class="segmento" role="group" aria-labelledby="g-tit"><button type="button" id="g-cartola" aria-pressed="true">Cartola</button><button type="button" id="g-compras" aria-pressed="false">Registro de Compras</button></div>
+    <small style="display:block;font-size:.8rem;color:var(--tinta-2);margin-top:5px">Tiene ambos: elija cuál refleja mejor lo que gasta.</small></div>
 </div>
-<div class="campos">
-  <div class="campo"><label for="anio">Año a presupuestar</label><input type="number" id="anio"></div>
-  <div class="campo"><label for="crec">Crecimiento mensual de ventas (%)</label><input type="number" id="crec" value="0" step="0.1"><small>Puede cambiarlo línea por línea en el Excel.</small></div>
-  <div class="campo"><label for="infl">Alza mensual de gastos (%)</label><input type="number" id="infl" value="0" step="0.1"></div>
-</div>
-<div class="acciones"><button class="btn" id="armar" disabled>Armar presupuesto</button><button class="btn sec" id="muestra" type="button">Probar con datos de ejemplo</button></div>
 
-<div id="estado" class="estado"></div>
-<div id="resultado" hidden>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
   <div class="cifras" id="cifras"></div>
-  <div class="acciones"><button class="btn" id="excel">Descargar Excel con fórmulas</button></div>
+  <div class="acciones"><button class="btn" id="excel" type="button"></button><span class="nota" id="excel-err" role="status"></span></div>
   <div id="tabla"></div>
-  <p class="estado" id="base-nota"></p>
+  <p class="nota" id="base-nota"></p>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <script type="module">
-import { basePresupuesto, clasificar, leerCartola, leerRegistroSII } from "./lib/ave-herramientas.js";
-import { $, zonaCarga, leerTabular, mostrarTabla, invitacion, estado, fmtCLP, cargarXLSX, registrar, archivoMuestra } from "./lib/ui.js";
-import { leerFacturas } from "./lib/entradas.js";
+import { basePresupuesto, leerReglas } from "./lib/ave-herramientas.js";
+import { $, mostrarTabla, invitacion, estado, fmtCLP, cargarXLSX, registrar, titular, cifras, rotuloEjemplo, siguientes, plural } from "./lib/ui.js";
+import { montarFuentes } from "./lib/fuentes.js";
+import { calcGastos } from "./lib/respuestas.js";
+import { guardarAjustes } from "./lib/sesion.js";
+import { icono } from "./lib/catalogo.js";
+
 const est = $("#estado");
 $("#anio").value = new Date().getFullYear() + 1;
-let aV = [], aG = [], base = null;
-const listo = () => $("#armar").disabled = !(aV.length || aG.length);
-zonaCarga($("#zona-v"), fs => { aV = fs; $("#n-v").textContent = fs.map(f => f.name).join(", "); listo(); });
-zonaCarga($("#zona-g"), fs => { aG = fs; $("#n-g").textContent = fs.map(f => f.name).join(", "); listo(); });
+$("#excel").innerHTML = icono("descarga") + "Descargar Excel con fórmulas";
+let d = null, base = null, fuente = "";
 const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
 function proyectar(filas) {
@@ -63,27 +74,51 @@ function proyectar(filas) {
   return filas.map(f => { const g = f.tipo === "Ingreso" ? cv : cg; const o = { ...f, crecimiento: g }; let v = f.base_mensual; MESES.forEach((m, i) => { if (i) v *= 1 + g; o[m] = Math.round(v); }); o.total = MESES.reduce((s, m) => s + o[m], 0); return o; });
 }
 
-async function armar() {
-  estado(est, "Leyendo archivos…");
-  const { facturas } = await leerFacturas(aV, "");
-  const ventas = facturas.filter(f => f.libro !== "compras");
-  const gastos = [];
-  for (const a of aG) {
-    const t = await leerTabular(a);
-    const c = leerCartola(t, a.name);
-    if (c.movimientos.length) gastos.push(...clasificar(c.movimientos.filter(m => m.cargo)).filas);
-    else gastos.push(...clasificar(leerRegistroSII(t, "compras", a.name).map(f => ({ ...f, fecha: f.fecha_emision }))).filas);
+function calcular() {
+  if (!d || !(d.tiene.ventas || d.tiene.cartola || d.tiene.compras)) {
+    base = null; $("#resultado").hidden = true; $("#g-campo").hidden = true;
+    estado(est, d && !d.vacia ? "Para armar el presupuesto falta al menos el Registro de Ventas, la cartola o el Registro de Compras." : "");
+    return;
   }
-  base = basePresupuesto({ ventas, gastos });
+  // La fuente de gastos: la cartola si existe; si hay ambas, el usuario elige.
+  const ambas = d.tiene.cartola && d.tiene.compras;
+  if (!fuente && d.ajustes.fuenteGastos) fuente = d.ajustes.fuenteGastos;
+  if (!d.tiene[fuente]) fuente = d.tiene.cartola ? "cartola" : d.tiene.compras ? "compras" : "";
+  $("#g-campo").hidden = !ambas;
+  $("#g-cartola").setAttribute("aria-pressed", String(fuente === "cartola"));
+  $("#g-compras").setAttribute("aria-pressed", String(fuente === "compras"));
+  let gastos = [];
+  if (fuente) {
+    // Las reglas propias de la herramienta de Gastos (guardadas en la sesión) se aplican aquí también.
+    let g;
+    try { g = calcGastos(d, { fuente, reglas: leerReglas(d.ajustes.reglasGasto || "") }); }
+    catch { g = calcGastos(d, { fuente }); }   // una regla con caracteres que rompen la búsqueda: se ignoran
+    gastos = fuente === "cartola" ? g.filas.filter(f => f.cargo) : g.filas;
+  }
+  base = basePresupuesto({ ventas: d.ventas, gastos });
+  if (!base.filas.length) { $("#resultado").hidden = true; estado(est, "No se encontraron ventas ni gastos con fecha para armar el presupuesto.", "alerta"); return; }
+  const anio = $("#anio").value;
   const filas = proyectar(base.filas);
   const ing = filas.filter(f => f.tipo === "Ingreso").reduce((s, f) => s + f.total, 0), gas = filas.filter(f => f.tipo === "Gasto").reduce((s, f) => s + f.total, 0);
-  $("#cifras").innerHTML = [["Ventas del año", fmtCLP(ing)], ["Gastos del año", fmtCLP(gas)], ["Resultado de caja", fmtCLP(ing - gas)], ["Líneas de gasto", filas.length - 1]]
-    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
-  mostrarTabla($("#tabla"), filas, ["tipo", "concepto", "base_mensual", ...MESES, "total"], { etiquetas: { tipo: "Tipo", concepto: "Concepto", base_mensual: "Base mensual", total: "Total año" } });
-  $("#base-nota").textContent = `Base calculada con ${base.meses_ventas.length} mes(es) de ventas y ${base.meses_gastos.length} mes(es) de gastos. Las ventas van en neto (sin IVA); los gastos de la cartola incluyen IVA. Ajuste en el Excel lo que no represente un mes normal.`;
-  estado(est, "Listo.", "ok");
-  $("#resultado").hidden = false;
+  const nV = base.meses_ventas.length, nG = base.meses_gastos.length;
+  rotuloEjemplo($("#rotulo"), d.ejemplo);
+  const historia = nV && nG ? (nV === nG ? `sus últimos ${nV} meses` : `su historia (${plural(nV, "mes", "meses")} de ventas y ${plural(nG, "mes", "meses")} de gastos)`) : `sus últimos ${nV || nG} meses`;
+  const montos = [nV ? `vendería <b>${fmtCLP(ing)}</b>` : "", nG ? `gastaría <b>${fmtCLP(gas)}</b>` : ""].filter(Boolean).join(" y ");
+  // Ventas y gastos no son bases comparables (las ventas van netas; los cargos de la cartola traen IVA, impuestos
+  // y cuotas de crédito), así que el titular no entrega un "resultado": solo lo que vendería y lo que gastaría.
+  const comparables = nV && nG && fuente === "compras";
+  const aclara = nV && nG ? (comparables ? "Ventas y compras van ambas en neto, pero un presupuesto de caja también lleva sueldos, impuestos y cuotas que no están en las facturas. " : "No son bases comparables: las ventas van netas, y los cargos de la cartola incluyen IVA, impuestos y cuotas de crédito. ") : "";
+  titular($("#titular"), `Si ${anio} se pareciera a ${historia}, ${montos}.`,
+    `${aclara}Es el promedio de su historia con los ajustes que indicó, no una predicción.`);
+  cifras($("#cifras"), [["Ventas del año", fmtCLP(ing)], ["Gastos del año", fmtCLP(gas)], ["Diferencia entre ambas", fmtCLP(ing - gas)], ["Líneas de gasto", filas.length - (nV ? 1 : 0)]]);
+  mostrarTabla($("#tabla"), filas, ["tipo", "concepto", "base_mensual", ...MESES, "total"], { etiquetas: { tipo: "Tipo", concepto: "Concepto", base_mensual: "Base mensual", total: "Total año" }, titulo: "Presupuesto de 12 meses" });
+  const gnota = fuente === "compras" ? "los gastos del Registro de Compras también van en neto" : "los gastos de la cartola incluyen IVA";
+  $("#base-nota").textContent = `Base calculada con ${plural(nV, "mes", "meses")} de ventas y ${plural(nG, "mes", "meses")} de gastos. Las ventas van en neto (sin IVA); ${gnota}. Ajuste en el Excel lo que no represente un mes normal.`;
+  siguientes($("#siguientes"), ["flujo", "gastos", "guia-ia"]);
   invitacion($("#invitacion"), "Un presupuesto sirve de verdad cuando se compara solo contra lo real, cada semana.");
+  $("#resultado").hidden = false;
+  const falta = !nV ? "Falta el Registro de Ventas: el presupuesto no tiene ingresos." : !nG ? "Sin cartola ni Registro de Compras no hay líneas de gasto." : "";
+  estado(est, falta || `Presupuesto ${anio} armado con ${nV} ${nV === 1 ? "mes" : "meses"} de ventas y ${nG} de gastos.`, falta ? "alerta" : "ok");
 }
 
 async function excel() {
@@ -121,18 +156,27 @@ async function excel() {
   XLSX.writeFile(libro, `presupuesto-${anio}-ave.xlsx`, { compression: true });
   registrar("descarga", { formato: "xlsx", nombre: "presupuesto" });
 }
-$("#armar").onclick = armar; $("#excel").onclick = excel;
-$("#muestra").onclick = async () => {
-  aV = [await archivoMuestra("muestras/registros/RegistroVentas_SII_ejemplo.csv")]; aG = [await archivoMuestra("muestras/cartolas/Cartola_BancoEstado_ejemplo.csv")];
-  $("#n-v").textContent = aV[0].name; $("#n-g").textContent = aG[0].name; listo(); armar();
+$("#excel").onclick = async () => {
+  const err = $("#excel-err"), b = $("#excel"); err.textContent = ""; b.disabled = true;
+  try { await excel(); }
+  catch (e) { err.textContent = "No se pudo armar el Excel: " + (e && e.message ? e.message : "la biblioteca no cargó") + ". Revise su conexión y vuelva a intentar."; }
+  b.disabled = false;
 };
+["anio", "crec", "infl"].forEach(id => $("#" + id).addEventListener("input", calcular));
+["cartola", "compras"].forEach(f => $("#g-" + f).onclick = () => { fuente = f; guardarAjustes({ fuenteGastos: f }); calcular(); });
+
+montarFuentes($("#fuentes"), {
+  usa: ["ventas", "compras", "cartola"],
+  opcional: { cartola: "gastos por categoría; si no la tiene, se usan las compras", compras: "gastos por categoría si no hay cartola" },
+  alCambiar(datos) { d = datos; calcular(); }
+});
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

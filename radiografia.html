@@ -3,85 +3,124 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radiografía de ventas y compras · AVE</title>
-<meta name="description" content="Vea la evolución mensual de sus ventas y compras, sus principales clientes y proveedores, y cuánto depende de unos pocos clientes. Gratis.">
+<title>Radiografía: ¿de quién depende? · AVE</title>
+<meta name="description" content="Vea cuánto de su venta depende de unos pocos clientes, cómo vienen los últimos meses y a qué proveedores les compra más. Gratis y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/radiografia.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/radiografia.html"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Radiografía de ventas y compras"><meta property="og:description" content="Vea la evolución mensual de sus ventas y compras, sus principales clientes y proveedores, y cuánto depende de unos pocos clientes. Gratis.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Radiografía: ¿de quién depende?"><meta property="og:description" content="Vea cuánto de su venta depende de unos pocos clientes, cómo vienen los últimos meses y a qué proveedores les compra más. Gratis y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · En qué se va la plata</p>
-<h1>Radiografía de ventas y compras</h1>
-<p class="lead">¿Cuánto de su venta depende de sus tres principales clientes? ¿Cómo vienen los últimos meses? ¿A quién le compra más? Suba sus Registros de Compras y Ventas y lo ve en una sola pantalla.</p>
-<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+<main class="wrap" id="contenido">
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Radiografía</p>
+  <h1>¿De quién dependo?</h1>
+  <p class="lead">¿Cuánto de su venta depende de sus tres principales clientes? ¿Cómo vienen los últimos meses? ¿A quién le compra más? Suba sus Registros de Ventas y de Compras y lo ve en una sola pantalla.</p>
+</header>
 
-<label class="zona" id="zona"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Arrastre aquí sus Registros de Compras y Ventas</b><span id="n">Mientras más meses, mejor la lectura</span></label>
-<p class="muestra"><button type="button" id="muestra">Probar con registros de ejemplo</button> (datos ficticios).</p>
+<div id="fuentes"></div>
 
-<div id="estado" class="estado"></div>
-<div id="resultado" hidden>
-  <div class="cifras" id="cifras"></div>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
   <div id="lectura"></div>
+  <div class="cifras" id="cifras"></div>
+  <div id="g-clientes"></div>
+  <div id="g-meses"></div>
   <div class="acciones" id="descargas"></div>
+
   <h2>Evolución mensual</h2><div id="t-evol"></div>
   <h2>Principales clientes</h2><div id="t-cli"></div>
   <h2>Principales proveedores</h2><div id="t-prov"></div>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <script type="module">
-import { radiografia } from "./lib/ave-herramientas.js";
-import { $, zonaCarga, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
-import { leerFacturas } from "./lib/entradas.js";
+import { $, esc, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, fmtPct, nombreMes, titular, cifras, rotuloEjemplo, barrasH, graficoColumnas, siguientes, plural } from "./lib/ui.js";
+import { montarFuentes } from "./lib/fuentes.js";
+import { calcRadiografia } from "./lib/respuestas.js";
+
 const est = $("#estado");
 const CE = ["mes", "ventas_netas", "compras_netas", "diferencia", "documentos_venta", "documentos_compra"];
 const CR = ["posicion", "nombre", "rut", "documentos", "neto", "participacion", "acumulado"];
 const ETQ = { mes: "Mes", ventas_netas: "Ventas netas", compras_netas: "Compras netas", diferencia: "Ventas menos compras", documentos_venta: "Documentos de venta", documentos_compra: "Documentos de compra", posicion: "N°", nombre: "Razón social", rut: "RUT", documentos: "Documentos", neto: "Monto neto", participacion: "% del total", acumulado: "% acumulado" };
+const MES_CORTO = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const mesCorto = m => `${MES_CORTO[Number(m.slice(5, 7)) - 1]} ${m.slice(2, 4)}`;
 
-async function cargar(archivos) {
-  $("#n").textContent = archivos.map(f => f.name).join(", ");
-  const { facturas, problemas } = await leerFacturas(archivos, "");
-  const ventas = facturas.filter(f => f.libro === "ventas"), compras = facturas.filter(f => f.libro === "compras");
-  if (!ventas.length && !compras.length) { estado(est, "No se encontraron documentos. " + problemas.join(" "), "error"); return; }
-  const r = radiografia({ ventas, compras }), i = r.indicadores;
-  $("#cifras").innerHTML = [["Clientes", i.clientes], ["Principal cliente", i.concentracion_top1.toLocaleString("es-CL") + "% de la venta"], ["Tres principales clientes", i.concentracion_top3.toLocaleString("es-CL") + "% de la venta"], ["Clientes que hacen el 80%", i.clientes_80], ["Venta promedio por documento", fmtCLP(i.ticket_promedio)]]
-    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
-  const frases = [];
-  if (i.concentracion_top1 >= 30) frases.push(`Un solo cliente explica el ${i.concentracion_top1}% de su venta: si se atrasa o se va, se nota de inmediato en la caja.`);
-  else if (i.concentracion_top3 >= 60) frases.push(`Tres clientes explican el ${i.concentracion_top3}% de su venta: vale la pena seguirlos de cerca.`);
-  else if (i.clientes) frases.push("Su venta está repartida entre varios clientes: ninguno concentra un riesgo grande por sí solo.");
-  const neg = r.evolucion.filter(m => m.diferencia < 0).map(m => m.mes);
-  if (neg.length && ventas.length && compras.length) frases.push(`En ${neg.join(", ")} compró más de lo que vendió (en neto).`);
-  $("#lectura").innerHTML = frases.length ? `<div class="aviso ok">${frases.join(" ")}</div>` : "";
-  mostrarTabla($("#t-evol"), r.evolucion, CE, { etiquetas: ETQ, claseFila: m => m.diferencia < 0 ? "media" : "" });
+function calcular(d) {
+  const r = d && calcRadiografia(d);
+  if (!r) {
+    $("#resultado").hidden = true;
+    estado(est, d && !d.vacia ? "Para esta lectura faltan el Registro de Ventas o el de Compras." : "");
+    return;
+  }
+  const i = r.indicadores, hayVentas = d.tiene.ventas, hayCompras = d.tiene.compras;
+  rotuloEjemplo($("#rotulo"), d.ejemplo);
+
+  // Titular: la concentración, armada con los datos.
+  let frase, detalle = "";
+  if (!hayVentas) frase = `Con solo el Registro de Compras se ven sus <b>${plural(i.proveedores, "proveedor", "proveedores")}</b>; para saber de qué clientes depende falta el Registro de Ventas.`;
+  else if (i.concentracion_top1 >= 30) frase = `Un solo cliente explica el <b class="mal">${fmtPct(i.concentracion_top1)}</b> de su venta: si se atrasa o se va, se nota de inmediato en la caja.`;
+  else if (i.concentracion_top3 >= 60) frase = `Tres clientes explican el <b class="mal">${fmtPct(i.concentracion_top3)}</b> de su venta: vale la pena seguirlos de cerca.`;
+  else frase = `Su venta está repartida entre <b>${plural(i.clientes, "cliente", "clientes")}</b>: ninguno concentra un riesgo grande por sí solo.`;
+  if (hayVentas && r.clientes[0]) detalle = `Su principal cliente es ${esc(r.clientes[0].nombre)}, con el ${fmtPct(i.concentracion_top1)} de la venta neta.`;
+  titular($("#titular"), frase, detalle);
+
+  // Solo se comparan los meses que ambos registros cubren: entre el primer y el último mes con ventas.
+  // Un mes sin ventas porque el registro no llega hasta ahí no es un mes de venta cero.
+  const conVentas = r.evolucion.filter(m => m.documentos_venta > 0).map(m => m.mes).sort();
+  const cubiertos = hayVentas && hayCompras && conVentas.length ? r.evolucion.filter(m => m.mes >= conVentas[0] && m.mes <= conVentas.at(-1)) : r.evolucion;
+  const neg = cubiertos.filter(m => m.diferencia < 0).map(m => nombreMes(m.mes));
+  $("#lectura").innerHTML = neg.length && hayVentas && hayCompras ? `<div class="aviso ok">En ${esc(neg.join(", "))} compró más de lo que vendió (en neto, en los meses que cubren ambos registros).</div>` : "";
+
+  const pr = r.proveedores, p3 = Math.min(100, pr.slice(0, 3).reduce((t, x) => t + x.participacion, 0)), p80 = (pr.findIndex(x => x.acumulado >= 80) + 1) || pr.length;
+  if (!hayVentas) cifras($("#cifras"), [["Proveedores", i.proveedores], ["Principal proveedor", fmtPct(pr[0] ? pr[0].participacion : 0) + " de la compra"], ["Tres principales proveedores", fmtPct(p3) + " de la compra"], ["Proveedores que hacen el 80%", p80]]);
+  else cifras($("#cifras"), [["Clientes", i.clientes], ["Principal cliente", fmtPct(i.concentracion_top1) + " de la venta"], ["Tres principales clientes", fmtPct(i.concentracion_top3) + " de la venta"], ["Clientes que hacen el 80%", i.clientes_80], ["Venta promedio por documento", fmtCLP(i.ticket_promedio)]]);
+
+  const top = r.clientes.slice(0, 6);
+  if (hayVentas && top.length) barrasH($("#g-clientes"), top.map(c => ({ etiqueta: c.nombre || c.rut || "Sin identificar", valor: c.participacion })), { titulo: "Principales clientes, según su parte de la venta", formato: n => fmtPct(n) });
+  else $("#g-clientes").innerHTML = "";
+  if (cubiertos.length >= 2 && hayVentas) graficoColumnas($("#g-meses"), cubiertos.map(m => ({ x: mesCorto(m.mes), valor: m.ventas_netas, titulo: nombreMes(m.mes) })), { titulo: "Ventas netas por mes" });
+  else $("#g-meses").innerHTML = "";
+
+  mostrarTabla($("#t-evol"), r.evolucion, CE, { etiquetas: ETQ, titulo: "Evolución mensual", claseFila: m => m.diferencia < 0 ? "media" : "" });
   const pct = l => l.map(x => ({ ...x, participacion: x.participacion.toLocaleString("es-CL") + "%", acumulado: x.acumulado.toLocaleString("es-CL") + "%" }));
-  mostrarTabla($("#t-cli"), pct(r.clientes), CR, { etiquetas: ETQ, numericas: ["documentos", "neto"] });
-  mostrarTabla($("#t-prov"), pct(r.proveedores), CR, { etiquetas: ETQ, numericas: ["documentos", "neto"] });
+  mostrarTabla($("#t-cli"), pct(r.clientes), CR, { etiquetas: ETQ, titulo: "Principales clientes", numericas: ["documentos", "neto"] });
+  mostrarTabla($("#t-prov"), pct(r.proveedores), CR, { etiquetas: ETQ, titulo: "Principales proveedores", numericas: ["documentos", "neto"] });
   botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Evolución", filas: r.evolucion, columnas: CE, etiquetas: ETQ }, { nombre: "Clientes", filas: r.clientes, columnas: CR, etiquetas: ETQ }, { nombre: "Proveedores", filas: r.proveedores, columnas: CR, etiquetas: ETQ }] }), "radiografia-ave");
-  estado(est, "Listo.", "ok");
+  siguientes($("#siguientes"), ["cobranza", "presupuesto", "flujo"]);
+  estado(est, `Lectura hecha con ${plural(r.evolucion.length, "mes", "meses")} de documentos.`, "ok");
   $("#resultado").hidden = false;
   invitacion($("#invitacion"), "Esta foto es de hoy. ¿Y si la viera actualizada todos los meses, con su equipo leyéndola?");
 }
-zonaCarga($("#zona"), cargar);
-$("#muestra").onclick = async () => cargar(await Promise.all(["muestras/registros/RegistroVentas_SII_Copihue_ejemplo.csv", "muestras/registros/RegistroCompras_SII_Copihue_ejemplo.csv"].map(archivoMuestra)));
+
+montarFuentes($("#fuentes"), {
+  usa: ["ventas", "compras"],
+  alCambiar(d) { calcular(d); }
+});
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

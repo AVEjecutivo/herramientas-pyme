@@ -3,102 +3,131 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cuadratura banco y facturas · AVE</title>
-<meta name="description" content="Cruce la cartola bancaria con sus facturas de venta y compra: qué está pagado, qué está pendiente y qué movimientos no tienen respaldo. Gratis.">
+<title>Cuadratura: ¿cuadra el banco con las facturas? · AVE</title>
+<meta name="description" content="Cruce la cartola bancaria con sus facturas de venta y compra: qué está pagado, qué está pendiente y qué movimientos no tienen factura. Gratis y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/cuadratura.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/cuadratura.html"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Cuadratura banco y facturas"><meta property="og:description" content="Cruce la cartola bancaria con sus facturas de venta y compra: qué está pagado, qué está pendiente y qué movimientos no tienen respaldo. Gratis.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Cuadratura: ¿cuadra el banco con las facturas?"><meta property="og:description" content="Cruce la cartola bancaria con sus facturas de venta y compra: qué está pagado, qué está pendiente y qué movimientos no tienen factura. Gratis y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · Entender la caja</p>
-<h1>Cuadratura entre banco y facturas</h1>
-<p class="lead">Suba la cartola y sus facturas. La herramienta cruza cada abono con una factura de venta y cada cargo con una de compra, y le muestra tres listas: lo pagado, lo pendiente y los movimientos que no tienen documento que los respalde.</p>
-<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+<main class="wrap" id="contenido">
+<style>.cifra .v .pal{font-family:var(--texto);font-variant-numeric:normal;letter-spacing:0}</style>
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Cuadratura</p>
+  <h1>¿Cuadra el banco con las facturas?</h1>
+  <p class="lead">Suba la cartola y sus facturas. Cada abono se cruza con una factura de venta y cada cargo con una de compra: verá qué está pagado, qué sigue pendiente y qué movimientos del banco no tienen factura que los respalde.</p>
+</header>
 
-<div class="campos">
-  <div class="campo"><label>1. Cartola bancaria</label>
-    <label class="zona" id="zona-cartola"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls"><b>Cartola</b><span id="n-cartola">CSV o Excel de cualquier banco</span></label></div>
-  <div class="campo"><label>2. Facturas</label>
-    <label class="zona" id="zona-facturas"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Facturas</b><span id="n-facturas">Registro de Compras y Ventas del SII, XML, o la tabla del extractor</span></label></div>
-  <div class="campo"><label for="rut">RUT de su empresa</label><input type="text" id="rut" placeholder="76.123.456-0"><small>Solo se usa para distinguir ventas de compras en XML o tablas exportadas.</small></div>
-</div>
-<div class="acciones"><button class="btn" id="cruzar" disabled>Cruzar</button><button class="btn sec" id="muestra" type="button">Probar con datos de ejemplo</button></div>
+<div id="fuentes"></div>
 
-<div id="estado" class="estado"></div>
-<div id="resultado" hidden>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
   <div class="cifras" id="cifras"></div>
   <div class="acciones" id="descargas"></div>
+
   <h2>Movimientos del banco</h2>
   <div id="t-movs"></div>
+
   <h2>Facturas</h2>
   <div id="t-facts"></div>
+
   <details><summary>¿Cómo se decide un cruce?</summary>
     <p>Se exige el mismo monto total y que el movimiento sea posterior a la emisión de la factura (hasta 180 días). Si dos o más facturas tienen el mismo monto, gana la que tiene su folio o el nombre del cliente o proveedor en la glosa del banco; si aun así hay empate, el movimiento queda como <b>ambiguo</b> para que lo decida una persona. Los pagos parciales o agrupados no se cruzan automáticamente.</p>
   </details>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <script type="module">
-import { leerCartola, conciliar } from "./lib/ave-herramientas.js";
-import { $, zonaCarga, leerTabular, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
-import { leerFacturas } from "./lib/entradas.js";
+import { $, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, fmtFecha, titular, cifras, rotuloEjemplo, siguientes, plural } from "./lib/ui.js";
+import { montarFuentes } from "./lib/fuentes.js";
+import { cuadrar } from "./lib/respuestas.js";
+
 const est = $("#estado");
-let archCartola = [], archFacturas = [], res = null;
-const listo = () => { $("#cruzar").disabled = !(archCartola.length && archFacturas.length); };
-zonaCarga($("#zona-cartola"), fs => { archCartola = fs; $("#n-cartola").textContent = fs.map(f => f.name).join(", "); listo(); });
-zonaCarga($("#zona-facturas"), fs => { archFacturas = fs; $("#n-facturas").textContent = fs.map(f => f.name).join(", "); listo(); });
+let res = null;
 
 const CM = ["fecha", "descripcion", "cargo", "abono", "factura", "cruce"];
 const CF = ["libro", "tipo_documento", "folio", "fecha_emision", "contraparte", "monto_total", "estado_pago", "fecha_pago", "dias_a_pago"];
 const ETQ = { factura: "Factura asociada", cruce: "Resultado", libro: "Libro", contraparte: "Cliente o proveedor", estado_pago: "Estado", fecha_pago: "Fecha de pago", dias_a_pago: "Días hasta el pago" };
 
-async function cruzar() {
-  estado(est, "Leyendo archivos…");
-  const movs = [];
-  for (const a of archCartola) movs.push(...leerCartola(await leerTabular(a), a.name).movimientos);
-  const { facturas, problemas, sinLibro } = await leerFacturas(archFacturas, $("#rut").value);
-  if (!movs.length) { estado(est, "No se encontraron movimientos en la cartola.", "error"); return; }
-  if (sinLibro) { estado(est, `${sinLibro} factura(s) no se pudieron clasificar como venta o compra. Ingrese el RUT de su empresa.`, "alerta"); return; }
-  res = conciliar(movs, facturas);
-  res.facturas.forEach(f => { f.contraparte = f.libro === "ventas" ? f.razon_social_receptor : f.razon_social_emisor; f.libro = f.libro === "ventas" ? "Venta" : "Compra"; });
-  const r = res.resumen;
-  const pend = res.facturas.filter(f => f.estado_pago === "Pendiente");
-  const porCobrar = pend.filter(f => f.libro === "Venta").reduce((s, f) => s + f.monto_total, 0);
-  const porPagar = pend.filter(f => f.libro === "Compra").reduce((s, f) => s + f.monto_total, 0);
-  $("#cifras").innerHTML = [["Movimientos cruzados", `${r.movimientos_cruzados} de ${movs.length}`], ["Movimientos sin respaldo", r.movimientos_sin_respaldo], ["Facturas pagadas", r.facturas_pagadas], ["Ventas pendientes de cobro", fmtCLP(porCobrar)], ["Compras pendientes de pago", fmtCLP(porPagar)]]
-    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
-  mostrarTabla($("#t-movs"), res.movimientos, CM, { etiquetas: ETQ, numericas: ["cargo", "abono"], claseFila: m => m.cruce === "Sin respaldo" ? "media" : m.cruce.startsWith("Ambiguo") ? "baja" : "" });
-  mostrarTabla($("#t-facts"), res.facturas, CF, { etiquetas: ETQ, numericas: ["monto_total", "dias_a_pago"], claseFila: f => f.estado_pago === "Pendiente" ? "media" : "" });
+function calcular(d) {
+  const hayFacturas = d && (d.tiene.ventas || d.tiene.compras);
+  if (!d || !d.tiene.cartola || !hayFacturas) {
+    $("#resultado").hidden = true;
+    const falta = !d || d.vacia ? "" : !d.tiene.cartola && !hayFacturas ? "Para cuadrar falta la cartola del banco y al menos un registro de facturas (ventas o compras)."
+      : !d.tiene.cartola ? "Para cuadrar falta la cartola del banco." : "Para cuadrar falta al menos un registro de facturas: el de ventas, el de compras o ambos.";
+    estado(est, falta);
+    return;
+  }
+  const c = cuadrar(d), r = c.resumen, M = c.movimientos.length;
+  // Copias: lo que devuelve cuadrar() está en caché y lo usan otras páginas.
+  const facturas = c.facturas.map(f => ({ ...f, contraparte: f.libro === "ventas" ? f.razon_social_receptor : f.razon_social_emisor, libro: f.libro === "ventas" ? "Venta" : "Compra" }));
+  res = { movimientos: c.movimientos, facturas };
+  rotuloEjemplo($("#rotulo"), d.ejemplo);
+
+  const sin = r.movimientos_sin_respaldo, amb = r.movimientos_ambiguos;
+  const partes = [`Quedan por cobrar <b>${fmtCLP(c.porCobrar)}</b> y por pagar <b>${fmtCLP(c.porPagar)}</b> en facturas sin pago en el banco.`];
+  if (sin) partes.push(`${plural(sin, "movimiento no tiene", "movimientos no tienen")} factura asociada; sueldos, impuestos y comisiones bancarias normalmente no la llevan, así que no es necesariamente un problema.`);
+  else partes.push("Ningún movimiento quedó sin factura asociada.");
+  // Pendientes emitidas antes de que empiece la cartola: pudieron pagarse antes y no se pueden verificar.
+  const nSv = c.sinVerificarVenta.n + c.sinVerificarCompra.n;
+  if (nSv) partes.push(`${plural(nSv, "de las facturas pendientes es anterior", "de las facturas pendientes son anteriores")} al ${fmtFecha(c.cartolaDesde)}, que es donde empieza la cartola: con estos archivos no se puede saber si ya se pagaron.`);
+  if (amb) partes.push(`${plural(amb, "movimiento es ambiguo", "movimientos son ambiguos")}: hay más de una factura con el mismo monto y lo debe decidir una persona.`);
+  titular($("#titular"), `<b>${r.movimientos_cruzados} de ${M}</b> ${M === 1 ? "movimiento" : "movimientos"} del banco ${r.movimientos_cruzados === 1 ? "tiene" : "tienen"} su factura.`, partes.join(" "));
+
+  cifras($("#cifras"), [
+    ["Movimientos cruzados", `<span class="pal">${r.movimientos_cruzados} de ${M}</span>`],
+    ["Movimientos sin respaldo", sin, sin ? "alerta" : ""],
+    ["Facturas pagadas", r.facturas_pagadas],
+    ["Ventas pendientes de cobro", fmtCLP(c.porCobrar)],
+    ["Compras pendientes de pago", fmtCLP(c.porPagar)]
+  ]);
+  mostrarTabla($("#t-movs"), res.movimientos, CM, {
+    etiquetas: ETQ, numericas: ["cargo", "abono"], titulo: "Movimientos del banco",
+    claseFila: m => m.cruce === "Sin respaldo" ? "media" : m.cruce.startsWith("Ambiguo") ? "baja" : "",
+    chips: { cruce: v => v === "Sin respaldo" ? "alerta" : String(v).startsWith("Ambiguo") ? "error" : "ok" }
+  });
+  mostrarTabla($("#t-facts"), res.facturas, CF, {
+    etiquetas: ETQ, numericas: ["monto_total", "dias_a_pago"], titulo: "Facturas",
+    claseFila: f => f.estado_pago === "Pendiente" ? "media" : "",
+    chips: { estado_pago: v => v === "Pagada" ? "ok" : "alerta" }
+  });
   botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Movimientos", filas: res.movimientos, columnas: CM, etiquetas: ETQ }, { nombre: "Facturas", filas: res.facturas, columnas: CF, etiquetas: ETQ }] }), "cuadratura-ave");
-  estado(est, problemas.length ? problemas.join(" ") : "Listo.", problemas.length ? "alerta" : "ok");
+  siguientes($("#siguientes"), ["cobranza", "flujo", "gastos"]);
+  estado(est, `Cruce hecho: ${plural(r.facturas_pagadas, "factura pagada", "facturas pagadas")} y ${plural(r.facturas_pendientes, "pendiente", "pendientes")}.`, amb ? "alerta" : "ok");
   $("#resultado").hidden = false;
   invitacion($("#invitacion"), "¿Cuántas horas al mes le toma hoy cuadrar el banco?");
 }
-$("#cruzar").onclick = cruzar;
-$("#muestra").onclick = async () => {
-  archCartola = [await archivoMuestra("muestras/cartolas/Cartola_BancoEstado_ejemplo.csv")];
-  archFacturas = await Promise.all(["muestras/registros/RegistroVentas_SII_ejemplo.csv", "muestras/registros/RegistroCompras_SII_ejemplo.csv"].map(archivoMuestra));
-  $("#n-cartola").textContent = archCartola[0].name; $("#n-facturas").textContent = archFacturas.map(f => f.name).join(", ");
-  listo(); cruzar();
-};
+
+montarFuentes($("#fuentes"), {
+  usa: ["cartola", "ventas", "compras"],
+  opcional: { ventas: "con el de ventas o el de compras basta", compras: "con el de ventas o el de compras basta" },
+  alCambiar(d) { calcular(d); }
+});
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

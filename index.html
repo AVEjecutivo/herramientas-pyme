@@ -3,59 +3,100 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Herramientas gratuitas para pymes · AVE</title>
-<meta name="description" content="Herramientas gratuitas de AVE para ordenar la información de su empresa: facturas, cartolas, cobranza, flujo de caja, F29 y más. Funcionan en su navegador, sin subir sus datos.">
+<meta name="description" content="Herramientas gratuitas de AVE para ordenar la información de su empresa: cuánta plata tendrá, quién le debe, cuánto IVA pagará y más. Funcionan en su navegador, sin registro y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Herramientas gratuitas para pymes"><meta property="og:description" content="Herramientas gratuitas de AVE para ordenar la información de su empresa: facturas, cartolas, cobranza, flujo de caja, F29 y más. Funcionan en su navegador, sin subir sus datos.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Herramientas gratuitas para pymes"><meta property="og:description" content="Herramientas gratuitas de AVE para ordenar la información de su empresa: cuánta plata tendrá, quién le debe, cuánto IVA pagará y más. Funcionan en su navegador, sin registro y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./" aria-current="page">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello">AVE · Herramientas gratuitas</p>
-<h1>Herramientas gratuitas para ordenar la información de su empresa</h1>
-<p class="lead">Facturas, cartolas, cobranza, flujo de caja, impuestos. Cada herramienta resuelve una pregunta concreta y entrega una tabla lista para Excel o Google Sheets. Son gratuitas, no requieren registro y funcionan completas en su navegador: <b>sus documentos no se suben a ningún servidor</b>.</p>
+<main class="wrap" id="contenido">
+<section class="hero">
+  <div>
+    <p class="sello">AVE · Herramientas gratuitas</p>
+    <h1>Ordene la información de su empresa</h1>
+    <p class="lead">Suba los archivos que ya tiene —los registros del SII y la cartola del banco— y vea las respuestas a las preguntas de su empresa. Son gratuitas, no piden registro y funcionan en su navegador.</p>
+    <div class="acciones">
+      <a class="btn grande" href="panorama.html">Ver mi empresa en una pantalla</a>
+      <a class="btn sec grande" href="panorama.html?ejemplo">Probar con una empresa de ejemplo</a>
+    </div>
+    <p class="hero-nota"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span>Sus archivos no salen de su computador: se leen en su navegador y no se suben a ningún servidor.</span></p>
+  </div>
+  <div class="vista" aria-hidden="true">
+    <span class="vista-rot">Ejemplo · datos ficticios</span>
+    <div class="vista-fila">
+      <div class="vista-c"><small>¿Cuánta plata voy a tener?</small><b>−$3.793.100</b><span>Saldo más bajo, en la semana 13</span>
+        <div class="mini"><i style="height:100%"></i><i style="height:80.2%"></i><i style="height:77%"></i><i style="height:68%"></i><i style="height:62.1%"></i><i style="height:62.1%"></i><i style="height:62.1%"></i><i style="height:34.4%"></i><i style="height:21.4%"></i><i style="height:21.4%"></i><i style="height:21.4%"></i><i style="height:6.2%"></i><i class="b" style="height:19.2%"></i></div></div>
+      <div class="vista-c"><small>¿Quién me debe?</small><b>$34.000.000</b><span>$28.000.000 con el plazo vencido</span></div>
+    </div>
+    <div class="vista-fila">
+      <div class="vista-c"><small>¿Cuánto voy a pagar de IVA?</small><b>$1.182.183</b><span>Estimación de junio de 2026</span></div>
+      <div class="vista-c"><small>¿De quién dependo?</small><b>28,5%</b><span>de la venta, en un solo cliente</span></div>
+    </div>
+  </div>
+</section>
 
-<section class="grupo"><h2>¿Cuánta plata tengo y cuánta voy a tener?</h2><div class="tarjetas">
-  <a class="tarjeta" href="flujo.html"><h3>Flujo de caja a 13 semanas</h3><p>Su caja proyectada semana a semana, con la semana más estrecha a la vista.</p></a>
-  <a class="tarjeta" href="cuadratura.html"><h3>Cuadratura banco y facturas</h3><p>Qué está pagado, qué está pendiente y qué movimientos no tienen respaldo.</p></a>
-  <a class="tarjeta" href="cartola.html"><h3>Ordenador de cartolas</h3><p>La cartola de cualquier banco en una tabla estándar, con el saldo verificado.</p></a>
-</div></section>
+<ul class="hechos">
+  <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><div><b>No salen de su computador</b>Los archivos se leen en su navegador, sin subirlos a ningún servidor.</div></li>
+  <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Gratis y sin registro</b>No pide cuenta, correo ni tarjeta.</div></li>
+  <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v11M7.5 11L12 15.5 16.5 11M5 19.5h14"/></svg><div><b>Todo queda en Excel o Google Sheets</b>Cada resultado se descarga como tabla, lista para seguir trabajando.</div></li>
+</ul>
 
-<section class="grupo"><h2>¿Quién me debe?</h2><div class="tarjetas">
-  <a class="tarjeta" href="cobranza.html"><h3>Cobranza por antigüedad</h3><p>Deuda por cliente y tramo, con borradores de correo de cobranza listos para revisar.</p></a>
-  <a class="tarjeta" href="radiografia.html"><h3>Radiografía de ventas y compras</h3><p>Evolución mensual, principales clientes y cuánto depende de unos pocos.</p></a>
-</div></section>
+<section class="seccion">
+  <h2>Empiece por su pregunta</h2>
+  <p class="lead">Cada una abre con los documentos que ya haya subido, sin cargarlos de nuevo.</p>
+  <div class="tarjetas grandes"><a class="tarjeta" href="flujo.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M9.3 20V4M14.7 20v-7M20 20V8"/></svg><span class="t-txt"><b class="t-tit">¿Cuánta plata voy a tener?</b><span class="t-res">Su caja semana a semana por los próximos tres meses, con la semana más estrecha a la vista.</span><span class="t-sub">Flujo de caja a 13 semanas</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="cobranza.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="t-txt"><b class="t-tit">¿Quién me debe?</b><span class="t-res">La deuda de cada cliente por tramo de atraso y el correo de cobranza ya redactado.</span><span class="t-sub">Cobranza por antigüedad</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="f29.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8z"/><path d="M9.5 14.5l5-5.5"/><circle cx="9.8" cy="9.3" r=".9"/><circle cx="14.2" cy="14.3" r=".9"/></svg><span class="t-txt"><b class="t-tit">¿Cuánto voy a pagar de IVA?</b><span class="t-res">IVA, PPM y retenciones del mes, para llegar donde su contador sabiendo el número.</span><span class="t-sub">Estimador del F29</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="gastos.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5H12z"/><path d="M15 3.9A8.5 8.5 0 0 1 20.1 9H15z"/></svg><span class="t-txt"><b class="t-tit">¿En qué se va la plata?</b><span class="t-res">Cada movimiento con su categoría, con reglas que usted puede ver y cambiar.</span><span class="t-sub">Clasificador de gastos</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="radiografia.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c.5-3.3 2.8-5 6-5s5.5 1.7 6 5"/><circle cx="17" cy="9.5" r="2.3"/><path d="M17.5 14.4c2 .4 3.2 1.9 3.5 4.1"/></svg><span class="t-txt"><b class="t-tit">¿De quién dependo?</b><span class="t-res">Sus principales clientes y proveedores, y cuánto de la venta está en pocas manos.</span><span class="t-sub">Radiografía de ventas y compras</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="presupuesto.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h2M14 14h2M8 17h2"/></svg><span class="t-txt"><b class="t-tit">¿Cuánto puedo gastar el próximo año?</b><span class="t-res">Un Excel con fórmulas, armado desde su historia real de ventas y gastos.</span><span class="t-sub">Presupuesto de 12 meses</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+</section>
 
-<section class="grupo"><h2>¿Cuánto voy a pagar de impuestos?</h2><div class="tarjetas">
-  <a class="tarjeta" href="f29.html"><h3>Estimador del F29</h3><p>IVA, PPM y retenciones del mes, a partir de sus Registros de Compras y Ventas.</p></a>
-  <a class="tarjeta" href="honorarios.html"><h3>Boletas de honorarios</h3><p>Retención según la tasa de cada año y revisión del informe de boletas del SII.</p></a>
-</div></section>
+<section class="seccion">
+  <h2>Deje sus documentos en limpio</h2>
+  <p class="lead">Para cuando el problema es el documento mismo: una cartola desordenada, facturas sueltas, una lista de RUT con errores.</p>
+  <div class="tarjetas"><a class="tarjeta" href="facturas.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4M10 12h5M10 15.5h5"/></svg><span class="t-txt"><b class="t-tit">Extractor de facturas a Excel</b><span class="t-res">Un lote de facturas en XML, PDF o foto, convertido en una tabla ordenada.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="cartola.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9.5L12 4l8.5 5.5M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3.5 20.5h17"/></svg><span class="t-txt"><b class="t-tit">Ordenador de cartolas</b><span class="t-res">La cartola de cualquier banco en una tabla estándar, con el saldo verificado.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="cuadratura.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg><span class="t-txt"><b class="t-tit">Cuadratura banco y facturas</b><span class="t-res">Qué está pagado, qué está pendiente y qué movimientos no tienen factura.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="honorarios.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12v17H6z"/><path d="M9 8h6M9 11.5h6M9 15h3"/></svg><span class="t-txt"><b class="t-tit">Boletas de honorarios</b><span class="t-res">La retención según la tasa de cada año y la revisión del informe del SII.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="rut.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 15.8c.6-1.5 1.6-2.2 3-2.2s2.4.7 3 2.2M14.5 10h4M14.5 13.5h4"/></svg><span class="t-txt"><b class="t-tit">Validador de RUT</b><span class="t-res">Dígito verificador, formato y duplicados en sus listas de clientes y proveedores.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+</section>
 
-<section class="grupo"><h2>¿En qué se va la plata?</h2><div class="tarjetas">
-  <a class="tarjeta" href="gastos.html"><h3>Clasificador de gastos</h3><p>Cada movimiento con su categoría, con reglas que usted puede ver y cambiar.</p></a>
-  <a class="tarjeta" href="presupuesto.html"><h3>Presupuesto de 12 meses</h3><p>Un Excel con fórmulas, armado desde su historia real de ventas y gastos.</p></a>
-</div></section>
+<section class="seccion">
+  <h2>Cuando sus tablas ya estén ordenadas</h2>
+  <p class="lead">El paso siguiente: preguntarles con IA, medir lo que cuesta el desorden o usar las funciones desde su propio código.</p>
+  <div class="tarjetas"><a class="tarjeta" href="guia-ia.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l1.7 4.6 4.6 1.7-4.6 1.7L12 16l-1.7-4.5-4.6-1.7 4.6-1.7z"/><path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg><span class="t-txt"><b class="t-tit">Pregúntele a sus datos</b><span class="t-res">Paso a paso para conectar estas tablas a Copilot o Gemini y hacerles preguntas.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="horas.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h10M7 20.5h10M8 3.5c0 4 4 5 4 8.5s-4 4.5-4 8.5M16 3.5c0 4-4 5-4 8.5s4 4.5 4 8.5"/></svg><span class="t-txt"><b class="t-tit">¿Cuánto le cuesta el desorden?</b><span class="t-res">Las horas y el dinero que se van cada mes en digitar, cuadrar y buscar.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="tarjeta" href="agentes.html"><svg class="ic t-ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 8L4 12l4.5 4M15.5 8L20 12l-4.5 4M13.5 5.5l-3 13"/></svg><span class="t-txt"><b class="t-tit">Para desarrolladores y agentes de IA</b><span class="t-res">Las mismas funciones, en código abierto, para su propio asistente.</span></span><svg class="ic t-fl" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+</section>
 
-<section class="grupo"><h2>Ordenar documentos</h2><div class="tarjetas">
-  <a class="tarjeta" href="facturas.html"><h3>Extractor de facturas a Excel</h3><p>Un lote de facturas en XML, PDF o fotografía, convertido en una sola tabla.</p></a>
-  <a class="tarjeta" href="rut.html"><h3>Validador de RUT</h3><p>Dígito verificador, formato y duplicados en sus listas de clientes y proveedores.</p></a>
-</div></section>
-
-<section class="grupo"><h2>Usar sus datos con IA</h2><div class="tarjetas">
-  <a class="tarjeta" href="guia-ia.html"><h3>Pregúntele a sus datos</h3><p>Guía paso a paso para conectar sus tablas a Copilot o Gemini y hacerles preguntas.</p></a>
-  <a class="tarjeta" href="horas.html"><h3>¿Cuánto le cuesta el desorden?</h3><p>Las horas y el dinero que se van cada mes en digitar, cuadrar y buscar.</p></a>
-  <a class="tarjeta" href="agentes.html"><h3>Para desarrolladores y agentes de IA</h3><p>Use estas mismas funciones desde su propio código o asistente.</p></a>
-</div></section>
+<section class="seccion">
+  <h2>Lo que estas herramientas hacen, y lo que no</h2>
+  <div class="compara">
+    <div>
+      <h3>Con estas herramientas</h3>
+      <ul>
+        <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Usted descarga los archivos, los sube y obtiene la respuesta de hoy.</span></li>
+        <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>El mes que viene hay que repetirlo.</span></li>
+        <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Sirven para una pregunta puntual.</span></li>
+      </ul>
+    </div>
+    <div class="prog">
+      <h3>Con el programa de AVE</h3>
+      <ul>
+        <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>La información llega sola y cuadrada.</span></li>
+        <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Los cálculos quedan en fórmulas dentro de sus propias planillas, sin costo por uso.</span></li>
+        <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>La IA se usa solo donde hay que interpretar, con la cuenta de su empresa, que usted paga directo al proveedor.</span></li>
+        <li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Su equipo aprende a construir sus propias mejoras durante un año.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
 
 <div id="invitacion"></div>
 <script type="module">
@@ -66,8 +107,8 @@ invitacion($("#invitacion"), "Estas herramientas ordenan una foto. Nosotros le a
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>

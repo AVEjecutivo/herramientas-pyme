@@ -3,97 +3,130 @@
 <head>
 <meta name="robots" content="noindex">
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ordenador de cartolas bancarias · AVE</title>
-<meta name="description" content="Convierta la cartola de cualquier banco chileno en una tabla estándar de fecha, glosa, cargo, abono y saldo. Gratis y sin subir sus datos.">
+<title>La cartola en limpio · AVE</title>
+<meta name="description" content="Convierta la cartola de cualquier banco chileno en una tabla estándar de fecha, glosa, cargo, abono y saldo, y verifique que el saldo cuadre. Gratis y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/cartola.html">
-<meta name="theme-color" content="#1B2B3D">
+<meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/cartola.html"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Ordenador de cartolas bancarias"><meta property="og:description" content="Convierta la cartola de cualquier banco chileno en una tabla estándar de fecha, glosa, cargo, abono y saldo. Gratis y sin subir sus datos.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="La cartola en limpio"><meta property="og:description" content="Convierta la cartola de cualquier banco chileno en una tabla estándar de fecha, glosa, cargo, abono y saldo, y verifique que el saldo cuadre. Gratis y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
+<link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#F5E8CF;color:#1B2B3D;font:16px/1.5 system-ui,sans-serif">Estas herramientas necesitan JavaScript: todo se calcula en su navegador, sin enviar sus archivos a ningún servidor. Actívelo para usarlas.</p></noscript>
+<a class="salto" href="#contenido">Ir al contenido</a>
 <div class="bar"><div class="bar-in">
-  <a class="wm" href="../">AVE<span>.</span></a>
-  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+  <a class="wm" href="../" aria-label="AVE, ir a la portada">AVE<span>.</span></a>
+  <nav aria-label="Herramientas"><a href="./">Herramientas</a><a href="panorama.html">Panorama</a><a href="guia-ia.html" class="op">Guía de IA</a></nav>
+  <a id="mis-docs" href="panorama.html" title="Sus documentos están cargados en esta pestaña. Ver el panorama." hidden></a>
+  <a class="btn" href="../" data-agenda>Agendar diagnóstico</a>
 </div></div>
-<main class="wrap">
-<p class="sello"><a href="./">Herramientas gratuitas</a> · Ordenar documentos</p>
-<h1>Ordenador de cartolas bancarias</h1>
-<p class="lead">Cada banco exporta la cartola a su manera: títulos, columnas en distinto orden, totales intercalados. Esta herramienta la deja en una tabla estándar —fecha, descripción, referencia, cargo, abono y saldo— y verifica que el saldo cuadre movimiento a movimiento.</p>
-<div class="privado"><b>●</b><div><b>Su cartola no sale de este computador.</b> Todo se procesa en su navegador.</div></div>
+<main class="wrap" id="contenido">
+<style>.cifra .v .pal{font-family:var(--texto);font-variant-numeric:normal;letter-spacing:0}</style>
+<header class="cab">
+  <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>Cartola</p>
+  <h1>La cartola en limpio</h1>
+  <p class="lead">Cada banco exporta la cartola a su manera: títulos, columnas en distinto orden, totales intercalados. Súbala y queda en una tabla estándar —fecha, descripción, referencia, cargo, abono y saldo— con el saldo verificado movimiento a movimiento. Si sube varias, se unen en una sola.</p>
+</header>
 
-<label class="zona" id="zona">
-  <input type="file" multiple accept=".csv,.txt,.xlsx,.xls">
-  <b>Arrastre aquí una o varias cartolas</b>
-  <span>CSV o Excel, de cualquier banco. Si sube varias, se unen en una sola tabla.</span>
-</label>
-<p class="muestra">¿Quiere ver cómo funciona? <button type="button" id="muestra">Probar con cartolas de ejemplo</button> (datos ficticios).</p>
+<div id="fuentes"></div>
 
-<div id="estado" class="estado"></div>
-<div id="resultado" hidden>
+<div id="estado" class="estado" role="status" aria-live="polite"></div>
+<section id="resultado" aria-label="Resultado" hidden>
+  <div id="rotulo"></div>
+  <div id="titular"></div>
   <div class="cifras" id="cifras"></div>
   <div id="cuadre"></div>
   <div class="acciones" id="descargas"></div>
   <div id="tabla"></div>
-  <p class="estado">Siguiente paso natural: <a href="cuadratura.html">cruzar esta cartola con sus facturas</a> o <a href="gastos.html">clasificar los gastos por categoría</a>.</p>
+  <div id="siguientes"></div>
   <div id="invitacion"></div>
-</div>
+</section>
 
 <script type="module">
-import { leerCartola, COLUMNAS_CARTOLA } from "./lib/ave-herramientas.js";
-import { $, zonaCarga, leerTabular, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
-const est = $("#estado");
-let movs = [];
+import { COLUMNAS_CARTOLA } from "./lib/ave-herramientas.js";
+import { $, esc, notaCuentas, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, fmtFecha, titular, cifras, rotuloEjemplo, siguientes, plural } from "./lib/ui.js";
+import { montarFuentes } from "./lib/fuentes.js";
+import { cuentasDeCartola, periodo } from "./lib/sesion.js";
 
-function revisarSaldos(ms) {
-  let errores = 0;
+const est = $("#estado");
+
+/**
+ * Movimientos consecutivos cuyo saldo no calza. Cada archivo se prueba en los
+ * dos sentidos (hay bancos que exportan del más reciente al más antiguo) y se
+ * queda con el que cuadra: solo cuenta errores si ninguno cuadra.
+ */
+function erroresEn(ms) {
+  let e = 0;
   for (let i = 1; i < ms.length; i++) {
     const a = ms[i - 1], b = ms[i];
-    if (a.banco !== b.banco || a.saldo === "" || b.saldo === "") continue;
-    if (Math.abs(a.saldo + b.abono - b.cargo - b.saldo) > 1) errores++;
+    if (a.saldo === "" || b.saldo === "" || a.saldo == null || b.saldo == null) continue;
+    if (Math.abs(a.saldo + b.abono - b.cargo - b.saldo) > 1) e++;
   }
+  return e;
+}
+function revisarSaldos(ms) {
+  const porArchivo = new Map();
+  for (const m of ms) { const k = (m.archivo || "") + "|" + (m.banco || ""); if (!porArchivo.has(k)) porArchivo.set(k, []); porArchivo.get(k).push(m); }
+  let errores = 0;
+  for (const g of porArchivo.values()) errores += Math.min(erroresEn(g), erroresEn([...g].reverse()));
   return errores;
 }
 
-async function cargar(archivos) {
-  movs = []; const problemas = [];
-  for (const a of archivos) {
-    estado(est, "Leyendo " + a.name + "…");
-    try {
-      const r = leerCartola(await leerTabular(a), a.name);
-      if (r.error) problemas.push(`${a.name}: ${r.error}`);
-      movs.push(...r.movimientos.map(m => ({ ...m, banco: m.banco || a.name })));
-    } catch (e) { problemas.push(`${a.name}: ${e.message}`); }
+function calcular(d) {
+  if (!d || !d.tiene.cartola) {
+    $("#resultado").hidden = true;
+    estado(est, d && !d.vacia ? "Para ordenar la cartola falta subirla, en Excel o CSV." : "");
+    return;
   }
-  if (!movs.length) { estado(est, "No se encontraron movimientos. " + problemas.join(" "), "error"); return; }
+  const movs = d.movimientos;
   const cargos = movs.reduce((s, m) => s + m.cargo, 0), abonos = movs.reduce((s, m) => s + m.abono, 0);
-  const fechas = movs.map(m => m.fecha).sort();
-  $("#cifras").innerHTML = [["Movimientos", movs.length], ["Total abonos", fmtCLP(abonos)], ["Total cargos", fmtCLP(cargos)], ["Período", fechas[0].split("-").reverse().join("-") + " al " + fechas.at(-1).split("-").reverse().join("-")]]
-    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
-  const err = revisarSaldos(movs);
-  const tieneSaldo = movs.some(m => m.saldo !== "");
-  $("#cuadre").innerHTML = (problemas.length ? `<div class="aviso error">${problemas.join("<br>")}</div>` : "") +
-    (!tieneSaldo ? "" : err ? `<div class="aviso alerta">En ${err} movimiento(s) el saldo no cuadra con el anterior. Puede deberse al orden de la cartola o a movimientos faltantes: conviene revisarlo.</div>`
-      : `<div class="aviso ok">El saldo cuadra movimiento a movimiento.</div>`);
-  mostrarTabla($("#tabla"), movs, COLUMNAS_CARTOLA, { numericas: ["cargo", "abono", "saldo"] });
+  const fechas = movs.map(m => m.fecha).filter(Boolean).sort();
+  const bancos = [...new Set(movs.map(m => m.banco).filter(Boolean))];
+  const cuentas = cuentasDeCartola(movs), saldo = cuentas.length ? cuentas.reduce((t, c) => t + c.saldo, 0) : null;
+  const err = revisarSaldos(movs), tieneSaldo = movs.some(m => m.saldo !== "" && m.saldo != null);
+  rotuloEjemplo($("#rotulo"), d.ejemplo);
+
+  const cuadra = !tieneSaldo ? "La cartola no trae saldo, así que no se pudo verificar."
+    : err ? `En <b class="mal">${plural(err, "movimiento", "movimientos")}</b> el saldo no cuadra con el anterior.` : "El saldo cuadra.";
+  titular($("#titular"),
+    `<b>${plural(movs.length, "movimiento", "movimientos")}</b>${bancos.length ? ` de ${esc(bancos.join(", "))}` : ""}, ${periodo(movs.map(m => m.fecha))}. ${cuadra}`,
+    "Es la misma cartola, ya en una tabla estándar que se abre bien en Excel.");
+
+  cifras($("#cifras"), [
+    ["Movimientos", movs.length],
+    ["Total abonos", fmtCLP(abonos)],
+    ["Total cargos", fmtCLP(cargos)],
+    ["Período", `<span class="pal">${fechas.length ? fmtFecha(fechas[0]) + " al " + fmtFecha(fechas.at(-1)) : "—"}</span>`],
+    ...(saldo != null ? [[cuentas.length > 1 ? `Saldo final (${cuentas.length} cuentas)` : "Saldo final", fmtCLP(saldo)]] : [])
+  ]);
+  $("#cuadre").innerHTML = !tieneSaldo ? ""
+    : err ? `<div class="aviso alerta">En ${plural(err, "movimiento", "movimientos")} el saldo no cuadra con el anterior. Puede deberse al orden de la cartola o a movimientos faltantes: conviene revisarlo.</div>`
+    : `<div class="aviso ok">El saldo cuadra movimiento a movimiento.</div>`;
+  if (cuentas.length > 1) $("#cuadre").insertAdjacentHTML("beforeend", `<p class="nota"><b>Saldo final por cuenta.</b> ${esc(notaCuentas(cuentas).replace(/^Suma de \d+ cuentas: /, ""))}. Las cuentas se deducen de los períodos de cada archivo: si dos archivos no se traslapan, se toman como la misma cuenta.</p>`);
+  mostrarTabla($("#tabla"), movs, COLUMNAS_CARTOLA, { numericas: ["cargo", "abono", "saldo"], titulo: "Movimientos de la cartola" });
   botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Movimientos", filas: movs, columnas: COLUMNAS_CARTOLA }] }), "cartola-ave");
-  estado(est, `Listo: ${movs.length} movimientos.`, "ok");
+  siguientes($("#siguientes"), ["cuadratura", "gastos", "flujo"]);
+  estado(est, `Listo: ${plural(movs.length, "movimiento", "movimientos")}.`, err ? "alerta" : "ok");
   $("#resultado").hidden = false;
   invitacion($("#invitacion"), "¿Y si la cartola llegara ordenada sola, todos los meses?");
 }
-zonaCarga($("#zona"), cargar);
-$("#muestra").onclick = async () => cargar(await Promise.all(["muestras/cartolas/Cartola_BCI_ejemplo.csv", "muestras/cartolas/Cartola_Santander_ejemplo.csv"].map(archivoMuestra)));
+
+montarFuentes($("#fuentes"), {
+  usa: ["cartola"],
+  alCambiar(d) { calcular(d); }
+});
 </script>
 
 </main>
 <footer class="pie"><div class="wrap">
   <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
-  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+  <nav aria-label="Pie"><a href="./">Todas las herramientas</a><a href="agentes.html">Para desarrolladores y agentes</a><a href="agentes.html#licencia">Condiciones de uso</a><a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></nav>
 </div></footer>
-<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+<script type="module">import { iniciarPagina } from "./lib/ui.js"; iniciarPagina();</script>
 </body>
 </html>
