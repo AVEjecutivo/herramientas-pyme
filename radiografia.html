@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radiografía de ventas y compras · AVE</title>
+<meta name="description" content="Vea la evolución mensual de sus ventas y compras, sus principales clientes y proveedores, y cuánto depende de unos pocos clientes. Gratis.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/radiografia.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/radiografia.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Radiografía de ventas y compras"><meta property="og:description" content="Vea la evolución mensual de sus ventas y compras, sus principales clientes y proveedores, y cuánto depende de unos pocos clientes. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · En qué se va la plata</p>
+<h1>Radiografía de ventas y compras</h1>
+<p class="lead">¿Cuánto de su venta depende de sus tres principales clientes? ¿Cómo vienen los últimos meses? ¿A quién le compra más? Suba sus Registros de Compras y Ventas y lo ve en una sola pantalla.</p>
+<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+
+<label class="zona" id="zona"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Arrastre aquí sus Registros de Compras y Ventas</b><span id="n">Mientras más meses, mejor la lectura</span></label>
+<p class="muestra"><button type="button" id="muestra">Probar con registros de ejemplo</button> (datos ficticios).</p>
+
+<div id="estado" class="estado"></div>
+<div id="resultado" hidden>
+  <div class="cifras" id="cifras"></div>
+  <div id="lectura"></div>
+  <div class="acciones" id="descargas"></div>
+  <h2>Evolución mensual</h2><div id="t-evol"></div>
+  <h2>Principales clientes</h2><div id="t-cli"></div>
+  <h2>Principales proveedores</h2><div id="t-prov"></div>
+  <div id="invitacion"></div>
+</div>
+
+<script type="module">
+import { radiografia } from "./lib/ave-herramientas.js";
+import { $, zonaCarga, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
+import { leerFacturas } from "./lib/entradas.js";
+const est = $("#estado");
+const CE = ["mes", "ventas_netas", "compras_netas", "diferencia", "documentos_venta", "documentos_compra"];
+const CR = ["posicion", "nombre", "rut", "documentos", "neto", "participacion", "acumulado"];
+const ETQ = { mes: "Mes", ventas_netas: "Ventas netas", compras_netas: "Compras netas", diferencia: "Ventas menos compras", documentos_venta: "Documentos de venta", documentos_compra: "Documentos de compra", posicion: "N°", nombre: "Razón social", rut: "RUT", documentos: "Documentos", neto: "Monto neto", participacion: "% del total", acumulado: "% acumulado" };
+
+async function cargar(archivos) {
+  $("#n").textContent = archivos.map(f => f.name).join(", ");
+  const { facturas, problemas } = await leerFacturas(archivos, "");
+  const ventas = facturas.filter(f => f.libro === "ventas"), compras = facturas.filter(f => f.libro === "compras");
+  if (!ventas.length && !compras.length) { estado(est, "No se encontraron documentos. " + problemas.join(" "), "error"); return; }
+  const r = radiografia({ ventas, compras }), i = r.indicadores;
+  $("#cifras").innerHTML = [["Clientes", i.clientes], ["Principal cliente", i.concentracion_top1.toLocaleString("es-CL") + "% de la venta"], ["Tres principales clientes", i.concentracion_top3.toLocaleString("es-CL") + "% de la venta"], ["Clientes que hacen el 80%", i.clientes_80], ["Venta promedio por documento", fmtCLP(i.ticket_promedio)]]
+    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+  const frases = [];
+  if (i.concentracion_top1 >= 30) frases.push(`Un solo cliente explica el ${i.concentracion_top1}% de su venta: si se atrasa o se va, se nota de inmediato en la caja.`);
+  else if (i.concentracion_top3 >= 60) frases.push(`Tres clientes explican el ${i.concentracion_top3}% de su venta: vale la pena seguirlos de cerca.`);
+  else if (i.clientes) frases.push("Su venta está repartida entre varios clientes: ninguno concentra un riesgo grande por sí solo.");
+  const neg = r.evolucion.filter(m => m.diferencia < 0).map(m => m.mes);
+  if (neg.length && ventas.length && compras.length) frases.push(`En ${neg.join(", ")} compró más de lo que vendió (en neto).`);
+  $("#lectura").innerHTML = frases.length ? `<div class="aviso ok">${frases.join(" ")}</div>` : "";
+  mostrarTabla($("#t-evol"), r.evolucion, CE, { etiquetas: ETQ, claseFila: m => m.diferencia < 0 ? "media" : "" });
+  const pct = l => l.map(x => ({ ...x, participacion: x.participacion.toLocaleString("es-CL") + "%", acumulado: x.acumulado.toLocaleString("es-CL") + "%" }));
+  mostrarTabla($("#t-cli"), pct(r.clientes), CR, { etiquetas: ETQ, numericas: ["documentos", "neto"] });
+  mostrarTabla($("#t-prov"), pct(r.proveedores), CR, { etiquetas: ETQ, numericas: ["documentos", "neto"] });
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Evolución", filas: r.evolucion, columnas: CE, etiquetas: ETQ }, { nombre: "Clientes", filas: r.clientes, columnas: CR, etiquetas: ETQ }, { nombre: "Proveedores", filas: r.proveedores, columnas: CR, etiquetas: ETQ }] }), "radiografia-ave");
+  estado(est, "Listo.", "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "Esta foto es de hoy. ¿Y si la viera actualizada todos los meses, con su equipo leyéndola?");
+}
+zonaCarga($("#zona"), cargar);
+$("#muestra").onclick = async () => cargar(await Promise.all(["muestras/registros/RegistroVentas_SII_Copihue_ejemplo.csv", "muestras/registros/RegistroCompras_SII_Copihue_ejemplo.csv"].map(archivoMuestra)));
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

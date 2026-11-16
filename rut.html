@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validador de RUT · AVE</title>
+<meta name="description" content="Revise una lista de RUT chilenos: dígito verificador, formato y duplicados. Pegue la lista o suba una planilla. Gratis.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/rut.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/rut.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Validador de RUT"><meta property="og:description" content="Revise una lista de RUT chilenos: dígito verificador, formato y duplicados. Pegue la lista o suba una planilla. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Ordenar documentos</p>
+<h1>Validador de RUT y depurador de listas</h1>
+<p class="lead">Pegue una lista de RUT o suba la planilla de clientes o proveedores. La herramienta verifica el dígito verificador, unifica el formato (12.345.678-5) y marca los duplicados, aunque estén escritos de distinta manera.</p>
+<div class="privado"><b>●</b><div><b>Su lista no sale de este computador.</b></div></div>
+
+<div class="campos">
+  <div class="campo" style="grid-column:1/-1">
+    <label for="lista">Lista de RUT (uno por línea)</label>
+    <textarea id="lista" placeholder="76.123.456-0&#10;761234560&#10;12345678-5"></textarea>
+  </div>
+</div>
+<div class="acciones"><button class="btn" id="revisar">Revisar lista</button>
+<label class="btn sec" style="position:relative">Subir planilla<input type="file" id="archivo" accept=".csv,.txt,.xlsx,.xls" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+<button class="btn sec" id="muestra" type="button">Usar lista de ejemplo</button></div>
+<div id="columna"></div>
+
+<div id="estado" class="estado"></div>
+<div id="resultado" hidden>
+  <div class="cifras" id="cifras"></div>
+  <div class="acciones" id="descargas"></div>
+  <div id="tabla"></div>
+  <div id="invitacion"></div>
+</div>
+
+<script type="module">
+import { depurarRuts, validarRut, detectarSeparador, dividirLineaCSV } from "./lib/ave-herramientas.js";
+import { $, leerTabular, mostrarTabla, botonesDescarga, invitacion, estado } from "./lib/ui.js";
+const est = $("#estado");
+let filas = [], tabla = null;
+const COLS = ["fila", "entrada", "rut", "valido", "motivo", "duplicado_de"];
+const ETQ = { fila: "Fila", entrada: "Valor original", rut: "RUT normalizado", valido: "Válido", motivo: "Motivo", duplicado_de: "Duplicado de la fila" };
+
+function revisar(lista) {
+  filas = depurarRuts(lista.filter(x => String(x).trim())).map(f => ({ ...f, valido: f.valido ? "Sí" : "No" }));
+  if (!filas.length) { estado(est, "La lista está vacía.", "alerta"); return; }
+  const malos = filas.filter(f => f.valido === "No").length, dup = filas.filter(f => f.duplicado_de !== "").length;
+  $("#cifras").innerHTML = [["RUT revisados", filas.length], ["Válidos", filas.length - malos], ["Con error", malos], ["Duplicados", dup]]
+    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+  mostrarTabla($("#tabla"), filas, COLS, { etiquetas: ETQ, numericas: [], claseFila: f => f.valido === "No" ? "baja" : f.duplicado_de !== "" ? "media" : "" });
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "RUT", filas, columnas: COLS, etiquetas: ETQ }] }), "rut-revisados-ave");
+  estado(est, "Listo.", "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "Una lista limpia es el primer paso de un sistema ordenado.");
+}
+
+$("#revisar").onclick = () => revisar($("#lista").value.split(/\r?\n/));
+$("#muestra").onclick = () => { $("#lista").value = ["76.543.210-3", "765432103", "12.345.678-5", "12345678-9", "77.215.100-4", "77215100-4", "96.820.410-6", "70821900-2", "abc", "9.999.999-k"].join("\n"); $("#revisar").click(); };
+$("#archivo").onchange = async ev => {
+  const a = ev.target.files[0]; if (!a) return;
+  const texto = await leerTabular(a);
+  const sep = detectarSeparador(texto);
+  const lineas = texto.split(/\r?\n/).filter(l => l.trim());
+  tabla = lineas.map(l => dividirLineaCSV(l, sep));
+  const enc = tabla[0];
+  // Columna sugerida: la que tenga más RUT válidos
+  const puntos = enc.map((_, i) => tabla.slice(1, 60).filter(r => validarRut(r[i]).valido).length);
+  const mejor = puntos.indexOf(Math.max(...puntos));
+  $("#columna").innerHTML = `<div class="campos"><div class="campo"><label for="col">Columna con los RUT</label><select id="col">${enc.map((h, i) => `<option value="${i}" ${i === mejor ? "selected" : ""}>${h || "Columna " + (i + 1)}</option>`).join("")}</select><small>Sugerida automáticamente.</small></div></div>`;
+  const usar = () => revisar(tabla.slice(1).map(r => r[Number($("#col").value)] || ""));
+  $("#col").onchange = usar; usar();
+};
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

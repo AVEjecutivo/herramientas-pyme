@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuánto le cuesta el desorden · AVE</title>
+<meta name="description" content="Calcule cuántas horas y cuánto dinero se van cada mes en digitar, cuadrar, buscar información y armar planillas. Gratis.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/horas.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/horas.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Cuánto le cuesta el desorden"><meta property="og:description" content="Calcule cuántas horas y cuánto dinero se van cada mes en digitar, cuadrar, buscar información y armar planillas. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Antes de empezar</p>
+<h1>¿Cuánto le cuesta el desorden?</h1>
+<p class="lead">Seis preguntas sobre cómo trabaja hoy su equipo. El resultado son las horas al mes —y su costo— que se van en digitar, cuadrar, buscar y armar planillas. Los números son los suyos: la herramienta no supone nada que usted no haya ingresado.</p>
+
+<div class="campos">
+  <div class="campo"><label for="docs">Documentos que se digitan o revisan al mes</label><input type="number" id="docs" min="0" value="0"><small>Facturas, boletas, comprobantes.</small></div>
+  <div class="campo"><label for="min">Minutos por documento</label><input type="number" id="min" min="0" value="0"></div>
+  <div class="campo"><label for="conc">Horas a la semana cuadrando el banco</label><input type="number" id="conc" min="0" step="0.5" value="0"></div>
+  <div class="campo"><label for="inf">Horas al mes armando informes o planillas</label><input type="number" id="inf" min="0" step="0.5" value="0"></div>
+  <div class="campo"><label for="cob">Horas a la semana en seguimiento de cobranza</label><input type="number" id="cob" min="0" step="0.5" value="0"></div>
+  <div class="campo"><label for="bus">Horas a la semana buscando información</label><input type="number" id="bus" min="0" step="0.5" value="0"><small>"¿Me mandas la factura de…?", "¿cuánto nos debe…?"</small></div>
+  <div class="campo"><label for="val">Costo de una hora de esa persona ($)</label><input type="number" id="val" min="0" value="0"><small>Sueldo bruto mensual dividido por 180, aprox.</small></div>
+</div>
+<div class="acciones"><button class="btn" id="calcular">Calcular</button><button class="btn sec" id="ejemplo" type="button">Ver con valores de ejemplo</button></div>
+
+<div id="resultado" hidden>
+  <p class="estado" id="rotulo"></p>
+  <div class="cifras" id="cifras"></div>
+  <div id="tabla"></div>
+  <div class="acciones" id="descargas"></div>
+  <div class="gancho" id="lectura"></div>
+  <div id="invitacion"></div>
+</div>
+
+<script type="module">
+import { calcularHoras } from "./lib/ave-herramientas.js";
+import { $, mostrarTabla, botonesDescarga, invitacion, fmtCLP } from "./lib/ui.js";
+let ejemplo = false;
+function calcular() {
+  const r = calcularHoras({ documentosMes: $("#docs").value, minutosPorDocumento: $("#min").value, horasConciliacionSemana: $("#conc").value, horasInformesMes: $("#inf").value, horasCobranzaSemana: $("#cob").value, horasBuscarSemana: $("#bus").value, valorHora: $("#val").value });
+  $("#rotulo").textContent = ejemplo ? "Ejemplo con valores ficticios. Reemplácelos por los de su empresa." : "Calculado con sus respuestas.";
+  $("#cifras").innerHTML = [["Horas al mes", r.horas_mes.toLocaleString("es-CL")], ["Jornadas completas al mes", r.jornadas_mes.toLocaleString("es-CL")], ["Costo al mes", fmtCLP(r.costo_mes)], ["Costo al año", fmtCLP(r.costo_anio)]]
+    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+  mostrarTabla($("#tabla"), r.partidas, ["tarea", "horas_mes"], { etiquetas: { tarea: "Tarea", horas_mes: "Horas al mes" } });
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Horas", filas: r.partidas, columnas: ["tarea", "horas_mes"], etiquetas: { tarea: "Tarea", horas_mes: "Horas al mes" } }] }), "costo-del-desorden-ave");
+  $("#lectura").innerHTML = r.horas_mes ? `<b>${r.horas_mes.toLocaleString("es-CL")} horas al mes</b> son ${r.jornadas_mes.toLocaleString("es-CL")} jornadas de alguien de su equipo dedicadas a mover información de un lugar a otro, en vez de usarla para decidir. La mayor parte de ese trabajo se puede ordenar una vez y dejar funcionando.` : "Ingrese sus números para ver el resultado.";
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "¿Y si su equipo recuperara ese tiempo y aprendiera a usarlo con IA?");
+}
+$("#calcular").onclick = () => { ejemplo = false; calcular(); };
+$("#ejemplo").onclick = () => { ejemplo = true; Object.entries({ docs: 150, min: 4, conc: 3, inf: 8, cob: 2, bus: 3, val: 9000 }).forEach(([k, v]) => $("#" + k).value = v); calcular(); };
+document.querySelectorAll("input").forEach(i => i.addEventListener("input", () => { ejemplo = false; if (!$("#resultado").hidden) calcular(); }));
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

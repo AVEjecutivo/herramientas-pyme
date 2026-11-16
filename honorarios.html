@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boletas de honorarios · AVE</title>
+<meta name="description" content="Calcule la retención de boletas de honorarios según la tasa del año y revise su informe de boletas del SII. Gratis.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/honorarios.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/honorarios.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Boletas de honorarios"><meta property="og:description" content="Calcule la retención de boletas de honorarios según la tasa del año y revise su informe de boletas del SII. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Ordenar documentos</p>
+<h1>Boletas de honorarios: cálculo y revisión</h1>
+<p class="lead">La retención de las boletas de honorarios sube cada año hasta llegar al 17% en 2028. Calcule una boleta de bruto a líquido —o al revés— y revise que el informe de boletas que descarga desde el SII tenga bien aplicada la tasa de cada año.</p>
+<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+
+<h2>Calculadora</h2>
+<div class="campos">
+  <div class="campo"><label for="anio">Año de emisión</label><select id="anio"></select></div>
+  <div class="campo"><label for="modo">Conozco el monto…</label><select id="modo"><option value="bruto">Bruto (lo que dice la boleta)</option><option value="liquido">Líquido (lo que se paga o recibe)</option></select></div>
+  <div class="campo"><label for="monto">Monto en pesos</label><input type="number" id="monto" value="1000000" min="0" step="1"></div>
+</div>
+<div class="cifras" id="calc"></div>
+
+<h2>Revisión del informe de boletas del SII</h2>
+<p>En el sitio del SII, en Boletas de honorarios electrónicas, descargue el informe de boletas emitidas o recibidas en formato CSV o Excel y súbalo aquí.</p>
+<label class="zona" id="zona"><input type="file" accept=".csv,.txt,.xlsx,.xls"><b>Arrastre aquí el informe de boletas</b><span>CSV o Excel descargado desde el SII</span></label>
+<p class="muestra"><button type="button" id="muestra">Probar con un informe de ejemplo</button> (datos ficticios).</p>
+<div id="estado" class="estado"></div>
+<div id="resultado" hidden>
+  <div class="cifras" id="cifras"></div>
+  <h3>Resumen por mes</h3>
+  <div id="meses"></div>
+  <div class="acciones" id="descargas"></div>
+  <h3>Detalle de boletas</h3>
+  <div id="tabla"></div>
+</div>
+<div id="invitacion"></div>
+
+<script type="module">
+import { calcularHonorario, leerHonorarios, TASA_RETENCION } from "./lib/ave-herramientas.js";
+import { $, zonaCarga, leerTabular, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
+const est = $("#estado");
+const actual = new Date().getFullYear();
+$("#anio").innerHTML = Object.keys(TASA_RETENCION).map(a => `<option ${Number(a) === actual ? "selected" : ""}>${a}</option>`).join("");
+function calc() {
+  const v = Number($("#monto").value) || 0;
+  const r = calcularHonorario({ [$("#modo").value]: v, anio: $("#anio").value });
+  $("#calc").innerHTML = [["Tasa de retención " + r.anio, (r.tasa * 100).toLocaleString("es-CL") + "%"], ["Monto bruto", fmtCLP(r.bruto)], ["Retención", fmtCLP(r.retencion)], ["Líquido", fmtCLP(r.liquido)]]
+    .map(([e, x]) => `<div class="cifra"><div class="v">${x}</div><div class="e">${e}</div></div>`).join("");
+}
+["anio", "modo", "monto"].forEach(id => $("#" + id).addEventListener("input", calc)); calc();
+
+const COLS = ["folio", "fecha", "rut", "nombre", "estado", "bruto", "retencion_informada", "tasa", "retencion_calculada", "liquido", "diferencia", "revision"];
+const ETQ = { folio: "N° boleta", fecha: "Fecha", rut: "RUT", nombre: "Nombre", estado: "Estado", bruto: "Bruto", retencion_informada: "Retención informada", tasa: "Tasa del año", retencion_calculada: "Retención calculada", liquido: "Líquido", diferencia: "Diferencia", revision: "Revisión" };
+const COLS_MES = ["mes", "boletas", "bruto", "retencion", "liquido"];
+const ETQ_MES = { mes: "Mes", boletas: "Boletas", bruto: "Bruto", retencion: "Retención (a declarar en el F29)", liquido: "Líquido" };
+
+async function cargar([a]) {
+  const r = leerHonorarios(await leerTabular(a));
+  if (r.error || !r.boletas.length) { estado(est, r.error || "No se encontraron boletas en el archivo.", "error"); return; }
+  const malas = r.boletas.filter(b => b.revision.startsWith("La retención")).length;
+  const tot = k => r.meses.reduce((s, m) => s + m[k], 0);
+  $("#cifras").innerHTML = [["Boletas", r.boletas.length], ["Total bruto", fmtCLP(tot("bruto"))], ["Total retenido", fmtCLP(tot("retencion"))], ["Con diferencias", malas]]
+    .map(([e, x]) => `<div class="cifra"><div class="v">${x}</div><div class="e">${e}</div></div>`).join("");
+  const filas = r.boletas.map(b => ({ ...b, tasa: (b.tasa * 100).toLocaleString("es-CL") + "%" }));
+  mostrarTabla($("#meses"), r.meses, COLS_MES, { etiquetas: ETQ_MES, numericas: ["boletas", "bruto", "retencion", "liquido"] });
+  mostrarTabla($("#tabla"), filas, COLS, { etiquetas: ETQ, claseFila: b => b.revision.startsWith("La retención") ? "media" : "" });
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Boletas", filas, columnas: COLS, etiquetas: ETQ }, { nombre: "Resumen mensual", filas: r.meses, columnas: COLS_MES, etiquetas: ETQ_MES }] }), "honorarios-ave");
+  estado(est, malas ? `Listo. ${malas} boleta(s) tienen una retención distinta a la tasa del año: revíselas con su contador.` : "Listo. Todas las retenciones corresponden a la tasa del año.", malas ? "alerta" : "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "¿Las boletas, las facturas y el banco viven en lugares distintos?");
+}
+zonaCarga($("#zona"), cargar);
+$("#muestra").onclick = async () => cargar([await archivoMuestra("muestras/honorarios/informe-boletas-ejemplo.csv")]);
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

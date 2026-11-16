@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herramientas para agentes de IA · AVE</title>
+<meta name="description" content="Use las funciones de las herramientas gratuitas de AVE desde su propio código, su agente o su asistente de IA. Biblioteca JavaScript sin dependencias.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/agentes.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/agentes.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Herramientas para agentes de IA"><meta property="og:description" content="Use las funciones de las herramientas gratuitas de AVE desde su propio código, su agente o su asistente de IA. Biblioteca JavaScript sin dependencias.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Para desarrolladores y agentes</p>
+<h1>Las mismas herramientas, para su código o su agente de IA</h1>
+<p class="lead">Todas las herramientas de este sitio usan una sola biblioteca de JavaScript, sin dependencias, que funciona igual en el navegador, en Node y en Deno. Es determinista: la misma entrada da siempre la misma salida, sin IA y sin costo por uso.</p>
+
+<h2>Código abierto</h2>
+<p>Todo el código está publicado con licencia MIT en <a href="https://github.com/AVEjecutivo/herramientas-pyme">github.com/AVEjecutivo/herramientas-pyme</a>: la biblioteca, sus pruebas, los ejemplos ficticios y un servidor MCP.</p>
+
+<h2>Conectarlo a su asistente (servidor MCP)</h2>
+<p>Con el servidor MCP, su asistente de IA puede leer sus facturas y cartolas directamente desde su computador y responder con números exactos. Requiere Node.js 18.17 o superior. Nada se envía a servidores externos.</p>
+<h3>Claude Code</h3>
+<pre>claude mcp add herramientas-pyme -- npx -y github:AVEjecutivo/herramientas-pyme</pre>
+<h3>Claude Desktop</h3>
+<p>En Configuración › Desarrollador › Editar configuración, agregue a <code>claude_desktop_config.json</code>:</p>
+<pre>{
+  "mcpServers": {
+    "herramientas-pyme": { "command": "npx", "args": ["-y", "github:AVEjecutivo/herramientas-pyme"] }
+  }
+}</pre>
+<p>Luego puede pedirle, por ejemplo: <i>"Cruza la cartola de julio con mis Registros de Compras y Ventas y dime qué está pendiente"</i> o <i>"Estima mi F29 de junio"</i>.</p>
+
+<h2>Dónde está la biblioteca</h2>
+<pre>https://miavejecutivo.com/herramientas/lib/ave-herramientas.js
+https://miavejecutivo.com/llms.txt   (resumen para modelos de lenguaje)</pre>
+
+<h2>Cómo usarla</h2>
+<h3>En el navegador o en Deno</h3>
+<pre>import { leerDTE, leerCartola, conciliar } from "https://miavejecutivo.com/herramientas/lib/ave-herramientas.js";
+
+const facturas = leerDTE(textoXML, "factura.xml");
+const { movimientos } = leerCartola(textoCSV, "cartola-bci.csv");</pre>
+<h3>En Node (18 o superior)</h3>
+<pre>curl -O https://miavejecutivo.com/herramientas/lib/ave-herramientas.js
+
+// script.mjs
+import { leerRegistroSII, estimarF29 } from "./ave-herramientas.js";
+import { readFileSync } from "node:fs";
+const ventas = leerRegistroSII(readFileSync("RegistroVentas.csv", "utf8"));</pre>
+
+<h2>Funciones</h2>
+<div class="tabla"><table>
+<thead><tr><th>Función</th><th>Entrada</th><th>Salida</th></tr></thead>
+<tbody>
+<tr><td><code>leerDTE(xml, archivo?)</code></td><td>XML de DTE o EnvioDTE del SII</td><td>Filas de factura (una por documento)</td></tr>
+<tr><td><code>leerFacturaTexto(texto, archivo?, origen?)</code></td><td>Texto de un PDF o de un OCR</td><td>Una fila de factura con <code>confianza</code> y <code>observaciones</code></td></tr>
+<tr><td><code>leerRegistroSII(csv, libro?, archivo?)</code></td><td>CSV del Registro de Compras o Ventas</td><td>Filas de factura</td></tr>
+<tr><td><code>leerCartola(csv, archivo?)</code></td><td>Cartola en CSV de cualquier banco</td><td><code>{ movimientos, banco, error? }</code></td></tr>
+<tr><td><code>validarRut(rut)</code> · <code>depurarRuts(lista)</code></td><td>RUT en cualquier formato</td><td>RUT normalizado, validez y duplicados</td></tr>
+<tr><td><code>conciliar(movimientos, facturas)</code></td><td>Movimientos + facturas con <code>libro</code> ("ventas" o "compras")</td><td>Facturas pagadas/pendientes y movimientos sin respaldo</td></tr>
+<tr><td><code>antiguedadCobranza(ventas, { fechaCorte, plazoDias })</code></td><td>Facturas de venta</td><td>Detalle, clientes y tramos de antigüedad</td></tr>
+<tr><td><code>correoCobranza(cliente, detalle, firma)</code></td><td>Salida de la anterior</td><td><code>{ asunto, cuerpo }</code></td></tr>
+<tr><td><code>flujoCaja({ saldoInicial, fechaInicio, porCobrar, porPagar, gastosFijos })</code></td><td>Facturas y gastos fijos</td><td>13 semanas con saldo final</td></tr>
+<tr><td><code>estimarF29({ ventas, compras, mes, tasaPPM, remanente })</code></td><td>Facturas del mes</td><td>IVA débito, crédito, a pagar, PPM y total</td></tr>
+<tr><td><code>radiografia({ ventas, compras })</code></td><td>Facturas</td><td>Evolución mensual, clientes, proveedores, concentración</td></tr>
+<tr><td><code>clasificar(filas, { reglas? })</code></td><td>Movimientos o facturas de compra</td><td>Filas con <code>categoria</code> y resumen</td></tr>
+<tr><td><code>calcularHonorario({ bruto | liquido, anio })</code> · <code>leerHonorarios(csv)</code></td><td>Montos o informe de boletas del SII</td><td>Retención según la tasa del año</td></tr>
+<tr><td><code>basePresupuesto({ ventas, gastos })</code></td><td>Facturas y gastos clasificados</td><td>Promedio mensual por línea</td></tr>
+<tr><td><code>aCSV(filas, columnas?)</code></td><td>Cualquier tabla</td><td>CSV con punto y coma, listo para Excel</td></tr>
+</tbody></table></div>
+
+<h2>Formato de una fila de factura</h2>
+<pre>{
+  "archivo": "factura.xml", "tipo_dte": "33", "tipo_documento": "Factura electrónica",
+  "folio": "1043", "fecha_emision": "2026-06-02",
+  "rut_emisor": "76.123.456-0", "razon_social_emisor": "…",
+  "rut_receptor": "76.980.417-3", "razon_social_receptor": "…",
+  "monto_neto": 6400000, "monto_exento": 0, "iva": 1216000, "monto_total": 7616000,
+  "origen": "xml | pdf | ocr | ia | registro_ventas | registro_compras",
+  "confianza": "alta | media | baja", "observaciones": ""
+}</pre>
+<p>Fechas en formato ISO (aaaa-mm-dd), montos como enteros en pesos y RUT con puntos y guion.</p>
+
+<h2>Para su asistente de IA</h2>
+<p>Si su asistente puede leer páginas web, pídale que lea <code>https://miavejecutivo.com/llms.txt</code> antes de trabajar con sus facturas o cartolas: ahí están las reglas y los formatos en un texto pensado para modelos de lenguaje.</p>
+
+<h2>Licencia</h2>
+<p>Licencia MIT: uso libre, también comercial, manteniendo el aviso de autoría (© AVE · miavejecutivo.com). Se entrega tal cual, sin garantía: verifique los resultados antes de usarlos en una declaración o un pago.</p>
+<div id="invitacion"></div>
+<script type="module">
+import { $, invitacion } from "./lib/ui.js";
+invitacion($("#invitacion"), "¿Su equipo quiere construir sus propias herramientas como estas?");
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

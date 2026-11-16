@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pregúntele a sus datos con IA · AVE</title>
+<meta name="description" content="Guía paso a paso para conectar sus tablas a Copilot en Excel o a Gemini en Google Sheets y hacerles preguntas en lenguaje natural.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/guia-ia.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/guia-ia.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Pregúntele a sus datos con IA"><meta property="og:description" content="Guía paso a paso para conectar sus tablas a Copilot en Excel o a Gemini en Google Sheets y hacerles preguntas en lenguaje natural.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Usar sus datos con IA</p>
+<h1>Pregúntele a sus datos: conecte sus tablas a Copilot o Gemini</h1>
+<p class="lead">Las tablas que descarga de estas herramientas están preparadas para que un asistente de IA las entienda. Esta guía le muestra, paso a paso, cómo hacerles preguntas en lenguaje natural —"¿qué cliente me debe más hace más de 60 días?"— con el asistente que probablemente ya tiene en su empresa.</p>
+
+<h2>¿Qué camino le corresponde?</h2>
+<div class="caminos">
+  <a class="camino tarjeta" href="#copilot"><b>A · Microsoft 365</b>Usa Outlook, Excel y OneDrive. Asistente: <b style="display:inline;color:inherit">Copilot en Excel</b>.</a>
+  <a class="camino tarjeta" href="#gemini"><b>B · Google Workspace</b>Usa Gmail, Drive y Hojas de cálculo. Asistente: <b style="display:inline;color:inherit">Gemini en Hojas de cálculo</b>.</a>
+  <a class="camino tarjeta" href="#gratuito"><b>C · Sin licencia empresarial</b>Un asistente gratuito, adjuntando el archivo. Con resguardos de privacidad.</a>
+</div>
+
+<h2 id="preparar">Antes de empezar: descargue su tabla</h2>
+<ol class="pasos">
+  <li><h3>Use cualquiera de las herramientas y presione "Descargar Excel"</h3>
+    <p>Nuestras descargas ya cumplen lo que piden los asistentes: <b>una sola fila de encabezados</b>, nombres de columna únicos y descriptivos ("Fecha de emisión", "Monto total"), sin celdas combinadas, sin filas vacías y sin subtotales intercalados. Si arma su propia planilla, respete esas mismas reglas.</p>
+    <figure class="pz real"><img src="img/descargar-tabla.png" alt="Botón de descarga al final de cada herramienta." loading="lazy"><figcaption>Botón de descarga al final de cada herramienta.</figcaption></figure>
+  </li>
+</ol>
+
+<h2 id="copilot">Camino A · Copilot en Excel (Microsoft 365)</h2>
+<div class="aviso alerta"><b>Requisitos.</b> Una licencia de Microsoft 365 que incluya Copilot en Excel (en empresas suele ser un complemento pagado; consulte a quien administra sus licencias). El archivo debe estar guardado en <b>OneDrive o SharePoint</b> con <b>Autoguardado activado</b>: Copilot no funciona sobre archivos guardados solo en el computador.</div>
+<ol class="pasos">
+  <li><h3>Guarde el archivo en OneDrive</h3>
+    <p>Abra el Excel descargado y vaya a <b>Archivo › Guardar una copia › OneDrive</b>. También puede arrastrarlo a su carpeta de OneDrive en el navegador.</p>
+    <figure class="pz"><svg viewBox="0 0 720 300" role="img" aria-label="Subir el archivo a la nube">
+<rect class="fondo" x="0" y="0" width="720" height="300"/>
+<rect class="marco" x="20" y="16" width="680" height="268" rx="8"/>
+<circle class="linea" cx="40" cy="32" r="5"/><circle class="linea" cx="56" cy="32" r="5"/><circle class="linea" cx="72" cy="32" r="5"/>
+<line class="linea" x1="20" y1="48" x2="700" y2="48"/><rect class="celda" x="60" y="90" width="150" height="150" rx="6"/><text class="texto2" x="84" y="170">tabla-ave.xlsx</text>
+    <path class="acento-l" d="M240 165 H420" marker-end="url(#f)"/><defs><marker id="f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10z" class="acento"/></marker></defs>
+    <path class="enc" d="M470 200 a40 40 0 0 1 10 -78 a55 55 0 0 1 105 -10 a42 42 0 0 1 60 40 a38 38 0 0 1 -10 48z"/>
+    <text class="texto" x="510" y="180">Nube de su empresa</text><text class="texto2" x="440" y="250">OneDrive / SharePoint o Google Drive</text></svg><figcaption>Esquema referencial: guardar una copia en OneDrive. La pantalla real puede variar según la versión.</figcaption></figure></li>
+  <li><h3>Confirme que el Autoguardado esté activado</h3>
+    <p>Arriba a la izquierda de Excel aparece el interruptor <b>Autoguardado</b>. Debe estar encendido.</p></li>
+  <li><h3>Convierta los datos en una tabla de Excel</h3>
+    <p>Haga clic en cualquier celda con datos y presione <b>Ctrl + T</b> (en Mac, <b>Cmd + T</b>). Confirme que esté marcada la opción <b>"La tabla tiene encabezados"</b>. Así Copilot reconoce dónde empiezan y terminan sus datos.</p>
+    <figure class="pz"><svg viewBox="0 0 720 300" role="img" aria-label="Datos con formato de tabla">
+<rect class="fondo" x="0" y="0" width="720" height="300"/>
+<rect class="marco" x="20" y="16" width="680" height="268" rx="8"/>
+<circle class="linea" cx="40" cy="32" r="5"/><circle class="linea" cx="56" cy="32" r="5"/><circle class="linea" cx="72" cy="32" r="5"/>
+<line class="linea" x1="20" y1="48" x2="700" y2="48"/><rect class="enc" x="44" y="70" width="104" height="24"/><rect class="enc" x="148" y="70" width="104" height="24"/><rect class="enc" x="252" y="70" width="104" height="24"/><rect class="enc" x="356" y="70" width="104" height="24"/><rect class="enc" x="460" y="70" width="104" height="24"/><rect class="enc" x="564" y="70" width="104" height="24"/><rect class="celda" x="44" y="94" width="104" height="24"/><rect class="celda" x="148" y="94" width="104" height="24"/><rect class="celda" x="252" y="94" width="104" height="24"/><rect class="celda" x="356" y="94" width="104" height="24"/><rect class="celda" x="460" y="94" width="104" height="24"/><rect class="celda" x="564" y="94" width="104" height="24"/><rect class="celda" x="44" y="118" width="104" height="24"/><rect class="celda" x="148" y="118" width="104" height="24"/><rect class="celda" x="252" y="118" width="104" height="24"/><rect class="celda" x="356" y="118" width="104" height="24"/><rect class="celda" x="460" y="118" width="104" height="24"/><rect class="celda" x="564" y="118" width="104" height="24"/><rect class="celda" x="44" y="142" width="104" height="24"/><rect class="celda" x="148" y="142" width="104" height="24"/><rect class="celda" x="252" y="142" width="104" height="24"/><rect class="celda" x="356" y="142" width="104" height="24"/><rect class="celda" x="460" y="142" width="104" height="24"/><rect class="celda" x="564" y="142" width="104" height="24"/><rect class="celda" x="44" y="166" width="104" height="24"/><rect class="celda" x="148" y="166" width="104" height="24"/><rect class="celda" x="252" y="166" width="104" height="24"/><rect class="celda" x="356" y="166" width="104" height="24"/><rect class="celda" x="460" y="166" width="104" height="24"/><rect class="celda" x="564" y="166" width="104" height="24"/><rect class="celda" x="44" y="190" width="104" height="24"/><rect class="celda" x="148" y="190" width="104" height="24"/><rect class="celda" x="252" y="190" width="104" height="24"/><rect class="celda" x="356" y="190" width="104" height="24"/><rect class="celda" x="460" y="190" width="104" height="24"/><rect class="celda" x="564" y="190" width="104" height="24"/><rect class="celda" x="44" y="214" width="104" height="24"/><rect class="celda" x="148" y="214" width="104" height="24"/><rect class="celda" x="252" y="214" width="104" height="24"/><rect class="celda" x="356" y="214" width="104" height="24"/><rect class="celda" x="460" y="214" width="104" height="24"/><rect class="celda" x="564" y="214" width="104" height="24"/><rect class="celda" x="44" y="238" width="104" height="24"/><rect class="celda" x="148" y="238" width="104" height="24"/><rect class="celda" x="252" y="238" width="104" height="24"/><rect class="celda" x="356" y="238" width="104" height="24"/><rect class="celda" x="460" y="238" width="104" height="24"/><rect class="celda" x="564" y="238" width="104" height="24"/><rect class="acento-l" x="44" y="70" width="624" height="24"/>
+    <text class="texto2" x="44" y="285">La primera fila son los encabezados; no hay filas vacías ni celdas combinadas.</text></svg><figcaption>Esquema referencial: la tabla con su fila de encabezados. La pantalla real puede variar según la versión.</figcaption></figure></li>
+  <li><h3>Abra Copilot</h3>
+    <p>En la pestaña <b>Inicio</b>, haga clic en el botón <b>Copilot</b> (en el extremo derecho de la cinta). Se abre un panel a la derecha.</p>
+    <figure class="pz"><svg viewBox="0 0 720 300" role="img" aria-label="Panel del asistente junto a la tabla">
+<rect class="fondo" x="0" y="0" width="720" height="300"/>
+<rect class="marco" x="20" y="16" width="680" height="268" rx="8"/>
+<circle class="linea" cx="40" cy="32" r="5"/><circle class="linea" cx="56" cy="32" r="5"/><circle class="linea" cx="72" cy="32" r="5"/>
+<line class="linea" x1="20" y1="48" x2="700" y2="48"/><rect class="enc" x="44" y="70" width="96" height="24"/><rect class="enc" x="140" y="70" width="96" height="24"/><rect class="enc" x="236" y="70" width="96" height="24"/><rect class="enc" x="332" y="70" width="96" height="24"/><rect class="celda" x="44" y="94" width="96" height="24"/><rect class="celda" x="140" y="94" width="96" height="24"/><rect class="celda" x="236" y="94" width="96" height="24"/><rect class="celda" x="332" y="94" width="96" height="24"/><rect class="celda" x="44" y="118" width="96" height="24"/><rect class="celda" x="140" y="118" width="96" height="24"/><rect class="celda" x="236" y="118" width="96" height="24"/><rect class="celda" x="332" y="118" width="96" height="24"/><rect class="celda" x="44" y="142" width="96" height="24"/><rect class="celda" x="140" y="142" width="96" height="24"/><rect class="celda" x="236" y="142" width="96" height="24"/><rect class="celda" x="332" y="142" width="96" height="24"/><rect class="celda" x="44" y="166" width="96" height="24"/><rect class="celda" x="140" y="166" width="96" height="24"/><rect class="celda" x="236" y="166" width="96" height="24"/><rect class="celda" x="332" y="166" width="96" height="24"/><rect class="celda" x="44" y="190" width="96" height="24"/><rect class="celda" x="140" y="190" width="96" height="24"/><rect class="celda" x="236" y="190" width="96" height="24"/><rect class="celda" x="332" y="190" width="96" height="24"/><rect class="celda" x="44" y="214" width="96" height="24"/><rect class="celda" x="140" y="214" width="96" height="24"/><rect class="celda" x="236" y="214" width="96" height="24"/><rect class="celda" x="332" y="214" width="96" height="24"/><rect class="celda" x="44" y="238" width="96" height="24"/><rect class="celda" x="140" y="238" width="96" height="24"/><rect class="celda" x="236" y="238" width="96" height="24"/><rect class="celda" x="332" y="238" width="96" height="24"/><rect class="enc" x="452" y="56" width="236" height="220" rx="6"/>
+    <text class="texto" x="468" y="80">Asistente</text>
+    <rect class="burbuja" x="468" y="94" width="200" height="40" rx="8" style="fill:var(--papel)"/><text class="texto2" x="478" y="118">¿Qué cliente me debe más?</text>
+    <rect class="burbuja" x="468" y="144" width="200" height="56" rx="8" style="fill:var(--papel)"/><text class="texto2" x="478" y="166">Según la columna Vencido…</text>
+    <rect class="celda" x="468" y="234" width="200" height="28" rx="4"/><text class="texto2" x="478" y="252">Escriba su pregunta</text></svg><figcaption>Esquema referencial: el panel del asistente junto a la tabla. La pantalla real puede variar según la versión.</figcaption></figure></li>
+  <li><h3>Haga su pregunta nombrando las columnas</h3>
+    <p>Mientras más concreta, mejor: <i>"Usando la columna Monto total, suma las facturas por Razón social receptor y ordénalas de mayor a menor"</i>. Puede pedirle que agregue una columna, que destaque filas o que arme un gráfico.</p></li>
+</ol>
+<div class="gancho">Copilot responde sobre la tabla que usted le entrega. Si la tabla está incompleta o no cuadra con el banco, la respuesta tampoco va a cuadrar. Por eso, en nuestro programa, lo primero es ordenar las fuentes, y recién después se enseña a preguntar.</div>
+
+<h2 id="gemini">Camino B · Gemini en Hojas de cálculo de Google (Google Workspace)</h2>
+<div class="aviso alerta"><b>Requisitos.</b> Un plan de Google Workspace que incluya Gemini, habilitado por el administrador de su dominio. Si no ve el botón de Gemini, verifique que esté en la cuenta de su empresa y consulte a su administrador.</div>
+<ol class="pasos">
+  <li><h3>Suba el archivo a Google Drive</h3>
+    <p>En Drive, haga clic en <b>Nuevo › Subir archivo</b> y elija el Excel o el CSV descargado.</p>
+    <figure class="pz"><svg viewBox="0 0 720 300" role="img" aria-label="Subir el archivo a la nube">
+<rect class="fondo" x="0" y="0" width="720" height="300"/>
+<rect class="marco" x="20" y="16" width="680" height="268" rx="8"/>
+<circle class="linea" cx="40" cy="32" r="5"/><circle class="linea" cx="56" cy="32" r="5"/><circle class="linea" cx="72" cy="32" r="5"/>
+<line class="linea" x1="20" y1="48" x2="700" y2="48"/><rect class="celda" x="60" y="90" width="150" height="150" rx="6"/><text class="texto2" x="84" y="170">tabla-ave.xlsx</text>
+    <path class="acento-l" d="M240 165 H420" marker-end="url(#f)"/><defs><marker id="f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10z" class="acento"/></marker></defs>
+    <path class="enc" d="M470 200 a40 40 0 0 1 10 -78 a55 55 0 0 1 105 -10 a42 42 0 0 1 60 40 a38 38 0 0 1 -10 48z"/>
+    <text class="texto" x="510" y="180">Nube de su empresa</text><text class="texto2" x="440" y="250">OneDrive / SharePoint o Google Drive</text></svg><figcaption>Esquema referencial: subir el archivo a Drive. La pantalla real puede variar según la versión.</figcaption></figure></li>
+  <li><h3>Ábralo como Hoja de cálculo de Google</h3>
+    <p>Haga doble clic en el archivo. Si es un Excel, vaya a <b>Archivo › Guardar como Hojas de cálculo de Google</b> para trabajar sobre una copia nativa.</p></li>
+  <li><h3>(Recomendado) Convierta los datos en tabla</h3>
+    <p>Seleccione una celda con datos y vaya a <b>Formato › Convertir en tabla</b>. Gemini interpreta mejor las columnas.</p>
+    <figure class="pz"><svg viewBox="0 0 720 300" role="img" aria-label="Datos con formato de tabla">
+<rect class="fondo" x="0" y="0" width="720" height="300"/>
+<rect class="marco" x="20" y="16" width="680" height="268" rx="8"/>
+<circle class="linea" cx="40" cy="32" r="5"/><circle class="linea" cx="56" cy="32" r="5"/><circle class="linea" cx="72" cy="32" r="5"/>
+<line class="linea" x1="20" y1="48" x2="700" y2="48"/><rect class="enc" x="44" y="70" width="104" height="24"/><rect class="enc" x="148" y="70" width="104" height="24"/><rect class="enc" x="252" y="70" width="104" height="24"/><rect class="enc" x="356" y="70" width="104" height="24"/><rect class="enc" x="460" y="70" width="104" height="24"/><rect class="enc" x="564" y="70" width="104" height="24"/><rect class="celda" x="44" y="94" width="104" height="24"/><rect class="celda" x="148" y="94" width="104" height="24"/><rect class="celda" x="252" y="94" width="104" height="24"/><rect class="celda" x="356" y="94" width="104" height="24"/><rect class="celda" x="460" y="94" width="104" height="24"/><rect class="celda" x="564" y="94" width="104" height="24"/><rect class="celda" x="44" y="118" width="104" height="24"/><rect class="celda" x="148" y="118" width="104" height="24"/><rect class="celda" x="252" y="118" width="104" height="24"/><rect class="celda" x="356" y="118" width="104" height="24"/><rect class="celda" x="460" y="118" width="104" height="24"/><rect class="celda" x="564" y="118" width="104" height="24"/><rect class="celda" x="44" y="142" width="104" height="24"/><rect class="celda" x="148" y="142" width="104" height="24"/><rect class="celda" x="252" y="142" width="104" height="24"/><rect class="celda" x="356" y="142" width="104" height="24"/><rect class="celda" x="460" y="142" width="104" height="24"/><rect class="celda" x="564" y="142" width="104" height="24"/><rect class="celda" x="44" y="166" width="104" height="24"/><rect class="celda" x="148" y="166" width="104" height="24"/><rect class="celda" x="252" y="166" width="104" height="24"/><rect class="celda" x="356" y="166" width="104" height="24"/><rect class="celda" x="460" y="166" width="104" height="24"/><rect class="celda" x="564" y="166" width="104" height="24"/><rect class="celda" x="44" y="190" width="104" height="24"/><rect class="celda" x="148" y="190" width="104" height="24"/><rect class="celda" x="252" y="190" width="104" height="24"/><rect class="celda" x="356" y="190" width="104" height="24"/><rect class="celda" x="460" y="190" width="104" height="24"/><rect class="celda" x="564" y="190" width="104" height="24"/><rect class="celda" x="44" y="214" width="104" height="24"/><rect class="celda" x="148" y="214" width="104" height="24"/><rect class="celda" x="252" y="214" width="104" height="24"/><rect class="celda" x="356" y="214" width="104" height="24"/><rect class="celda" x="460" y="214" width="104" height="24"/><rect class="celda" x="564" y="214" width="104" height="24"/><rect class="celda" x="44" y="238" width="104" height="24"/><rect class="celda" x="148" y="238" width="104" height="24"/><rect class="celda" x="252" y="238" width="104" height="24"/><rect class="celda" x="356" y="238" width="104" height="24"/><rect class="celda" x="460" y="238" width="104" height="24"/><rect class="celda" x="564" y="238" width="104" height="24"/><rect class="acento-l" x="44" y="70" width="624" height="24"/>
+    <text class="texto2" x="44" y="285">La primera fila son los encabezados; no hay filas vacías ni celdas combinadas.</text></svg><figcaption>Esquema referencial: los datos convertidos en tabla. La pantalla real puede variar según la versión.</figcaption></figure></li>
+  <li><h3>Abra el panel de Gemini</h3>
+    <p>Haga clic en el botón de Gemini, arriba a la derecha (aparece como <b>"Preguntar a Gemini"</b> o con el ícono de la estrella). Se abre un panel lateral.</p>
+    <figure class="pz"><svg viewBox="0 0 720 300" role="img" aria-label="Panel del asistente junto a la tabla">
+<rect class="fondo" x="0" y="0" width="720" height="300"/>
+<rect class="marco" x="20" y="16" width="680" height="268" rx="8"/>
+<circle class="linea" cx="40" cy="32" r="5"/><circle class="linea" cx="56" cy="32" r="5"/><circle class="linea" cx="72" cy="32" r="5"/>
+<line class="linea" x1="20" y1="48" x2="700" y2="48"/><rect class="enc" x="44" y="70" width="96" height="24"/><rect class="enc" x="140" y="70" width="96" height="24"/><rect class="enc" x="236" y="70" width="96" height="24"/><rect class="enc" x="332" y="70" width="96" height="24"/><rect class="celda" x="44" y="94" width="96" height="24"/><rect class="celda" x="140" y="94" width="96" height="24"/><rect class="celda" x="236" y="94" width="96" height="24"/><rect class="celda" x="332" y="94" width="96" height="24"/><rect class="celda" x="44" y="118" width="96" height="24"/><rect class="celda" x="140" y="118" width="96" height="24"/><rect class="celda" x="236" y="118" width="96" height="24"/><rect class="celda" x="332" y="118" width="96" height="24"/><rect class="celda" x="44" y="142" width="96" height="24"/><rect class="celda" x="140" y="142" width="96" height="24"/><rect class="celda" x="236" y="142" width="96" height="24"/><rect class="celda" x="332" y="142" width="96" height="24"/><rect class="celda" x="44" y="166" width="96" height="24"/><rect class="celda" x="140" y="166" width="96" height="24"/><rect class="celda" x="236" y="166" width="96" height="24"/><rect class="celda" x="332" y="166" width="96" height="24"/><rect class="celda" x="44" y="190" width="96" height="24"/><rect class="celda" x="140" y="190" width="96" height="24"/><rect class="celda" x="236" y="190" width="96" height="24"/><rect class="celda" x="332" y="190" width="96" height="24"/><rect class="celda" x="44" y="214" width="96" height="24"/><rect class="celda" x="140" y="214" width="96" height="24"/><rect class="celda" x="236" y="214" width="96" height="24"/><rect class="celda" x="332" y="214" width="96" height="24"/><rect class="celda" x="44" y="238" width="96" height="24"/><rect class="celda" x="140" y="238" width="96" height="24"/><rect class="celda" x="236" y="238" width="96" height="24"/><rect class="celda" x="332" y="238" width="96" height="24"/><rect class="enc" x="452" y="56" width="236" height="220" rx="6"/>
+    <text class="texto" x="468" y="80">Asistente</text>
+    <rect class="burbuja" x="468" y="94" width="200" height="40" rx="8" style="fill:var(--papel)"/><text class="texto2" x="478" y="118">¿Qué cliente me debe más?</text>
+    <rect class="burbuja" x="468" y="144" width="200" height="56" rx="8" style="fill:var(--papel)"/><text class="texto2" x="478" y="166">Según la columna Vencido…</text>
+    <rect class="celda" x="468" y="234" width="200" height="28" rx="4"/><text class="texto2" x="478" y="252">Escriba su pregunta</text></svg><figcaption>Esquema referencial: el panel lateral de Gemini. La pantalla real puede variar según la versión.</figcaption></figure></li>
+  <li><h3>Haga su pregunta</h3>
+    <p>Por ejemplo: <i>"¿Cuál fue el mes con más cargos en la columna Cargo y qué categorías explican ese aumento?"</i>. Gemini puede responder, crear fórmulas, tablas dinámicas y gráficos.</p></li>
+</ol>
+<div class="gancho">Si su empresa ya usa Google Workspace, el ecosistema completo se puede construir ahí mismo: que el Registro de Compras y Ventas y la cartola lleguen solos a una hoja, que los cálculos se hagan con fórmulas y que Gemini solo interprete. Es lo que montamos con nuestros clientes en los dos primeros meses.</div>
+
+<h2 id="gratuito">Camino C · Un asistente gratuito</h2>
+<p>Si su empresa no tiene Copilot ni Gemini, puede usar la versión gratuita de un asistente (ChatGPT, Gemini o Claude) y <b>adjuntar el archivo CSV o Excel</b> en la conversación.</p>
+<div class="aviso error"><b>Antes de subir un archivo, considere la privacidad.</b> El archivo se envía a la empresa que provee el asistente. En los planes gratuitos, según la política de cada proveedor, las conversaciones pueden usarse para mejorar sus modelos. Revise la configuración de privacidad de su cuenta, no suba información que no necesite (por ejemplo, datos personales de terceros) y, para uso habitual, prefiera una cuenta empresarial.</div>
+<div class="gancho">En nuestro programa, cada empresa tiene su propia cuenta de IA, a su nombre y pagada directamente al proveedor, configurada con las opciones de privacidad correctas. Nosotros no cobramos ni revendemos la IA: le enseñamos a usarla.</div>
+
+<h2 id="preguntas">Preguntas que funcionan bien</h2>
+<details open><summary>Sobre la tabla de facturas</summary><ul>
+  <li>Suma el Monto total por Razón social emisor y muéstrame los 10 proveedores con más compras.</li>
+  <li>¿Hay folios repetidos para un mismo RUT emisor?</li>
+  <li>Arma una tabla dinámica con el IVA por mes según la Fecha de emisión.</li></ul></details>
+<details><summary>Sobre la cartola</summary><ul>
+  <li>¿Cuáles son los 10 cargos más grandes del período y qué dicen en la Descripción?</li>
+  <li>Agrupa los cargos por semana y dime cuál fue la semana con más salidas.</li>
+  <li>¿Qué movimientos se repiten todos los meses por un monto parecido?</li></ul></details>
+<details><summary>Sobre la cobranza</summary><ul>
+  <li>¿Qué clientes tienen deuda en el tramo de más de 60 días y cuánto suman?</li>
+  <li>Ordena a los clientes por Vencido y destaca en rojo los que superan $1.000.000.</li></ul></details>
+<details><summary>Sobre el flujo de caja</summary><ul>
+  <li>¿En qué semana el Saldo final es más bajo y qué la explica?</li>
+  <li>Si los cobros de la semana 1 se atrasan dos semanas, ¿qué pasa con el saldo?</li></ul></details>
+
+<h2 id="verificar">Cómo saber si la respuesta es correcta</h2>
+<ol>
+  <li><b>Pida que le muestre cómo llegó al número:</b> la fórmula, el filtro o las filas que usó.</li>
+  <li><b>Compárelo con un total que usted conoce:</b> el total de la cartola, el del Registro de Ventas del SII o el saldo del banco.</li>
+  <li><b>Desconfíe</b> de columnas que no existen en su tabla, de cifras demasiado redondas y de respuestas que no indican el período.</li>
+</ol>
+<div class="gancho">Verificar una respuesta de IA es una habilidad que se entrena. En nuestro programa es la lección del quinto mes, practicada sobre los datos reales de su empresa y con un error plantado a propósito para que el equipo aprenda a detectarlo.</div>
+
+<h2>Lo que este camino no resuelve</h2>
+<p>La tabla que descargó es una foto de hoy. El mes que viene habrá que descargar, subir y preguntar otra vez, y la calidad de cada respuesta dependerá de que alguien haya armado bien la tabla. Un ecosistema de datos resuelve justamente eso: que la información llegue sola, cuadrada y al día, y que su equipo sepa preguntarle y verificar lo que responde.</p>
+<div id="invitacion"></div>
+
+<script type="module">
+import { $, invitacion } from "./lib/ui.js";
+invitacion($("#invitacion"), "¿Quiere que su equipo haga esto con datos que se actualizan solos?");
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

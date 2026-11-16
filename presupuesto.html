@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuesto anual en Excel · AVE</title>
+<meta name="description" content="Arme un presupuesto de 12 meses en Excel, con fórmulas, a partir de su historia real de ventas y gastos. Gratis.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/presupuesto.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/presupuesto.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Presupuesto anual en Excel"><meta property="og:description" content="Arme un presupuesto de 12 meses en Excel, con fórmulas, a partir de su historia real de ventas y gastos. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · En qué se va la plata</p>
+<h1>Presupuesto de 12 meses, a partir de su historia</h1>
+<p class="lead">Suba su Registro de Ventas y su cartola (o Registro de Compras). La herramienta calcula su promedio mensual de ventas y de cada categoría de gasto, y le entrega un Excel de 12 meses <b>con fórmulas</b>: cambie el crecimiento esperado de una línea y todo se recalcula.</p>
+<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+
+<div class="campos">
+  <div class="campo"><label>1. Ventas</label><label class="zona" id="zona-v"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Registro de Ventas</b><span id="n-v">CSV del SII o tabla del extractor</span></label></div>
+  <div class="campo"><label>2. Gastos</label><label class="zona" id="zona-g"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls"><b>Cartola o Registro de Compras</b><span id="n-g">Se clasifican por categoría automáticamente</span></label></div>
+</div>
+<div class="campos">
+  <div class="campo"><label for="anio">Año a presupuestar</label><input type="number" id="anio"></div>
+  <div class="campo"><label for="crec">Crecimiento mensual de ventas (%)</label><input type="number" id="crec" value="0" step="0.1"><small>Puede cambiarlo línea por línea en el Excel.</small></div>
+  <div class="campo"><label for="infl">Alza mensual de gastos (%)</label><input type="number" id="infl" value="0" step="0.1"></div>
+</div>
+<div class="acciones"><button class="btn" id="armar" disabled>Armar presupuesto</button><button class="btn sec" id="muestra" type="button">Probar con datos de ejemplo</button></div>
+
+<div id="estado" class="estado"></div>
+<div id="resultado" hidden>
+  <div class="cifras" id="cifras"></div>
+  <div class="acciones"><button class="btn" id="excel">Descargar Excel con fórmulas</button></div>
+  <div id="tabla"></div>
+  <p class="estado" id="base-nota"></p>
+  <div id="invitacion"></div>
+</div>
+
+<script type="module">
+import { basePresupuesto, clasificar, leerCartola, leerRegistroSII } from "./lib/ave-herramientas.js";
+import { $, zonaCarga, leerTabular, mostrarTabla, invitacion, estado, fmtCLP, cargarXLSX, registrar, archivoMuestra } from "./lib/ui.js";
+import { leerFacturas } from "./lib/entradas.js";
+const est = $("#estado");
+$("#anio").value = new Date().getFullYear() + 1;
+let aV = [], aG = [], base = null;
+const listo = () => $("#armar").disabled = !(aV.length || aG.length);
+zonaCarga($("#zona-v"), fs => { aV = fs; $("#n-v").textContent = fs.map(f => f.name).join(", "); listo(); });
+zonaCarga($("#zona-g"), fs => { aG = fs; $("#n-g").textContent = fs.map(f => f.name).join(", "); listo(); });
+const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+function proyectar(filas) {
+  const cv = Number($("#crec").value) / 100, cg = Number($("#infl").value) / 100;
+  return filas.map(f => { const g = f.tipo === "Ingreso" ? cv : cg; const o = { ...f, crecimiento: g }; let v = f.base_mensual; MESES.forEach((m, i) => { if (i) v *= 1 + g; o[m] = Math.round(v); }); o.total = MESES.reduce((s, m) => s + o[m], 0); return o; });
+}
+
+async function armar() {
+  estado(est, "Leyendo archivos…");
+  const { facturas } = await leerFacturas(aV, "");
+  const ventas = facturas.filter(f => f.libro !== "compras");
+  const gastos = [];
+  for (const a of aG) {
+    const t = await leerTabular(a);
+    const c = leerCartola(t, a.name);
+    if (c.movimientos.length) gastos.push(...clasificar(c.movimientos.filter(m => m.cargo)).filas);
+    else gastos.push(...clasificar(leerRegistroSII(t, "compras", a.name).map(f => ({ ...f, fecha: f.fecha_emision }))).filas);
+  }
+  base = basePresupuesto({ ventas, gastos });
+  const filas = proyectar(base.filas);
+  const ing = filas.filter(f => f.tipo === "Ingreso").reduce((s, f) => s + f.total, 0), gas = filas.filter(f => f.tipo === "Gasto").reduce((s, f) => s + f.total, 0);
+  $("#cifras").innerHTML = [["Ventas del año", fmtCLP(ing)], ["Gastos del año", fmtCLP(gas)], ["Resultado de caja", fmtCLP(ing - gas)], ["Líneas de gasto", filas.length - 1]]
+    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+  mostrarTabla($("#tabla"), filas, ["tipo", "concepto", "base_mensual", ...MESES, "total"], { etiquetas: { tipo: "Tipo", concepto: "Concepto", base_mensual: "Base mensual", total: "Total año" } });
+  $("#base-nota").textContent = `Base calculada con ${base.meses_ventas.length} mes(es) de ventas y ${base.meses_gastos.length} mes(es) de gastos. Las ventas van en neto (sin IVA); los gastos de la cartola incluyen IVA. Ajuste en el Excel lo que no represente un mes normal.`;
+  estado(est, "Listo.", "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "Un presupuesto sirve de verdad cuando se compara solo contra lo real, cada semana.");
+}
+
+async function excel() {
+  const XLSX = await cargarXLSX();
+  const n = base.filas.length, anio = $("#anio").value;
+  const col = i => XLSX.utils.encode_col(i);
+  const aoa = [["Tipo", "Concepto", "Base mensual", "Crecimiento mensual", ...MESES.map(m => `${m} ${anio}`), "Total año"]];
+  // Cada celda lleva la fórmula y además su valor ya calculado: Excel y Sheets
+  // recalculan, y los visores que no recalculan (vista previa del correo o del
+  // teléfono) igual muestran los números.
+  const F = (f, v) => ({ t: "n", f, v: Math.round(v) });
+  const proy = proyectar(base.filas);
+  proy.forEach((p, i) => {
+    const r = i + 2, fila = [p.tipo, p.concepto, p.base_mensual, p.crecimiento];
+    let v = p.base_mensual;
+    MESES.forEach((m, k) => { if (k) v *= 1 + p.crecimiento; fila.push(k === 0 ? F(`C${r}`, v) : F(`${col(3 + k)}${r}*(1+$D${r})`, v)); });
+    fila.push(F(`SUM(E${r}:P${r})`, p.total));
+    aoa.push(fila);
+  });
+  const fin = n + 1;
+  const suma = (tipo, clave) => proy.filter(p => p.tipo === tipo).reduce((s, p) => s + (clave === "base" ? p.base_mensual : p[clave]), 0);
+  const tot = (et, cond) => ["", et, F(`SUMIF($A$2:$A$${fin},"${cond}",C2:C${fin})`, suma(cond, "base")), "", ...MESES.map((m, k) => F(`SUMIF($A$2:$A$${fin},"${cond}",${col(4 + k)}2:${col(4 + k)}${fin})`, suma(cond, m))), F(`SUMIF($A$2:$A$${fin},"${cond}",Q2:Q${fin})`, suma(cond, "total"))];
+  aoa.push([], tot("Total ingresos", "Ingreso"), tot("Total gastos", "Gasto"));
+  const ri = fin + 2, rg = fin + 3;
+  const res = k => suma("Ingreso", k) - suma("Gasto", k);
+  aoa.push(["", "Resultado de caja", F(`C${ri}-C${rg}`, res("base")), "", ...MESES.map((m, k) => F(`${col(4 + k)}${ri}-${col(4 + k)}${rg}`, res(m))), F(`Q${ri}-Q${rg}`, res("total"))]);
+  const hoja = XLSX.utils.aoa_to_sheet(aoa);
+  for (let r = 1; r < aoa.length; r++) for (let c = 2; c < 17; c++) { const cel = hoja[XLSX.utils.encode_cell({ r, c })]; if (cel) cel.z = c === 3 ? "0.0%" : "#,##0"; }
+  hoja["!cols"] = [{ wch: 9 }, { wch: 30 }, { wch: 14 }, { wch: 12 }, ...MESES.map(() => ({ wch: 13 })), { wch: 15 }];
+  const libro = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(libro, hoja, "Presupuesto");
+  const notas = XLSX.utils.aoa_to_sheet([["Cómo usar este presupuesto"], ["1. La columna Base mensual es el promedio de su historia. Corríjala si incluye meses atípicos."], ["2. La columna Crecimiento mensual se aplica mes a mes. Cámbiela por línea."], ["3. Todos los meses y totales son fórmulas: no los escriba a mano."], ["4. Para comparar contra lo real cada mes, agregue una hoja con lo ejecutado."], [""], ["Generado con las herramientas gratuitas de AVE · miavejecutivo.com"]]);
+  notas["!cols"] = [{ wch: 90 }];
+  XLSX.utils.book_append_sheet(libro, notas, "Instrucciones");
+  XLSX.writeFile(libro, `presupuesto-${anio}-ave.xlsx`, { compression: true });
+  registrar("descarga", { formato: "xlsx", nombre: "presupuesto" });
+}
+$("#armar").onclick = armar; $("#excel").onclick = excel;
+$("#muestra").onclick = async () => {
+  aV = [await archivoMuestra("muestras/registros/RegistroVentas_SII_ejemplo.csv")]; aG = [await archivoMuestra("muestras/cartolas/Cartola_BancoEstado_ejemplo.csv")];
+  $("#n-v").textContent = aV[0].name; $("#n-g").textContent = aG[0].name; listo(); armar();
+};
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

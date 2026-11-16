@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cobranza: quién le debe · AVE</title>
+<meta name="description" content="Vea quién le debe, cuánto y hace cuántos días, por tramo de antigüedad, con borradores de correo de cobranza listos para revisar. Gratis.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/cobranza.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/cobranza.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Cobranza: quién le debe"><meta property="og:description" content="Vea quién le debe, cuánto y hace cuántos días, por tramo de antigüedad, con borradores de correo de cobranza listos para revisar. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Entender la caja</p>
+<h1>Cobranza: quién le debe, cuánto y desde cuándo</h1>
+<p class="lead">Suba su Registro de Ventas del SII (y, si quiere, la cartola para descontar lo ya pagado). Obtiene la deuda de cada cliente por tramo de antigüedad y un borrador de correo de cobranza para cada uno, cordial y listo para revisar.</p>
+<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b> Los correos son borradores: usted los revisa y los envía desde su propio correo.</div></div>
+
+<div class="campos">
+  <div class="campo"><label>1. Facturas de venta</label>
+    <label class="zona" id="zona-v"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Registro de Ventas</b><span id="n-v">CSV del SII, XML o tabla del extractor</span></label></div>
+  <div class="campo"><label>2. Cartola (opcional)</label>
+    <label class="zona" id="zona-c"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls"><b>Cartola</b><span id="n-c">Para marcar como pagadas las facturas ya cobradas</span></label></div>
+</div>
+<div class="campos">
+  <div class="campo"><label for="corte">Fecha de corte</label><input type="date" id="corte"></div>
+  <div class="campo"><label for="plazo">Plazo de pago que otorga (días)</label><input type="number" id="plazo" value="30" min="0"></div>
+  <div class="campo"><label for="rut">RUT de su empresa</label><input type="text" id="rut" placeholder="Solo si sube XML"></div>
+  <div class="campo"><label for="firma">Firma de los correos</label><input type="text" id="firma" placeholder="Nombre, cargo y empresa"></div>
+</div>
+<div class="acciones"><button class="btn" id="calcular" disabled>Calcular</button><button class="btn sec" id="muestra" type="button">Probar con datos de ejemplo</button></div>
+
+<div id="estado" class="estado"></div>
+<div id="resultado" hidden>
+  <div class="cifras" id="cifras"></div>
+  <div class="acciones" id="descargas"></div>
+  <h2>Deuda por cliente</h2>
+  <div id="t-clientes"></div>
+  <h2>Borradores de correo</h2>
+  <div class="campos"><div class="campo"><label for="sel">Cliente</label><select id="sel"></select></div></div>
+  <p><b>Asunto:</b> <span id="asunto"></span></p>
+  <div class="correo" id="cuerpo"></div>
+  <div class="acciones"><button class="btn sec" id="copiar">Copiar correo</button></div>
+  <h2>Detalle de documentos</h2>
+  <div id="t-detalle"></div>
+  <div id="invitacion"></div>
+</div>
+
+<script type="module">
+import { antiguedadCobranza, correoCobranza, conciliar, leerCartola, TRAMOS } from "./lib/ave-herramientas.js";
+import { $, zonaCarga, leerTabular, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, hoyISO, archivoMuestra } from "./lib/ui.js";
+import { leerFacturas } from "./lib/entradas.js";
+const est = $("#estado");
+$("#corte").value = hoyISO();
+let aV = [], aC = [], res = null;
+zonaCarga($("#zona-v"), fs => { aV = fs; $("#n-v").textContent = fs.map(f => f.name).join(", "); $("#calcular").disabled = false; });
+zonaCarga($("#zona-c"), fs => { aC = fs; $("#n-c").textContent = fs.map(f => f.name).join(", "); });
+
+const CC = ["cliente", "rut_cliente", "documentos", "total", "vencido", "mayor_atraso", ...TRAMOS];
+const CD = ["cliente", "tipo_documento", "folio", "fecha_emision", "fecha_vencimiento", "dias_vencida", "tramo", "monto"];
+const ETQ = { cliente: "Cliente", rut_cliente: "RUT", documentos: "Documentos", total: "Deuda total", vencido: "Vencido", mayor_atraso: "Mayor atraso (días)", fecha_vencimiento: "Vencimiento", dias_vencida: "Días de atraso", tramo: "Tramo", monto: "Monto" };
+
+async function calcular() {
+  estado(est, "Leyendo archivos…");
+  let { facturas, problemas } = await leerFacturas(aV, $("#rut").value);
+  let ventas = facturas.filter(f => f.libro === "ventas" || !f.libro);
+  if (aC.length) {
+    const movs = []; for (const a of aC) movs.push(...leerCartola(await leerTabular(a), a.name).movimientos);
+    ventas = conciliar(movs, ventas.map(f => ({ ...f, libro: "ventas" }))).facturas;
+  }
+  res = antiguedadCobranza(ventas, { fechaCorte: $("#corte").value, plazoDias: Number($("#plazo").value) });
+  if (!res.detalle.length) { estado(est, "No hay facturas pendientes de cobro con esos datos.", "alerta"); return; }
+  const vencido = res.clientes.reduce((s, c) => s + c.vencido, 0);
+  $("#cifras").innerHTML = [["Por cobrar", fmtCLP(res.total)], ["Vencido", fmtCLP(vencido)], ["Más de 60 días", fmtCLP(res.tramos[TRAMOS[3]] + res.tramos[TRAMOS[4]])], ["Clientes con deuda", res.clientes.length]]
+    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+  mostrarTabla($("#t-clientes"), res.clientes, CC, { etiquetas: ETQ, claseFila: c => c.mayor_atraso > 60 ? "baja" : c.mayor_atraso > 0 ? "media" : "" });
+  mostrarTabla($("#t-detalle"), res.detalle, CD, { etiquetas: ETQ, numericas: ["dias_vencida", "monto"] });
+  $("#sel").innerHTML = res.clientes.map((c, i) => `<option value="${i}">${c.cliente} — ${fmtCLP(c.vencido || c.total)}</option>`).join("");
+  verCorreo();
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Por cliente", filas: res.clientes, columnas: CC, etiquetas: ETQ }, { nombre: "Detalle", filas: res.detalle, columnas: CD, etiquetas: ETQ }] }), "cobranza-ave");
+  estado(est, problemas.length ? problemas.join(" ") : "Listo.", problemas.length ? "alerta" : "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "¿Y si esta lista le llegara sola cada lunes?");
+}
+function verCorreo() {
+  const c = res.clientes[Number($("#sel").value) || 0];
+  const m = correoCobranza(c, res.detalle, $("#firma").value);
+  $("#asunto").textContent = m.asunto; $("#cuerpo").textContent = m.cuerpo;
+}
+$("#sel").onchange = verCorreo; $("#firma").oninput = () => res && verCorreo();
+$("#copiar").onclick = async () => { await navigator.clipboard.writeText("Asunto: " + $("#asunto").textContent + "\n\n" + $("#cuerpo").textContent); $("#copiar").textContent = "Copiado"; setTimeout(() => $("#copiar").textContent = "Copiar correo", 1500); };
+$("#calcular").onclick = calcular;
+$("#muestra").onclick = async () => {
+  aV = [await archivoMuestra("muestras/registros/RegistroVentas_SII_ejemplo.csv")]; aC = [await archivoMuestra("muestras/cartolas/Cartola_BancoEstado_ejemplo.csv")];
+  $("#n-v").textContent = aV[0].name; $("#n-c").textContent = aC[0].name; $("#corte").value = "2026-07-08"; $("#calcular").disabled = false; calcular();
+};
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

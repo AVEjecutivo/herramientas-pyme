@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Ejemplo ficticio generado por AVE. No corresponde a documentos reales. -->
+<EnvioDTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+ <SetDTE ID="SetDoc">
+  <Caratula version="1.0"><RutEmisor>76543210-3</RutEmisor><RutEnvia>11111111-1</RutEnvia><RutReceptor>60803000-K</RutReceptor><FchResol>2014-08-22</FchResol><NroResol>80</NroResol><TmstFirmaEnv>2026-06-25T10:00:00</TmstFirmaEnv></Caratula>
+  <DTE version="1.0">
+    <Documento ID="F2841T33">
+      <Encabezado>
+        <IdDoc><TipoDTE>33</TipoDTE><Folio>2841</Folio><FchEmis>2026-06-12</FchEmis><FmaPago>2</FmaPago></IdDoc>
+        <Emisor><RUTEmisor>76543210-3</RUTEmisor><RznSoc>Servicios Técnicos Andes SpA</RznSoc><GiroEmis>Mantención de equipos industriales</GiroEmis><Acteco>331200</Acteco><DirOrigen>Av. Vicuña Mackenna 1234</DirOrigen><CmnaOrigen>Santiago</CmnaOrigen></Emisor>
+        <Receptor><RUTRecep>76980417-K</RUTRecep><RznSocRecep>Constructora Meridiano Ltda</RznSocRecep><GiroRecep>Construcción</GiroRecep></Receptor>
+        <Totales><MntNeto>1250000</MntNeto><TasaIVA>19</TasaIVA><IVA>237500</IVA><MntTotal>1487500</MntTotal></Totales>
+      </Encabezado>
+      <Detalle><NroLinDet>1</NroLinDet><NmbItem>Servicio de mantención</NmbItem><QtyItem>1</QtyItem><PrcItem>1250000</PrcItem><MontoItem>1250000</MontoItem></Detalle>
+    </Documento>
+  </DTE>
+  <DTE version="1.0">
+    <Documento ID="F118T34">
+      <Encabezado>
+        <IdDoc><TipoDTE>34</TipoDTE><Folio>118</Folio><FchEmis>2026-06-20</FchEmis><FmaPago>2</FmaPago></IdDoc>
+        <Emisor><RUTEmisor>76543210-3</RUTEmisor><RznSoc>Servicios Técnicos Andes SpA</RznSoc><GiroEmis>Mantención de equipos industriales</GiroEmis><Acteco>331200</Acteco><DirOrigen>Av. Vicuña Mackenna 1234</DirOrigen><CmnaOrigen>Santiago</CmnaOrigen></Emisor>
+        <Receptor><RUTRecep>77455209-K</RUTRecep><RznSocRecep>Sociedad Educacional San Rafael</RznSocRecep><GiroRecep>Educación</GiroRecep></Receptor>
+        <Totales><MntExe>860000</MntExe><MntTotal>860000</MntTotal></Totales>
+      </Encabezado>
+      <Detalle><NroLinDet>1</NroLinDet><NmbItem>Servicio de mantención</NmbItem><QtyItem>1</QtyItem><PrcItem>860000</PrcItem><MontoItem>860000</MontoItem></Detalle>
+    </Documento>
+  </DTE>
+  <DTE version="1.0">
+    <Documento ID="F95T61">
+      <Encabezado>
+        <IdDoc><TipoDTE>61</TipoDTE><Folio>95</Folio><FchEmis>2026-06-25</FchEmis><FmaPago>2</FmaPago></IdDoc>
+        <Emisor><RUTEmisor>76543210-3</RUTEmisor><RznSoc>Servicios Técnicos Andes SpA</RznSoc><GiroEmis>Mantención de equipos industriales</GiroEmis><Acteco>331200</Acteco><DirOrigen>Av. Vicuña Mackenna 1234</DirOrigen><CmnaOrigen>Santiago</CmnaOrigen></Emisor>
+        <Receptor><RUTRecep>76980417-K</RUTRecep><RznSocRecep>Constructora Meridiano Ltda</RznSocRecep><GiroRecep>Construcción</GiroRecep></Receptor>
+        <Totales><MntNeto>150000</MntNeto><TasaIVA>19</TasaIVA><IVA>28500</IVA><MntTotal>178500</MntTotal></Totales>
+      </Encabezado>
+      <Detalle><NroLinDet>1</NroLinDet><NmbItem>Servicio de mantención</NmbItem><QtyItem>1</QtyItem><PrcItem>150000</PrcItem><MontoItem>150000</MontoItem></Detalle>
+      <Referencia><NroLinRef>1</NroLinRef><TpoDocRef>33</TpoDocRef><FolioRef>2841</FolioRef><RazonRef>Anula diferencia de precio</RazonRef></Referencia>
+    </Documento>
+  </DTE>
+ </SetDTE>
+</EnvioDTE>

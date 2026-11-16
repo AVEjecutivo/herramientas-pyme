@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estimador del F29 · AVE</title>
+<meta name="description" content="Estime el IVA, el PPM y las retenciones de su F29 del mes a partir de sus Registros de Compras y Ventas. Gratis y sin subir sus datos.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/f29.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/f29.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Estimador del F29"><meta property="og:description" content="Estime el IVA, el PPM y las retenciones de su F29 del mes a partir de sus Registros de Compras y Ventas. Gratis y sin subir sus datos.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Impuestos</p>
+<h1>Estimador del F29: cuánto pagaría este mes</h1>
+<p class="lead">Suba sus Registros de Compras y Ventas del SII y elija el mes. Obtiene una estimación del IVA a pagar (o del remanente a favor), del PPM y de las retenciones de honorarios, para llegar a la conversación con su contador sabiendo el número.</p>
+<div class="privado"><b>●</b><div><b>Sus datos no salen de este computador.</b></div></div>
+
+<label class="zona" id="zona"><input type="file" multiple accept=".csv,.txt,.xlsx,.xls,.xml"><b>Arrastre aquí sus Registros de Compras y Ventas</b><span id="n">CSV descargados desde el SII (puede subir ambos a la vez)</span></label>
+<p class="muestra"><button type="button" id="muestra">Probar con registros de ejemplo</button> (datos ficticios).</p>
+<div class="campos">
+  <div class="campo"><label for="mes">Mes a estimar</label><select id="mes"><option value="">Suba sus registros primero</option></select></div>
+  <div class="campo"><label for="ppm">Tasa de PPM (%)</label><input type="number" id="ppm" value="0.25" step="0.01" min="0"><small>Aparece en su último F29 o se la indica su contador.</small></div>
+  <div class="campo"><label for="rem">Remanente de crédito del mes anterior ($)</label><input type="number" id="rem" value="0" min="0"></div>
+  <div class="campo"><label for="rut">RUT de su empresa</label><input type="text" id="rut" placeholder="Solo si sube XML"></div>
+  <div class="campo"><label for="hon">Retención de honorarios del mes ($)</label><input type="number" id="hon" value="0" min="0"><small>Puede calcularla con la <a href="honorarios.html">herramienta de honorarios</a>.</small></div>
+</div>
+
+<div id="estado" class="estado"></div>
+<div id="resultado" hidden>
+  <div class="cifras" id="cifras"></div>
+  <div id="tabla"></div>
+  <div class="acciones" id="descargas"></div>
+  <div class="aviso alerta"><b>Estimación basada en sus datos.</b> El cálculo definitivo lo valida su contador antes de declarar: puede haber ajustes (facturas recibidas fuera de plazo, IVA de uso común, reajuste del remanente, impuestos adicionales). El F29 vence el día 20 del mes siguiente para quienes facturan electrónicamente y declaran por internet; el 12 en los demás casos.</div>
+  <div id="invitacion"></div>
+</div>
+
+<script type="module">
+import { estimarF29, mesesDe } from "./lib/ave-herramientas.js";
+import { $, zonaCarga, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
+import { leerFacturas } from "./lib/entradas.js";
+const est = $("#estado");
+let facturas = [], res = null, ultimos = [];
+const NOMBRE_MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const nombreMes = m => { const [a, n] = m.split("-"); return `${NOMBRE_MES[Number(n) - 1]} ${a}`; };
+
+async function cargar(archivos) {
+  ultimos = archivos;
+  $("#n").textContent = archivos.map(f => f.name).join(", ");
+  const r = await leerFacturas(archivos, $("#rut").value);
+  facturas = r.facturas;
+  const ms = mesesDe(facturas);
+  if (!ms.length) { estado(est, "No se encontraron documentos. " + r.problemas.join(" "), "error"); return; }
+  $("#mes").innerHTML = ms.map(m => `<option value="${m}">${nombreMes(m)}</option>`).join("");
+  calcular();
+}
+function calcular() {
+  if (!facturas.length) return;
+  res = estimarF29({ ventas: facturas.filter(f => f.libro === "ventas"), compras: facturas.filter(f => f.libro === "compras"), mes: $("#mes").value, tasaPPM: Number($("#ppm").value), remanente: Number($("#rem").value), retencionHonorarios: Number($("#hon").value) });
+  $("#cifras").innerHTML = [["Total estimado a pagar", fmtCLP(res.total_estimado)], ["IVA a pagar", fmtCLP(res.iva_a_pagar)], ["Remanente para el mes siguiente", fmtCLP(res.remanente_siguiente)], ["PPM", fmtCLP(res.ppm)]]
+    .map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+  const filas = [
+    ["Ventas netas del mes (afectas y exentas)", res.ventas_netas], ["IVA débito (ventas)", res.iva_debito], ["IVA crédito (compras)", -res.iva_credito],
+    ["Remanente del mes anterior", -res.remanente_anterior], ["IVA a pagar", res.iva_a_pagar], ["PPM (" + $("#ppm").value + "% de las ventas netas)", res.ppm],
+    ["Retención de honorarios", res.retencion_honorarios], ["Total estimado", res.total_estimado]
+  ].map(([concepto, monto]) => ({ concepto, monto }));
+  mostrarTabla($("#tabla"), filas, ["concepto", "monto"], { etiquetas: { concepto: `Estimación F29 · ${nombreMes(res.mes)}`, monto: "Monto" }, numericas: ["monto"] });
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "F29 " + res.mes, filas, columnas: ["concepto", "monto"], etiquetas: { concepto: "Concepto", monto: "Monto" } }] }), `f29-estimado-${res.mes}-ave`);
+  const sinLibro = facturas.filter(f => !f.libro).length;
+  const falta = !facturas.some(f => f.libro === "ventas") ? "ventas" : !facturas.some(f => f.libro === "compras") ? "compras" : "";
+  const aviso = sinLibro ? ` ${sinLibro} documento(s) quedaron fuera porque no se pudo saber si son venta o compra: ingrese el RUT de su empresa.` : falta ? ` Falta el registro de ${falta}: la estimación está incompleta.` : "";
+  estado(est, `${res.documentos_venta} documento(s) de venta y ${res.documentos_compra} de compra en ${nombreMes(res.mes)}${res.notas_credito_venta + res.notas_credito_compra ? ", incluidas notas de crédito (restan)" : ""}.${aviso}`, aviso ? "alerta" : "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "¿Y si este número le llegara solo, el día 10 de cada mes?");
+}
+zonaCarga($("#zona"), cargar);
+$("#rut").addEventListener("change", () => ultimos.length && cargar(ultimos));
+["mes", "ppm", "rem", "hon"].forEach(id => $("#" + id).addEventListener("input", calcular));
+$("#muestra").onclick = async () => { await cargar(await Promise.all(["muestras/registros/RegistroVentas_SII_ejemplo.csv", "muestras/registros/RegistroCompras_SII_ejemplo.csv"].map(archivoMuestra))); };
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>

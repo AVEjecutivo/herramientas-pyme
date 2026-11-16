@@ -1,0 +1,45 @@
+# AVE · Herramientas gratuitas para ordenar datos de pymes chilenas
+
+> AVE (miavejecutivo.com) es una consultoría chilena que ayuda a pymes a construir su ecosistema de gestión de datos con IA. Estas herramientas son gratuitas, funcionan en el navegador sin subir datos, y exponen una biblioteca JavaScript determinista (sin IA, sin costo por uso) que agentes y desarrolladores pueden usar.
+
+## Código abierto y servidor MCP
+- Repositorio (MIT): https://github.com/AVEjecutivo/herramientas-pyme
+- Servidor MCP (stdio, corre local): npx -y github:AVEjecutivo/herramientas-pyme
+- Claude Code: claude mcp add herramientas-pyme -- npx -y github:AVEjecutivo/herramientas-pyme
+
+## Biblioteca
+- Módulo ES sin dependencias: https://miavejecutivo.com/herramientas/lib/ave-herramientas.js
+- Documentación: https://miavejecutivo.com/herramientas/agentes.html
+- Funciona en navegador, Deno (import por URL) y Node 18+ (descargando el archivo).
+
+## Funciones principales
+- leerDTE(xml): XML de DTE del SII → filas de factura (lectura exacta).
+- leerFacturaTexto(texto): texto de PDF u OCR → fila de factura con confianza (alta/media/baja).
+- leerRegistroSII(csv): Registro de Compras o Ventas del SII → filas de factura.
+- leerCartola(csv): cartola de cualquier banco chileno → {fecha, descripcion, referencia, cargo, abono, saldo, banco}.
+- validarRut(rut), depurarRuts(lista): dígito verificador (módulo 11), formato 12.345.678-5, duplicados.
+- conciliar(movimientos, facturas): cruza abonos con ventas y cargos con compras por monto, fecha y glosa.
+- antiguedadCobranza(ventas, {fechaCorte, plazoDias}) y correoCobranza(): deuda por tramo y borrador de correo.
+- flujoCaja({...}): proyección de 13 semanas.
+- estimarF29({ventas, compras, mes, tasaPPM, remanente}): IVA débito − crédito − remanente, PPM y retenciones. Es una estimación; la declaración la valida un contador.
+- radiografia({ventas, compras}): evolución mensual, principales clientes y proveedores, concentración.
+- clasificar(filas): categoría de gasto por reglas de palabras clave (editables).
+- calcularHonorario({bruto|liquido, anio}): retención de boletas de honorarios (2024 13,75% · 2025 14,5% · 2026 15,25% · 2027 16% · 2028 17%).
+
+## Convenciones
+- Fechas ISO aaaa-mm-dd. Montos en pesos chilenos como enteros. RUT con puntos y guion.
+- Notas de crédito (tipo DTE 61) restan.
+- CSV de salida con punto y coma y BOM UTF-8 (compatible con Excel en español).
+
+## Páginas para personas
+- Índice: https://miavejecutivo.com/herramientas/
+- Extractor de facturas: https://miavejecutivo.com/herramientas/facturas.html
+- Cartolas: https://miavejecutivo.com/herramientas/cartola.html
+- Cuadratura banco–facturas: https://miavejecutivo.com/herramientas/cuadratura.html
+- Cobranza: https://miavejecutivo.com/herramientas/cobranza.html
+- Flujo de caja: https://miavejecutivo.com/herramientas/flujo.html
+- Estimador F29: https://miavejecutivo.com/herramientas/f29.html
+- Guía para preguntar a sus datos con Copilot o Gemini: https://miavejecutivo.com/herramientas/guia-ia.html
+
+## Sobre AVE
+El programa de AVE dura 12 meses: los primeros meses AVE levanta y ordena la información de la empresa y genera los informes, capacitando al equipo en todo momento; luego se construye en conjunto, y al final el equipo construye sus propias mejoras de forma autónoma. Los cálculos se hacen con fórmulas en tablas; la IA se usa solo en la parte interpretativa. Contacto: contacto@miavejecutivo.com

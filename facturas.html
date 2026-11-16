@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extractor de facturas a Excel · AVE</title>
+<meta name="description" content="Suba un lote de facturas electrónicas (XML, PDF o fotografía) y descargue una tabla ordenada en Excel o CSV. Gratis y sin subir sus documentos a ningún servidor.">
+<link rel="canonical" href="https://miavejecutivo.com/herramientas/facturas.html">
+<meta name="theme-color" content="#1B2B3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
+<meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/facturas.html"><meta property="og:site_name" content="AVE">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Extractor de facturas a Excel"><meta property="og:description" content="Suba un lote de facturas electrónicas (XML, PDF o fotografía) y descargue una tabla ordenada en Excel o CSV. Gratis y sin subir sus documentos a ningún servidor.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <a class="wm" href="../">AVE<span>.</span></a>
+  <nav><a href="./">Herramientas</a><a href="guia-ia.html">Guía de IA</a><a class="op" href="agentes.html">Para agentes</a><a href="../" data-agenda>Diagnóstico</a></nav>
+</div></div>
+<main class="wrap">
+<p class="sello"><a href="./">Herramientas gratuitas</a> · Ordenar documentos</p>
+<h1>Extractor de facturas a Excel</h1>
+<p class="lead">Suba un lote de facturas, notas de crédito o guías —en XML, PDF o fotografía— y obtenga una sola tabla con folio, fechas, RUT, razón social, neto, IVA y total, lista para Excel o Google Sheets.</p>
+<div class="privado"><b>●</b><div><b>Sus documentos no salen de este computador.</b> La lectura se hace completa en su navegador. Ningún archivo se sube a un servidor.</div></div>
+
+<label class="zona" id="zona">
+  <input type="file" multiple accept=".xml,.pdf,.png,.jpg,.jpeg,.webp,.csv,.txt">
+  <b>Arrastre aquí sus archivos o haga clic para elegirlos</b>
+  <span>XML del SII (lectura exacta) · PDF · fotografías · CSV del Registro de Compras y Ventas</span>
+</label>
+<p class="muestra">¿No tiene archivos a mano? <button type="button" id="muestra">Probar con documentos de ejemplo</button> (datos ficticios).</p>
+
+<div id="estado" class="estado"></div>
+<div id="resultado" hidden>
+  <div class="cifras" id="cifras"></div>
+  <div class="acciones" id="descargas"></div>
+  <div id="ia"></div>
+  <div id="tabla"></div>
+  <p class="estado">Las filas en amarillo o rojo no cuadraron por completo: revise esos documentos antes de usarlos. <a href="guia-ia.html">¿Quiere hacerle preguntas a esta tabla con Copilot o Gemini? Vea la guía.</a></p>
+  <div id="invitacion"></div>
+</div>
+
+<details>
+  <summary>¿Cómo funciona y qué tan exacto es?</summary>
+  <p><b>XML:</b> es el documento tributario original que exige el SII. Se lee campo por campo, sin interpretación: es exacto. Si su sistema de facturación o el portal del SII le permite descargar los XML, use esa vía.</p>
+  <p><b>PDF con texto:</b> se extrae el texto y se reconocen los campos según el formato de representación impresa del SII. Se verifica que neto + exento + IVA sume el total.</p>
+  <p><b>PDF escaneado o fotografía:</b> se reconoce el texto en su propio navegador (puede tardar unos segundos por página). Es la vía menos precisa; por eso cada fila indica su nivel de confianza.</p>
+  <p><b>CSV del Registro de Compras y Ventas:</b> el archivo que se descarga desde el SII. Se lee tal cual.</p>
+</details>
+
+<script type="module">
+import { leerDTE, leerFacturaTexto, leerRegistroSII, textoInsuficiente, COLUMNAS_FACTURA } from "./lib/ave-herramientas.js";
+import { $, zonaCarga, leerTexto, cargarScript, CDN, IA_URL, mostrarTabla, botonesDescarga, invitacion, estado, fmtCLP, archivoMuestra } from "./lib/ui.js";
+
+let filas = [];
+const originales = new Map();
+const est = $("#estado");
+
+async function textoPDF(archivo) {
+  await cargarScript(CDN.pdfjs);
+  const pdfjs = window.pdfjsLib;
+  pdfjs.GlobalWorkerOptions.workerSrc = CDN.pdfjsWorker;
+  const pdf = await pdfjs.getDocument({ data: new Uint8Array(await archivo.arrayBuffer()) }).promise;
+  const paginas = [];
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const pag = await pdf.getPage(p);
+    const cont = await pag.getTextContent();
+    const lineas = new Map();
+    for (const it of cont.items) {
+      const y = Math.round(it.transform[5] / 3);
+      if (!lineas.has(y)) lineas.set(y, []);
+      lineas.get(y).push([it.transform[4], it.str]);
+    }
+    const texto = [...lineas.entries()].sort((a, b) => b[0] - a[0])
+      .map(([, partes]) => partes.sort((a, b) => a[0] - b[0]).map(x => x[1]).join(" ").replace(/\s+/g, " ").trim()).join("\n");
+    paginas.push({ texto, pag });
+  }
+  return { pdf, paginas };
+}
+
+let lector = null;
+async function ocr(imagen) {
+  if (!lector) {
+    estado(est, "Preparando el reconocimiento de texto (solo la primera vez)…");
+    await cargarScript(CDN.tesseract);
+    lector = await window.Tesseract.createWorker("spa");
+  }
+  const { data } = await lector.recognize(imagen);
+  return data.text;
+}
+
+async function paginaACanvas(pag) {
+  const vista = pag.getViewport({ scale: 2.2 });
+  const c = document.createElement("canvas");
+  c.width = vista.width; c.height = vista.height;
+  await pag.render({ canvasContext: c.getContext("2d"), viewport: vista }).promise;
+  return c;
+}
+
+async function procesar(archivo) {
+  const n = archivo.name.toLowerCase();
+  if (n.endsWith(".xml")) {
+    const r = leerDTE(await leerTexto(archivo), archivo.name);
+    return r.length ? r : [{ ...vacia(archivo.name), confianza: "baja", observaciones: "El XML no contiene un DTE reconocible" }];
+  }
+  if (n.endsWith(".csv") || n.endsWith(".txt")) {
+    const r = leerRegistroSII(await leerTexto(archivo), null, archivo.name);
+    return r.length ? r : [{ ...vacia(archivo.name), confianza: "baja", observaciones: "No parece un CSV del Registro de Compras o Ventas del SII" }];
+  }
+  if (n.endsWith(".pdf")) {
+    const { paginas } = await textoPDF(archivo);
+    const texto = paginas.map(p => p.texto).join("\n");
+    if (!textoInsuficiente(texto)) return [leerFacturaTexto(texto, archivo.name, "pdf")];
+    estado(est, `${archivo.name}: es un PDF escaneado, reconociendo el texto…`);
+    let t = "";
+    for (const p of paginas.slice(0, 3)) t += (await ocr(await paginaACanvas(p.pag))) + "\n";
+    return [leerFacturaTexto(t, archivo.name, "ocr")];
+  }
+  if (/\.(png|jpe?g|webp)$/.test(n)) {
+    estado(est, `${archivo.name}: reconociendo el texto de la imagen…`);
+    return [leerFacturaTexto(await ocr(archivo), archivo.name, "ocr")];
+  }
+  return [{ ...vacia(archivo.name), confianza: "baja", observaciones: "Formato no soportado" }];
+}
+
+function vacia(archivo) { const f = {}; COLUMNAS_FACTURA.forEach(c => f[c] = ""); f.archivo = archivo; return f; }
+
+function marcarDuplicados(fs) {
+  const vistos = new Map();
+  for (const f of fs) {
+    if (!f.folio || !f.tipo_dte) continue;
+    const k = [f.rut_emisor, f.tipo_dte, f.folio].join("|");
+    if (vistos.has(k)) f.observaciones = (f.observaciones ? f.observaciones + " · " : "") + `Duplicado de ${vistos.get(k)}`;
+    else vistos.set(k, f.archivo);
+  }
+}
+
+async function cargar(archivos) {
+  filas = [];
+  $("#resultado").hidden = true;
+  for (let i = 0; i < archivos.length; i++) {
+    estado(est, `Leyendo ${i + 1} de ${archivos.length}: ${archivos[i].name}…`);
+    originales.set(archivos[i].name, archivos[i]);
+    try { filas.push(...await procesar(archivos[i])); }
+    catch (e) { filas.push({ ...vacia(archivos[i].name), confianza: "baja", observaciones: "No se pudo leer: " + e.message }); }
+  }
+  marcarDuplicados(filas);
+  mostrar();
+}
+
+function mostrar() {
+  const suma = c => filas.reduce((s, f) => s + (Number(f[c]) || 0) * (f.tipo_dte === "61" ? -1 : 1), 0);
+  const revisar = filas.filter(f => f.confianza !== "alta").length;
+  $("#cifras").innerHTML = [
+    ["Documentos leídos", filas.length], ["Monto neto", fmtCLP(suma("monto_neto"))],
+    ["IVA", fmtCLP(suma("iva"))], ["Monto total", fmtCLP(suma("monto_total"))], ["Por revisar", revisar]
+  ].map(([e, v]) => `<div class="cifra"><div class="v">${v}</div><div class="e">${e}</div></div>`).join("");
+  mostrarTabla($("#tabla"), filas, COLUMNAS_FACTURA, {
+    numericas: ["monto_neto", "monto_exento", "iva", "monto_total"],
+    claseFila: f => f.confianza === "baja" ? "baja" : f.confianza === "media" ? "media" : ""
+  });
+  botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "Facturas", filas, columnas: COLUMNAS_FACTURA }] }), "facturas-ave");
+  $("#ia").innerHTML = !revisar ? "" : IA_URL
+    ? `<div class="aviso alerta">${revisar} documento(s) no se pudieron leer por completo con reglas fijas.
+       <p style="margin:.5em 0">Puede intentar leerlos con una IA gratuita. <b>Esos documentos se enviarán a Google</b>: en su plan gratuito, Google puede utilizarlos para mejorar sus modelos. Los demás documentos no se envían.</p>
+       <button class="btn sec" id="usar-ia">Autorizo: intentar con IA gratuita</button></div>`
+    : `<div class="aviso alerta">${revisar} documento(s) no se pudieron leer por completo con reglas fijas. Revíselos manualmente o, si tiene el XML de esos documentos, súbalo: es la vía exacta.</div>`;
+  const b = $("#usar-ia");
+  if (b) b.onclick = conIA;
+  estado(est, `Listo: ${filas.length} documento(s) en la tabla.`, "ok");
+  $("#resultado").hidden = false;
+  invitacion($("#invitacion"), "¿Su equipo hace esto a mano todos los meses?");
+}
+
+async function aBase64(archivo) {
+  const bytes = new Uint8Array(await archivo.arrayBuffer());
+  let s = ""; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+
+async function conIA() {
+  const pendientes = filas.filter(f => f.confianza !== "alta" && originales.has(f.archivo));
+  for (const f of pendientes) {
+    const a = originales.get(f.archivo);
+    estado(est, `Consultando la IA por ${a.name}…`);
+    try {
+      const r = await fetch(IA_URL, { method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ archivo: a.name, tipo: a.type || "application/pdf", datos: await aBase64(a) }) });
+      const j = await r.json();
+      if (!r.ok) { estado(est, j.mensaje || "La IA gratuita no está disponible en este momento.", "alerta"); invitacion($("#invitacion"), "¿Necesita procesar más documentos que los que permite el límite gratuito?"); return; }
+      const nueva = leerFacturaTexto(j.texto || "", a.name, "ia");
+      Object.assign(f, nueva, { origen: "ia" });
+    } catch (e) { estado(est, "No se pudo contactar a la IA: " + e.message, "error"); return; }
+  }
+  mostrar();
+}
+
+zonaCarga($("#zona"), cargar);
+$("#muestra").onclick = async () => {
+  const rutas = ["muestras/facturas/dte-envio-ejemplo.xml", "muestras/facturas/factura-ejemplo-1.pdf", "muestras/facturas/factura-ejemplo-2.pdf"];
+  cargar(await Promise.all(rutas.map(archivoMuestra)));
+};
+</script>
+
+</main>
+<footer class="pie"><div class="wrap">
+  <span><b>AVE</b> · Ecosistemas de gestión de datos a través de IA · Chile</span>
+  <span>Herramientas gratuitas. Sus datos se procesan en su navegador. <a href="agentes.html">Condiciones de uso</a> · <a href="mailto:contacto@miavejecutivo.com">contacto@miavejecutivo.com</a></span>
+</div></footer>
+<script type="module">import { conectarAgenda } from "./lib/ui.js"; conectarAgenda(document);</script>
+</body>
+</html>
