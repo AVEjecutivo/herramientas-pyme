@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+
+    <Documento ID="F2850T33">
+      <Encabezado>
+        <IdDoc><TipoDTE>33</TipoDTE><Folio>2850</Folio><FchEmis>2026-07-03</FchEmis><FmaPago>2</FmaPago></IdDoc>
+        <Emisor><RUTEmisor>76543210-3</RUTEmisor><RznSoc>Servicios Técnicos Andes SpA</RznSoc><GiroEmis>Mantención de equipos industriales</GiroEmis><Acteco>331200</Acteco><DirOrigen>Av. Vicuña Mackenna 1234</DirOrigen><CmnaOrigen>Santiago</CmnaOrigen></Emisor>
+        <Receptor><RUTRecep>76222918-8</RUTRecep><RznSocRecep>Supermercados La Colina</RznSocRecep><GiroRecep>Comercio</GiroRecep></Receptor>
+        <Totales><MntNeto>2380000</MntNeto><TasaIVA>19</TasaIVA><IVA>452200</IVA><MntTotal>2832200</MntTotal></Totales>
+      </Encabezado>
+      <Detalle><NroLinDet>1</NroLinDet><NmbItem>Servicio de mantención</NmbItem><QtyItem>1</QtyItem><PrcItem>2380000</PrcItem><MontoItem>2380000</MontoItem></Detalle>
+    </Documento>
+
+</DTE>

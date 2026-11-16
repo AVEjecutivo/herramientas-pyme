@@ -1,0 +1,31 @@
+{
+  "name": "herramientas-pyme",
+  "version": "1.0.0",
+  "description": "Herramientas deterministas y un servidor MCP para ordenar información de pymes chilenas: facturas del SII, cartolas, cuadratura, cobranza, flujo de caja, F29 y honorarios.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./navegador": "./src/ave-herramientas.js"
+  },
+  "bin": {
+    "herramientas-pyme": "mcp/servidor.mjs"
+  },
+  "files": ["src", "mcp", "ejemplos", "llms.txt", "README.md", "LICENSE"],
+  "scripts": {
+    "test": "node --test pruebas/biblioteca.test.mjs pruebas/mcp.test.mjs",
+    "mcp": "node mcp/servidor.mjs"
+  },
+  "engines": { "node": ">=18.17" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "pdfjs-dist": "4.10.38",
+    "zod": "^4.6.6"
+  },
+  "keywords": ["chile", "sii", "dte", "factura electronica", "cartola", "pyme", "f29", "mcp", "agentes", "contabilidad"],
+  "author": "AVE (https://miavejecutivo.com)",
+  "license": "MIT",
+  "homepage": "https://miavejecutivo.com/herramientas/",
+  "repository": { "type": "git", "url": "git+https://github.com/AVEjecutivo/herramientas-pyme.git" },
+  "bugs": { "url": "https://github.com/AVEjecutivo/herramientas-pyme/issues" }
+}
