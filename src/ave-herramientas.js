@@ -13,7 +13,9 @@
  * (apps-script/src/ImportadorFinanciero.js), trasladados al navegador.
  * Si se corrige algo acá, conviene revisar si aplica también allá.
  *
- * Licencia: uso libre, citando la fuente (AVE · miavejecutivo.com).
+ * Licencia MIT © 2026 AVE (miavejecutivo.com). Código abierto en
+ * https://github.com/AVEjecutivo/herramientas-pyme (src/ave-herramientas.js):
+ * este archivo y ese deben ser idénticos. Si se cambia uno, se copia al otro.
  */
 
 export const VERSION = "1.0.0";
