@@ -5,14 +5,14 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; form-action 'none'; base-uri 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Estimador del F29 · AVE</title>
-<meta name="description" content="Estime el IVA, el PPM y las retenciones de su F29 del mes a partir de sus Registros de Compras y Ventas. Gratis y sin subir sus datos.">
+<title>Estimador del F29: IVA y PPM · AVE</title>
+<meta name="description" content="Estime cuánto pagará en el F29 del mes: el IVA, el PPM y las retenciones, cada uno por separado, a partir de sus Registros de Compras y Ventas. Gratis y sin subir sus datos.">
 <link rel="canonical" href="https://miavejecutivo.com/herramientas/f29.html">
 <meta name="theme-color" content="#F5F3ED" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1A20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2064%2064'%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'14'%20fill%3D'%231B2B3D'%2F%3E%3Crect%20x%3D'13'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'27'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%23F5F3ED'%2F%3E%3Crect%20x%3D'41'%20y%3D'28'%20width%3D'9'%20height%3D'9'%20rx%3D'2'%20fill%3D'%232F5C8C'%2F%3E%3C%2Fsvg%3E">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miavejecutivo.com/herramientas/f29.html"><meta property="og:site_name" content="AVE">
-<meta property="og:locale" content="es_CL"><meta property="og:title" content="Estimador del F29"><meta property="og:description" content="Estime el IVA, el PPM y las retenciones de su F29 del mes a partir de sus Registros de Compras y Ventas. Gratis y sin subir sus datos.">
+<meta property="og:locale" content="es_CL"><meta property="og:title" content="Estimador del F29: IVA y PPM"><meta property="og:description" content="Estime cuánto pagará en el F29 del mes: el IVA, el PPM y las retenciones, cada uno por separado, a partir de sus Registros de Compras y Ventas. Gratis y sin subir sus datos.">
 <link rel="stylesheet" href="estilo.css">
 <link rel="modulepreload" href="lib/ave-herramientas.js"><link rel="modulepreload" href="lib/ui.js">
 </head>
@@ -28,20 +28,29 @@
 <main class="wrap" id="contenido">
 <header class="cab">
   <p class="miga"><a href="./">Herramientas</a><span aria-hidden="true">›</span>F29</p>
-  <h1>¿Cuánto voy a pagar de IVA?</h1>
-  <p class="lead">Suba sus Registros de Compras y Ventas del SII y elija el mes. Obtiene una estimación del IVA a pagar (o del remanente a favor), del PPM y de las retenciones de honorarios, para llegar a la conversación con su contador sabiendo el número.</p>
+  <h1>¿Cuánto voy a pagar en el F29?</h1>
+  <p class="lead">Suba sus Registros de Compras y Ventas del SII. Verá por separado las dos cosas que se pagan cada mes en el mismo formulario: <b>el IVA</b>, que sale de sus facturas, y <b>el PPM</b>, un anticipo del impuesto a la renta que depende de su régimen tributario.</p>
 </header>
 
 <div id="fuentes"></div>
 
 <div class="campos">
   <div class="campo"><label for="mes">Mes</label><select id="mes"></select></div>
-  <div class="campo"><label for="ppm">Tasa de PPM (%)</label><input type="number" id="ppm" value="0.25" step="0.01" min="0" inputmode="decimal"><small>Aparece en su último F29 o se la indica su contador.</small></div>
+  <div class="campo regimen"><label for="regimen">Régimen tributario de su empresa</label>
+    <select id="regimen">
+      <option value="propyme">Pro Pyme General (14 D N° 3)</option>
+      <option value="transparente">Pro Pyme Transparente (14 D N° 8)</option>
+      <option value="general">Régimen General (14 A)</option>
+    </select>
+    <small>Si no lo sabe, lo dice su contador o el sitio del SII. La mayoría de las pymes está en Pro Pyme General.</small></div>
+  <div class="campo"><label for="ppm">Tasa de PPM (%)</label><input type="text" id="ppm" inputmode="decimal" autocomplete="off">
+    <small id="ppm-nota"></small></div>
 </div>
-<details class="ajustes"><summary>Ajustar supuestos</summary>
+<p class="campo-check"><label><input type="checkbox" id="sobre50"> Los ingresos de mi empresa el año pasado superaron las 50.000 UF</label></p>
+<details class="ajustes"><summary>Remanente y retenciones</summary>
   <div class="campos">
-    <div class="campo"><label for="rem">Remanente de crédito del mes anterior</label><div class="con-prefijo"><input id="rem" data-monto placeholder="0"></div></div>
-    <div class="campo"><label for="hon">Retención de honorarios del mes</label><div class="con-prefijo"><input id="hon" data-monto placeholder="0"></div><small>Puede calcularla con la <a href="honorarios.html">herramienta de honorarios</a>.</small></div>
+    <div class="campo"><label for="rem">Remanente de crédito del mes anterior</label><div class="con-prefijo"><input id="rem" data-monto placeholder="0"></div><small>Aparece en su F29 del mes pasado. Se reajusta por UTM: su contador ajusta el valor exacto.</small></div>
+    <div class="campo"><label for="hon">Retención de honorarios del mes</label><div class="con-prefijo"><input id="hon" data-monto placeholder="0"></div><small>Lo que retuvo a quienes le emitieron boletas de honorarios. Puede calcularla con la <a href="honorarios.html">herramienta de honorarios</a>.</small></div>
   </div>
 </details>
 
@@ -50,12 +59,22 @@
   <div id="rotulo"></div>
   <div id="titular"></div>
   <div class="cifras" id="cifras"></div>
+  <div id="explica" class="prosa"></div>
   <div id="tabla"></div>
   <div class="acciones" id="descargas"></div>
-  <div class="aviso alerta"><b>Estimación basada en sus datos.</b> El cálculo definitivo lo valida su contador antes de declarar: puede haber ajustes (facturas recibidas fuera de plazo, IVA de uso común, reajuste del remanente, impuestos adicionales). Si su empresa vende con boleta, confirme que esas ventas estén en el registro que subió: si no están, el IVA real será mayor. El F29 vence el día 20 del mes siguiente para quienes facturan electrónicamente y declaran por internet; el 12 en los demás casos.</div>
+  <div class="aviso alerta"><b>Es una estimación con sus datos: la declaración la valida su contador.</b> Puede cambiar por facturas de compra recibidas en otro mes (el SII asigna cada compra al mes en que se registró, y aquí se ordenan por su fecha de emisión), IVA de uso común o no recuperable, el reajuste del remanente, otros impuestos (específicos, adicionales, retenciones de IVA) y créditos que aquí no se ven. Si su empresa vende con boleta, confirme que esas ventas estén en el registro que subió: si no están, el IVA real será mayor. Las guías de despacho no se cuentan: no generan IVA. <b>Plazos:</b> el F29 vence el día 12 del mes siguiente; el día 20 si su empresa emite factura electrónica y declara <i>y paga</i> por internet. Si el vencimiento cae en sábado, domingo o feriado, pasa al día hábil siguiente.</div>
   <div id="siguientes"></div>
   <div id="invitacion"></div>
 </section>
+<style>
+  @media (min-width:760px){.campos .campo.regimen{grid-column:span 2}}
+  .campo-check{margin:-4px 0 14px;font-size:.92rem}
+  .campo-check label{display:inline-flex;gap:.55em;align-items:center;min-height:44px;cursor:pointer}
+  .campo-check input{width:20px;height:20px;accent-color:var(--cobre)}
+  #explica p{color:var(--tinta-2);max-width:68ch}
+  #explica b{color:var(--tinta)}
+  #tabla tr.suma td{font-weight:600;background:var(--papel-2)}
+</style>
 
 <script type="module">
 import { $, estado, fmtCLP, nombreMes, plural, titular, cifras, rotuloEjemplo, mostrarTabla, botonesDescarga, siguientes, invitacion, num, activarMontos, ponerMonto } from "./lib/ui.js";
@@ -65,8 +84,8 @@ import { guardarAjustes } from "./lib/sesion.js";
 
 const est = $("#estado");
 let d = null, silencio = false;
-/** 0.25 → "0,25": la tasa se escribe con coma, como en Chile. */
-const fmtTasa = n => Number(n).toLocaleString("es-CL", { maximumFractionDigits: 2 });
+/** 0.125 → "0,125": la tasa se escribe con coma, como en Chile, y sin redondear (0,125 no es 0,13). */
+const fmtTasa = n => Number(n).toLocaleString("es-CL", { maximumFractionDigits: 3 });
 activarMontos();
 
 function llenarMeses() {
@@ -77,6 +96,21 @@ function llenarMeses() {
   else if (r) $("#mes").value = r.mes;   // el mismo mes por defecto que muestra el Panorama (lib/respuestas.js)
 }
 
+/** Lo que escribió el usuario en la tasa, o null si la dejó en blanco (se usa la de la ley). */
+const tasaEscrita = () => { const v = $("#ppm").value.trim().replace(",", "."); return v === "" || isNaN(Number(v)) ? null : Number(v); };
+
+function notaTasa(res) {
+  const ley = res.tasaPPMLegal;
+  if (res.regimen === "general") {
+    $("#ppm").placeholder = "1";
+    $("#ppm-nota").textContent = "En el Régimen General la tasa cambia cada año: es la de su último F29 (el primer año, 1%). Si la deja en blanco, se usa 1%.";
+  } else {
+    $("#ppm").placeholder = fmtTasa(ley);
+    const rebaja = res.regimen === "propyme" && res.mes >= "2025-08" && res.mes <= "2027-12";
+    $("#ppm-nota").textContent = `Por ley, en ${nombreMes(res.mes)}: ${fmtTasa(ley)}%${rebaja ? " (rebajada a la mitad entre agosto de 2025 y diciembre de 2027, Ley 21.755)" : ""}. Déjela en blanco para usar esa; escriba otra solo si su contador se la indicó.`;
+  }
+}
+
 function calcular() {
   if (silencio) return;
   if (!d || (!d.tiene.ventas && !d.tiene.compras)) {
@@ -84,29 +118,52 @@ function calcular() {
     estado(est, d && !d.vacia ? "Para estimar el F29 faltan el Registro de Ventas y el de Compras." : "");
     return;
   }
-  const ppm = num("#ppm");
-  guardarAjustes({ ppm });
-  const res = calcF29(d, { mes: $("#mes").value, ppm, remanente: num("#rem"), honorarios: num("#hon") });
+  const regimen = $("#regimen").value, sobre50milUF = $("#sobre50").checked, ppm = tasaEscrita();
+  guardarAjustes({ regimen, sobre50milUF, ppm });
+  const res = calcF29(d, { mes: $("#mes").value, regimen, sobre50milUF, ppm, remanente: num("#rem"), honorarios: num("#hon") });
   if (!res) { $("#resultado").hidden = true; estado(est, "No se encontraron documentos con fecha en los registros.", "alerta"); return; }
   if ($("#mes").value !== res.mes) $("#mes").value = res.mes;
-  const mes = nombreMes(res.mes);
+  notaTasa(res);
+  const mes = nombreMes(res.mes), tasa = fmtTasa(res.tasaPPM);
   rotuloEjemplo($("#rotulo"), d.ejemplo);
-  const sinIva = res.iva_a_pagar <= 0 && res.remanente_siguiente > 0;
   const notas = res.notas_credito_venta + res.notas_credito_compra;
-  const tasa = fmtTasa(ppm);
-  // La respuesta es el IVA, que sale solo de los documentos. El PPM depende de una tasa que usted confirma.
-  const frase = sinIva
-    ? `En ${mes} no habría IVA que pagar y quedaría un remanente de <b>${fmtCLP(res.remanente_siguiente)}</b> a su favor.`
-    : res.iva_a_pagar <= 0 ? `En ${mes} no habría IVA que pagar.` : `En ${mes} pagaría cerca de <b>${fmtCLP(res.iva_a_pagar)}</b> de IVA.`;
-  const conPpm = res.total_estimado > 0 ? ` Con PPM (${tasa}%) y retenciones, el total estimado es ${fmtCLP(res.total_estimado)}.` : "";
-  titular($("#titular"), frase, `Con ${plural(res.documentos_venta, "documento de venta", "documentos de venta")} y ${plural(res.documentos_compra, "de compra", "de compra")} en el mes${notas ? ", incluidas notas de crédito, que restan" : ""}.${conPpm}`);
-  cifras($("#cifras"), [["IVA a pagar", fmtCLP(res.iva_a_pagar)], ["Total estimado a pagar (con PPM y retenciones)", fmtCLP(res.total_estimado)], ["Remanente para el mes siguiente", fmtCLP(res.remanente_siguiente)], ["PPM", fmtCLP(res.ppm)]]);
+  const ret = res.retencion_honorarios;
+
+  // La respuesta: el total del formulario, y de qué está hecho. IVA y PPM nunca van mezclados.
+  const partes = [res.iva_a_pagar > 0 ? `<b>${fmtCLP(res.iva_a_pagar)}</b> de IVA` : null, `<b>${fmtCLP(res.ppm)}</b> de PPM`, ret ? `<b>${fmtCLP(ret)}</b> de retenciones` : null].filter(Boolean);
+  const unir = l => l.length > 1 ? l.slice(0, -1).join(", ") + " y " + l.at(-1) : l[0];
+  const frase = res.iva_a_pagar > 0
+    ? `En el F29 de ${mes} pagaría cerca de <b>${fmtCLP(res.total_estimado)}</b>: ${unir(partes)}.`
+    : `En el F29 de ${mes} no pagaría IVA${res.remanente_siguiente ? ` (le quedan <b>${fmtCLP(res.remanente_siguiente)}</b> a favor para el mes siguiente)` : ""}, pero sí ${unir(partes)}.`;
+  titular($("#titular"), frase, `Con ${plural(res.documentos_venta, "documento de venta", "documentos de venta")} y ${plural(res.documentos_compra, "de compra", "de compra")} del mes${notas ? ", incluidas notas de crédito, que restan" : ""}.`);
+
+  const tarjetas = [["IVA a pagar", fmtCLP(res.iva_a_pagar)], [`PPM (${tasa}%)`, fmtCLP(res.ppm)]];
+  if (ret) tarjetas.push(["Retención de honorarios", fmtCLP(ret)]);
+  tarjetas.push(["Total del F29", fmtCLP(res.total_estimado)]);
+  if (res.remanente_siguiente) tarjetas.push(["IVA a favor para el mes siguiente", fmtCLP(res.remanente_siguiente), "ok"]);
+  cifras($("#cifras"), tarjetas);
+
+  const baseTxt = res.basePPMTipo === "cobrado" ? "lo que cobró en el mes (según su cartola), sin IVA" : "lo que facturó en el mes, sin IVA";
+  const avisoBase = res.basePPMDebeSer === "percibido" && res.basePPMTipo === "facturado"
+    ? ` <b>En su régimen el PPM se calcula sobre lo cobrado, no sobre lo facturado</b>: sin la cartola solo sabemos lo facturado. Súbala y el cálculo se ajusta solo.` : "";
+  $("#explica").innerHTML =
+    `<p><b>IVA:</b> el IVA de sus ventas (${fmtCLP(res.iva_debito)}) menos el de sus compras (${fmtCLP(res.iva_credito)})${res.remanente_anterior ? ` y el remanente del mes anterior (${fmtCLP(res.remanente_anterior)})` : ""}. Si da negativo, no se paga: queda a favor para el mes siguiente.</p>` +
+    `<p><b>PPM:</b> no es IVA. Es un anticipo mensual del impuesto a la renta del año, que se paga en el mismo formulario. En el ${res.regimenNombre} se calcula sobre ${res.basePPMDebeSer === "percibido" ? "los ingresos cobrados" : "los ingresos facturados"} del mes; aquí, sobre ${baseTxt}: ${fmtCLP(res.basePPM)} × ${tasa}% = ${fmtCLP(res.ppm)}.${avisoBase}</p>`;
+
+  const fila = (concepto, monto) => ({ concepto, monto });
   const filas = [
-    ["Ventas netas del mes (afectas y exentas)", res.ventas_netas], ["IVA débito (ventas)", res.iva_debito], ["IVA crédito (compras)", -res.iva_credito],
-    ["Remanente del mes anterior", res.remanente_anterior ? -res.remanente_anterior : 0], ["IVA a pagar", res.iva_a_pagar], ["PPM (" + tasa + "% de las ventas netas)", res.ppm],
-    ["Retención de honorarios", res.retencion_honorarios], ["Total estimado", res.total_estimado]
-  ].map(([concepto, monto]) => ({ concepto, monto }));
-  mostrarTabla($("#tabla"), filas, ["concepto", "monto"], { etiquetas: { concepto: `Estimación F29 · ${mes}`, monto: "Monto" }, numericas: ["monto"], titulo: "Desglose del F29 estimado" });
+    fila("IVA · Débito: el IVA de sus ventas", res.iva_debito),
+    fila("IVA · Crédito: el IVA de sus compras (resta)", -res.iva_credito),
+    fila("IVA · Remanente del mes anterior (resta)", res.remanente_anterior ? -res.remanente_anterior : 0),
+    fila("IVA a pagar", res.iva_a_pagar),
+    fila(`PPM · Base: ${res.basePPMTipo === "cobrado" ? "ventas cobradas" : "ventas facturadas"} en el mes, sin IVA`, res.basePPM),
+    fila(`PPM · Tasa: ${tasa}% (${res.regimenNombre})`, ""),
+    fila("PPM a pagar", res.ppm),
+    fila("Retención de honorarios", ret),
+    fila("Total estimado del F29", res.total_estimado)
+  ];
+  mostrarTabla($("#tabla"), filas, ["concepto", "monto"], { etiquetas: { concepto: `Estimación del F29 · ${mes}`, monto: "Monto" }, numericas: ["monto"], titulo: "Desglose del F29 estimado",
+    claseFila: f => /^(IVA a pagar|PPM a pagar|Total)/.test(f.concepto) ? "suma" : "" });
   botonesDescarga($("#descargas"), () => ({ hojas: [{ nombre: "F29 " + res.mes, filas, columnas: ["concepto", "monto"], etiquetas: { concepto: "Concepto", monto: "Monto" } }] }), `f29-estimado-${res.mes}-ave`);
   siguientes($("#siguientes"), ["honorarios", "flujo", "radiografia"]);
   invitacion($("#invitacion"), "¿Y si este número le llegara solo, el día 10 de cada mes?");
@@ -114,10 +171,10 @@ function calcular() {
   const falta = res.faltaVentas ? "ventas" : res.faltaCompras ? "compras" : "";
   if (falta) estado(est, `Falta el Registro de ${falta === "ventas" ? "Ventas" : "Compras"}: la estimación está incompleta.`, "alerta");
   else if (d.sinLibro.length) estado(est, `${plural(d.sinLibro.length, "documento quedó fuera", "documentos quedaron fuera")} porque no se pudo saber si son venta o compra: ingrese el RUT de su empresa.`, "alerta");
-  else estado(est, `Estimación de ${mes}, con PPM de ${tasa}%.`, "ok");
+  else estado(est, `Estimación de ${mes}: IVA y PPM (${tasa}%) por separado.`, "ok");
 }
 
-["mes", "ppm", "rem", "hon"].forEach(id => $("#" + id).addEventListener("input", calcular));
+["mes", "ppm", "rem", "hon", "regimen", "sobre50"].forEach(id => { $("#" + id).addEventListener("input", calcular); $("#" + id).addEventListener("change", calcular); });
 
 montarFuentes($("#fuentes"), {
   usa: ["ventas", "compras"],
@@ -127,7 +184,9 @@ montarFuentes($("#fuentes"), {
     // Remanente y retención son de la empresa que cargó el usuario: no pasan al ejemplo ni a otra sesión.
     if (motivo === "ejemplo" || motivo === "vacio") { ponerMonto("#rem", ""); ponerMonto("#hon", ""); }
     llenarMeses();
-    $("#ppm").value = porDefecto(d).ppm;
+    const def = porDefecto(d);
+    $("#regimen").value = def.regimen; $("#sobre50").checked = def.sobre50milUF;
+    $("#ppm").value = def.ppm != null ? fmtTasa(def.ppm) : "";
     silencio = false;
     calcular();
   }

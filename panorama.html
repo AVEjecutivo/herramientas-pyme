@@ -154,10 +154,10 @@ function pintarIva() {
   // Con un solo registro el IVA no es una respuesta: se dice cuál falta.
   if (f.faltaVentas || f.faltaCompras) return pedir("p-iva", `Para estimar el IVA falta el Registro de ${f.faltaVentas ? "Ventas" : "Compras"}.`);
   const aFavor = f.iva_a_pagar === 0 && f.remanente_siguiente > 0;
-  const tasa = Number(porDefecto(d).ppm).toLocaleString("es-CL", { maximumFractionDigits: 2 });
+  const tasa = Number(f.tasaPPM).toLocaleString("es-CL", { maximumFractionDigits: 3 });
   const html = valor(aFavor ? `${fmtCLP(f.remanente_siguiente)} a favor` : fmtCLP(f.iva_a_pagar)) +
     frase(aFavor ? `Estimación de ${nombreMes(f.mes)}: el crédito de sus compras supera al IVA de sus ventas, y la diferencia queda a su favor para el mes siguiente.` : `Estimación de ${nombreMes(f.mes)}: IVA de sus ventas menos el de sus compras.`) +
-    aparte(`Con PPM (${tasa}%), el total estimado es ${fmtCLP(f.total_estimado)}; las retenciones de honorarios se agregan en el detalle. Es una estimación: la declaración la valida su contador.`);
+    aparte(`En el mismo F29 se paga además el PPM, que no es IVA sino un anticipo de la renta: ${fmtCLP(f.ppm)} (${tasa}% sobre lo ${f.basePPMTipo} en el mes, ${f.regimenNombre}). Total del F29: ${fmtCLP(f.total_estimado)}, sin contar retenciones. Es una estimación: la declaración la valida su contador.`);
   responder("p-iva", html);
   return true;
 }
