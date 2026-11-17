@@ -417,12 +417,34 @@ export function textoInsuficiente(texto) {
  * @param {"compras"|"ventas"} [libro]  si no se indica, se deduce de los encabezados
  * @param {string} [archivo]
  */
+/**
+ * Decide si un Registro del SII es de compras o de ventas por sus encabezados.
+ * Primero las columnas que solo trae cada uno ("Rut cliente", "Tipo Venta" /
+ * "RUT Proveedor", "Tipo Compra"); después, las de las versiones simplificadas.
+ * Ojo: el Registro de Ventas real trae "RUT Emisor Liquid. Factura", así que
+ * "emisor" a secas no basta para decir que es de compras.
+ * @param {string[]} enc  encabezados ya normalizados
+ * @returns {"compras"|"ventas"}
+ */
+function libroDeEncabezados(enc) {
+  const hay = l => enc.some(h => l.includes(h));
+  if (hay(["rut_cliente", "tipo_venta", "rut_receptor", "razon_social_receptor"])) return "ventas";
+  if (hay(["rut_proveedor", "tipo_compra", "rut_emisor", "razon_social_emisor", "iva_recuperable"])) return "compras";
+  return enc.some(h => h.includes("proveedor")) ? "compras" : "ventas";
+}
+
+/** Para meter texto del usuario dentro de una expresión regular sin que la rompa. */
+function escaparRegex(t) { return String(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+/** Notas de crédito: nacional (61) y de exportación (112). */
+function esNotaCredito(f) { return String(f && f.tipo_dte) === "61" || String(f && f.tipo_dte) === "112"; }
+
 export function leerRegistroSII(texto, libro, archivo) {
   const sep = detectarSeparador(texto);
   const lineas = String(texto).split(/\r?\n/).filter(l => l.trim());
   if (lineas.length < 2) return [];
   const enc = dividirLineaCSV(lineas[0], sep).map(normalizarEncabezado);
-  const esCompras = libro ? libro === "compras" : enc.some(h => h.includes("emisor") || h.includes("proveedor"));
+  const esCompras = libro ? libro === "compras" : libroDeEncabezados(enc) === "compras";
   const idx = {
     tipo: buscarColumna(enc, ["tipo_doc"]),
     folio: buscarColumna(enc, ["folio"]),
@@ -464,12 +486,14 @@ export function leerRegistroSII(texto, libro, archivo) {
 //  Cartolas bancarias
 // ─────────────────────────────────────────────────────────────
 
+// El orden importa: gana el primero que aparece. "chile" va al final porque
+// aparece en el nombre de casi cualquier banco o empresa chilena.
 const BANCOS = [
   ["bci", "BCI"], ["santander", "Santander"], ["bancoestado", "BancoEstado"],
-  ["banco estado", "BancoEstado"], ["chile", "Banco de Chile"], ["itau", "Itaú"],
-  ["scotiabank", "Scotiabank"], ["security", "Security"], ["bice", "BICE"],
-  ["falabella", "Falabella"], ["ripley", "Ripley"], ["consorcio", "Consorcio"],
-  ["internacional", "Internacional"]
+  ["banco estado", "BancoEstado"], ["itau", "Itaú"], ["scotiabank", "Scotiabank"],
+  ["security", "Security"], ["bice", "BICE"], ["falabella", "Falabella"],
+  ["ripley", "Ripley"], ["consorcio", "Consorcio"], ["internacional", "Internacional"],
+  ["banco de chile", "Banco de Chile"], ["bancochile", "Banco de Chile"], ["edwards", "Banco de Chile"]
 ];
 
 function detectarBanco(texto, nombreArchivo) {
@@ -621,7 +645,7 @@ export function conciliar(movimientos, facturas, opciones) {
   const puntaje = (m, f) => {
     let p = 0;
     const glosa = sinTildes(m.descripcion + " " + m.referencia).toLowerCase();
-    if (f.folio && new RegExp(`\\b${f.folio}\\b`).test(glosa)) p += 2;
+    if (f.folio && new RegExp(`\\b${escaparRegex(String(f.folio))}\\b`).test(glosa)) p += 2;
     const nombre = f.libro === "ventas" ? f.razon_social_receptor : f.razon_social_emisor;
     if (palabras(nombre).some(w => glosa.includes(w))) p += 1;
     return p;
@@ -629,7 +653,8 @@ export function conciliar(movimientos, facturas, opciones) {
   for (const m of movs) {
     const libro = m.abono ? "ventas" : "compras";
     const monto = m.abono || m.cargo;
-    const candidatas = facts.filter(f => !usadas.has(f._i) && f.libro === libro &&
+    // Una nota de crédito no se cobra ni se paga: corrige una factura. No se cruza con un movimiento.
+    const candidatas = facts.filter(f => !usadas.has(f._i) && f.libro === libro && !esNotaCredito(f) &&
       Math.abs(Number(f.monto_total) - monto) <= 1 &&
       (!f.fecha_emision || (diasEntre(f.fecha_emision, m.fecha) >= 0 && diasEntre(f.fecha_emision, m.fecha) <= ventana)));
     if (!candidatas.length) continue;
@@ -922,9 +947,13 @@ export function clasificar(filas, opciones) {
     if (f.abono && !f.cargo) return { ...f, categoria: "Ingresos", regla: "abono" };
     const texto = " " + sinTildes(campos.map(c => f[c] || "").join(" ")).toLowerCase() + " ";
     for (const r of reglas) {
+      // Palabras de 4 letras o menos: palabra completa ("sii", "tag"). Más largas: el comienzo de una
+      // palabra ("remuner" calza "remuneraciones", pero "mundo" no calza "Raimundo"). Las reglas
+      // las escribe el usuario: se escapan para que "c++" no rompa la búsqueda.
       const p = r.palabras.find(w => {
-        const ww = sinTildes(w).toLowerCase();
-        return ww.length <= 4 ? new RegExp(`[^a-z0-9]${ww.replace(/\s/g, "\\s")}[^a-z0-9]`).test(texto) : texto.includes(ww);
+        const ww = escaparRegex(sinTildes(w).toLowerCase().trim()).replace(/\s+/g, "\\s+");
+        if (!ww) return false;
+        return new RegExp(`[^a-z0-9]${ww}${w.trim().length <= 4 ? "[^a-z0-9]" : ""}`).test(texto);
       });
       if (p) return { ...f, categoria: r.categoria, regla: p };
     }
@@ -932,7 +961,7 @@ export function clasificar(filas, opciones) {
   });
   const resumen = {};
   for (const f of filasOut) {
-    const monto = Number(f.cargo || f.monto_total || 0) || Number(f.abono || 0);
+    const monto = (esNotaCredito(f) ? -1 : 1) * (Number(f.cargo || f.monto_total || 0) || Number(f.abono || 0));
     resumen[f.categoria] = resumen[f.categoria] || { categoria: f.categoria, movimientos: 0, monto: 0 };
     resumen[f.categoria].movimientos++; resumen[f.categoria].monto += monto;
   }
@@ -1060,27 +1089,89 @@ export function asignarLibro(facturas, rutEmpresa) {
 const signoDTE = t => (String(t) === "61" || String(t) === "112" ? -1 : 1);
 
 /**
- * Estimación del F29 de un mes. Es una estimación con datos propios: la
- * declaración la valida y la presenta el contador.
- * @param {{ventas:object[], compras:object[], mes:string, tasaPPM?:number,
- *          remanente?:number, retencionHonorarios?:number}} e
- *   mes "aaaa-mm"; tasaPPM en porcentaje (p. ej. 0,25); remanente de crédito del mes anterior
+ * Regímenes del artículo 14 de la Ley sobre Impuesto a la Renta, para el PPM.
+ * Fuentes: Circular SII N° 62 de 2020 (régimen Pro Pyme, apartados 1.8 y 2.6) y
+ * Circular SII N° 53 de 2025 (Ley N° 21.755, rebaja transitoria del PPM del 14 D N° 3).
+ * `base`: sobre qué se calcula el PPM. En los regímenes Pro Pyme, los ingresos del giro
+ * percibidos (cobrados) en el mes; en el Régimen General, los devengados (facturados).
+ */
+export const REGIMENES_PPM = {
+  propyme: { nombre: "Pro Pyme General (14 D N° 3)", base: "percibido" },
+  transparente: { nombre: "Pro Pyme Transparente (14 D N° 8)", base: "percibido" },
+  general: { nombre: "Régimen General (14 A)", base: "devengado" }
+};
+
+/**
+ * Tasa de PPM (en %) que fija la ley para un mes, o null si no es fija.
+ * - Pro Pyme General: 0,25% (0,5% si los ingresos del giro del año anterior superaron 50.000 UF),
+ *   rebajada a la mitad —0,125% y 0,25%— por los ingresos de agosto de 2025 a diciembre de 2027.
+ * - Pro Pyme Transparente: 0,2% (0,5% sobre 50.000 UF), sin rebaja.
+ * - Régimen General: variable, la que resulta del año anterior (1% el primer año): null.
+ * @param {"propyme"|"transparente"|"general"} regimen
+ * @param {boolean} sobre50milUF
+ * @param {string} mes  aaaa-mm
+ */
+export function tasaPPMLegal(regimen, sobre50milUF, mes) {
+  if (regimen === "general") return null;
+  if (regimen === "transparente") return sobre50milUF ? 0.5 : 0.2;
+  const rebaja = mes >= "2025-08" && mes <= "2027-12";
+  return (sobre50milUF ? 0.5 : 0.25) / (rebaja ? 2 : 1);
+}
+
+/** Documentos que no tienen efecto en el IVA ni en el PPM: las guías de despacho solo acompañan el traslado. */
+const SIN_EFECTO_TRIBUTARIO = new Set(["52"]);
+
+/**
+ * Estimación del F29 de un mes: el IVA y el PPM, por separado. Es una estimación con
+ * datos propios: la declaración la valida y la presenta el contador.
+ *
+ * IVA: débito de las ventas − crédito de las compras − remanente del mes anterior. Las notas de
+ * crédito restan. Las guías de despacho no cuentan.
+ *
+ * PPM: no es IVA, es un anticipo del impuesto a la renta que se paga en el mismo formulario.
+ * La tasa sale del régimen, del tramo y del mes (tasaPPMLegal), salvo que se entregue `tasaPPM`.
+ * La base, en los regímenes Pro Pyme, son las ventas cobradas en el mes: se usa `basePPM` si se
+ * entrega, o se calcula con `movimientos` (la cartola); sin ninguna de las dos, se usan las ventas
+ * facturadas y `base_ppm_tipo` lo dice.
+ *
+ * @param {{ventas:object[], compras:object[], mes:string, regimen?:string, sobre50milUF?:boolean,
+ *          tasaPPM?:number, basePPM?:number, movimientos?:object[], remanente?:number,
+ *          retencionHonorarios?:number}} e
+ *   mes "aaaa-mm"; tasaPPM en porcentaje (p. ej. 0,125); remanente de crédito del mes anterior
  */
 export function estimarF29(e) {
-  const delMes = f => (f.fecha_emision || "").slice(0, 7) === e.mes;
+  const delMes = f => (f.fecha_emision || "").slice(0, 7) === e.mes && !SIN_EFECTO_TRIBUTARIO.has(String(f.tipo_dte));
   const v = (e.ventas || []).filter(delMes), c = (e.compras || []).filter(delMes);
   const sum = (fs, k) => fs.reduce((s, f) => s + signoDTE(f.tipo_dte) * (Number(f[k]) || 0), 0);
   const debito = sum(v, "iva"), credito = sum(c, "iva");
   const ventasNetas = sum(v, "monto_neto") + sum(v, "monto_exento");
   const remanente = Number(e.remanente) || 0;
   const ivaDeterminado = debito - credito - remanente;
-  const ppm = Math.round(ventasNetas * (Number(e.tasaPPM) || 0) / 100);
-  const ret = Math.round(Number(e.retencionHonorarios) || 0);
   const ivaPagar = Math.max(ivaDeterminado, 0);
+
+  const regimen = REGIMENES_PPM[e.regimen] ? e.regimen : "propyme";
+  const tasaLegal = tasaPPMLegal(regimen, !!e.sobre50milUF, e.mes);
+  const manual = e.tasaPPM != null && e.tasaPPM !== "" && !isNaN(Number(e.tasaPPM));
+  const tasa = manual ? Number(e.tasaPPM) : tasaLegal != null ? tasaLegal : 1;
+  let base = ventasNetas, baseTipo = "facturado";
+  if (REGIMENES_PPM[regimen].base === "percibido") {
+    if (e.basePPM != null) { base = Number(e.basePPM) || 0; baseTipo = "cobrado"; }
+    else if (e.movimientos && e.movimientos.length) {
+      const ventasMes = (e.ventas || []).filter(f => !SIN_EFECTO_TRIBUTARIO.has(String(f.tipo_dte)));
+      base = conciliar(e.movimientos, ventasMes.map(f => ({ ...f, libro: "ventas" }))).facturas
+        .filter(f => f.estado_pago === "Pagada" && (f.fecha_pago || "").startsWith(e.mes))
+        .reduce((s, f) => s + signoDTE(f.tipo_dte) * ((Number(f.monto_neto) || 0) + (Number(f.monto_exento) || 0)), 0);
+      baseTipo = "cobrado";
+    }
+  }
+  const ppm = Math.max(Math.round(base * tasa / 100), 0);
+  const ret = Math.round(Number(e.retencionHonorarios) || 0);
   return {
     mes: e.mes, documentos_venta: v.length, documentos_compra: c.length,
     ventas_netas: ventasNetas, iva_debito: debito, iva_credito: credito, remanente_anterior: remanente,
     iva_a_pagar: ivaPagar, remanente_siguiente: Math.max(-ivaDeterminado, 0),
+    regimen, regimen_nombre: REGIMENES_PPM[regimen].nombre, tasa_ppm: tasa, tasa_ppm_legal: tasaLegal, tasa_ppm_manual: manual,
+    base_ppm: base, base_ppm_tipo: baseTipo, base_ppm_debe_ser: REGIMENES_PPM[regimen].base === "percibido" ? "cobrado" : "facturado",
     ppm, retencion_honorarios: ret, total_estimado: ivaPagar + ppm + ret,
     notas_credito_venta: v.filter(f => String(f.tipo_dte) === "61").length,
     notas_credito_compra: c.filter(f => String(f.tipo_dte) === "61").length

@@ -186,19 +186,27 @@ servidor.registerTool("flujo_caja_13_semanas", {
 
 servidor.registerTool("estimar_f29", {
   title: "Estimar F29",
-  description: "Estimación del F29 de un mes: IVA débito, IVA crédito, remanente, IVA a pagar, PPM y retención de honorarios. Las notas de crédito restan. Es una estimación con datos propios: la declaración la valida un contador. Vence el día 20 del mes siguiente para quienes facturan electrónicamente y declaran por internet (12 en los demás casos).",
+  description: "Estimación del F29 de un mes, con el IVA y el PPM por separado. IVA: débito de las ventas menos crédito de las compras menos remanente; las notas de crédito restan y las guías de despacho no cuentan. PPM: no es IVA, es un anticipo del impuesto a la renta; su tasa sale del régimen, del tramo de 50.000 UF y del mes (Pro Pyme General 0,125% de agosto de 2025 a diciembre de 2027, Ley 21.755; Pro Pyme Transparente 0,2%; Régimen General, la tasa de su último F29), y en los regímenes Pro Pyme se calcula sobre lo cobrado en el mes, por lo que conviene entregar la cartola. Es una estimación con datos propios: la declaración la valida un contador. El F29 vence el día 12 del mes siguiente, o el 20 si la empresa emite factura electrónica y declara y paga por internet; si cae en día inhábil, pasa al hábil siguiente.",
   inputSchema: {
     facturas: rutas.describe("Registros de Compras y Ventas del SII, XML o PDF"), rut_empresa: rutEmpresa,
     mes: z.string().regex(/^\d{4}-\d{2}$/).optional().describe("aaaa-mm; por defecto, el más reciente con documentos"),
-    tasa_ppm: z.number().min(0).optional().describe("Tasa de PPM en %, por ejemplo 0.25"),
+    regimen: z.enum(["propyme", "transparente", "general"]).optional().describe("Régimen tributario: propyme (Pro Pyme General, 14 D N° 3; por defecto), transparente (14 D N° 8) o general (14 A)"),
+    ingresos_sobre_50000_uf: z.boolean().optional().describe("true si los ingresos del giro del año anterior superaron 50.000 UF"),
+    cartolas: z.array(z.string()).optional().describe("Cartolas del banco: en los regímenes Pro Pyme el PPM se calcula sobre lo cobrado en el mes"),
+    tasa_ppm: z.number().min(0).optional().describe("Tasa de PPM en %, solo si su contador le indicó una distinta de la que fija la ley. En el Régimen General es obligatoria (si falta, se usa 1%)"),
     remanente: z.number().min(0).optional(), retencion_honorarios: z.number().min(0).optional()
   }
 }, async (e) => {
   const f = await leerFacturas(e.facturas, e.rut_empresa);
   const mes = e.mes || mesesDe(f.facturas)[0];
   if (!mes) return error("No se encontraron documentos con fecha. " + f.problemas.join(" "));
-  const r = estimarF29({ ventas: f.facturas.filter(x => x.libro === "ventas"), compras: f.facturas.filter(x => x.libro === "compras"), mes, tasaPPM: e.tasa_ppm, remanente: e.remanente, retencionHonorarios: e.retencion_honorarios });
-  return json({ ...r, meses_disponibles: mesesDe(f.facturas), advertencia: "Estimación basada en datos propios. El cálculo definitivo debe validarlo su contador antes de declarar.", aviso: avisoLibro(f.sinLibro), problemas: f.problemas });
+  const movimientos = [];
+  for (const ruta of e.cartolas || []) movimientos.push(...leerCartola(await leerTexto(ruta), basename(ruta)).movimientos);
+  const r = estimarF29({ ventas: f.facturas.filter(x => x.libro === "ventas"), compras: f.facturas.filter(x => x.libro === "compras"), mes,
+    regimen: e.regimen, sobre50milUF: e.ingresos_sobre_50000_uf, tasaPPM: e.tasa_ppm, movimientos, remanente: e.remanente, retencionHonorarios: e.retencion_honorarios });
+  const avisoBase = r.base_ppm_debe_ser === "cobrado" && r.base_ppm_tipo === "facturado"
+    ? "En este régimen el PPM se calcula sobre lo cobrado en el mes; sin cartola se usó lo facturado. Entregue la cartola para afinarlo." : undefined;
+  return json({ ...r, meses_disponibles: mesesDe(f.facturas), advertencia: "Estimación basada en datos propios. El IVA y el PPM son impuestos distintos que se pagan en el mismo F29. El cálculo definitivo debe validarlo su contador antes de declarar.", aviso_base_ppm: avisoBase, aviso: avisoLibro(f.sinLibro), problemas: f.problemas });
 });
 
 servidor.registerTool("radiografia_ventas_compras", {

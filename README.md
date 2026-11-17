@@ -24,7 +24,7 @@ exactos.
 | `cuadrar_banco_facturas` | Qué facturas están pagadas, cuáles pendientes y qué movimientos del banco no tienen respaldo |
 | `cobranza_por_antiguedad` | Quién le debe, cuánto y desde cuándo, por tramo, con borradores de correo de cobranza |
 | `flujo_caja_13_semanas` | La caja proyectada semana a semana, con la semana más estrecha |
-| `estimar_f29` | IVA débito y crédito, remanente, PPM y retenciones del mes |
+| `estimar_f29` | El IVA y el PPM del mes, por separado: la tasa del PPM según régimen y mes (Ley 21.755), sobre lo cobrado en los regímenes Pro Pyme |
 | `radiografia_ventas_compras` | Evolución mensual, principales clientes y proveedores, concentración de la venta |
 | `clasificar_gastos` | Cada gasto con su categoría, según reglas que usted puede ver y cambiar |
 | `calcular_honorario` · `revisar_informe_honorarios` | Retención de boletas de honorarios con la tasa de cada año, y revisión del informe del SII |
@@ -75,7 +75,7 @@ sus archivos:
 - *"Lee las facturas de la carpeta Documentos/Junio y guárdame una tabla para Excel."*
 - *"Cruza la cartola de julio con mis Registros de Compras y Ventas y dime qué está pendiente."*
 - *"¿Qué clientes me deben hace más de 60 días? Prepárame los correos de cobranza."*
-- *"Estima mi F29 de junio. Mi tasa de PPM es 0,25%."*
+- *"Estima mi F29 de junio. Estoy en Pro Pyme General; te paso también la cartola."*
 - *"Proyecta mi caja de las próximas 13 semanas con un saldo de $5.000.000."*
 
 ---
@@ -95,7 +95,8 @@ const { movimientos } = leerCartola(readFileSync("cartola.csv", "utf8"), "cartol
 const cruce = conciliar(movimientos, facturas);
 const f29 = estimarF29({ ventas: facturas.filter(f => f.libro === "ventas"),
                          compras: facturas.filter(f => f.libro === "compras"),
-                         mes: "2026-06", tasaPPM: 0.25 });
+                         mes: "2026-06", regimen: "propyme", movimientos });
+// La tasa del PPM sale de la ley (0,125% en Pro Pyme General hasta dic-2027) salvo que pase tasaPPM.
 ```
 
 `src/ave-herramientas.js` no tiene dependencias y funciona igual en el navegador

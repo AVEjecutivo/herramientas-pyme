@@ -21,7 +21,7 @@
 - conciliar(movimientos, facturas): cruza abonos con ventas y cargos con compras por monto, fecha y glosa.
 - antiguedadCobranza(ventas, {fechaCorte, plazoDias}) y correoCobranza(): deuda por tramo y borrador de correo.
 - flujoCaja({...}): proyección de 13 semanas.
-- estimarF29({ventas, compras, mes, tasaPPM, remanente}): IVA débito − crédito − remanente, PPM y retenciones. Es una estimación; la declaración la valida un contador.
+- estimarF29({ventas, compras, mes, regimen, sobre50milUF, movimientos, tasaPPM?, remanente}): el IVA (débito − crédito − remanente; las guías de despacho no cuentan) y el PPM por separado. El PPM no es IVA: su tasa sale de tasaPPMLegal(regimen, sobre50milUF, mes) —Pro Pyme General 0,125% de ago-2025 a dic-2027 (Ley 21.755), Pro Pyme Transparente 0,2%, Régimen General variable— y en Pro Pyme se calcula sobre lo cobrado en el mes (con la cartola). Es una estimación; la declaración la valida un contador.
 - radiografia({ventas, compras}): evolución mensual, principales clientes y proveedores, concentración.
 - clasificar(filas): categoría de gasto por reglas de palabras clave (editables).
 - calcularHonorario({bruto|liquido, anio}): retención de boletas de honorarios (2024 13,75% · 2025 14,5% · 2026 15,25% · 2027 16% · 2028 17%).

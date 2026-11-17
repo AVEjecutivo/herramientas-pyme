@@ -54,6 +54,17 @@ test("estimar_f29 pide el RUT cuando hace falta", async () => {
   assert.equal(con.datos.iva_a_pagar, 159000);
 });
 
+test("estimar_f29 separa IVA y PPM, toma la tasa de la ley y usa la cartola para la base cobrada", async () => {
+  const facturas = [ej("registros/RegistroVentas_SII_ejemplo.csv"), ej("registros/RegistroCompras_SII_ejemplo.csv")];
+  const sin = await llamar("estimar_f29", { facturas, mes: "2026-06" });
+  assert.equal(sin.datos.tasa_ppm, 0.125); assert.equal(sin.datos.base_ppm_tipo, "facturado"); assert.match(sin.datos.aviso_base_ppm, /cartola/);
+  const con = await llamar("estimar_f29", { facturas, mes: "2026-06", cartolas: [ej("cartolas/Cartola_BancoEstado_ejemplo.csv")] });
+  assert.equal(con.datos.base_ppm_tipo, "cobrado"); assert.equal(con.datos.aviso_base_ppm, undefined);
+  assert.equal(con.datos.total_estimado, con.datos.iva_a_pagar + con.datos.ppm);
+  const t = await llamar("estimar_f29", { facturas, mes: "2026-06", regimen: "transparente" });
+  assert.equal(t.datos.tasa_ppm, 0.2);
+});
+
 test("flujo_caja_13_semanas y errores claros", async () => {
   const { datos } = await llamar("flujo_caja_13_semanas", { facturas: [ej("registros/RegistroVentas_SII_ejemplo.csv"), ej("registros/RegistroCompras_SII_ejemplo.csv")], saldo_inicial: 2450000, fecha_inicio: "2026-07-09", gastos_fijos: [{ concepto: "Arriendo", monto: 850000, dia: 26 }] });
   assert.equal(datos.semanas.length, 13);
