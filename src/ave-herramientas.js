@@ -411,13 +411,6 @@ export function textoInsuficiente(texto) {
 // ─────────────────────────────────────────────────────────────
 
 /**
- * Lee el CSV del Registro de Compras o de Ventas que se descarga desde el SII
- * y lo deja con las mismas columnas que la tabla de facturas.
- * @param {string} texto
- * @param {"compras"|"ventas"} [libro]  si no se indica, se deduce de los encabezados
- * @param {string} [archivo]
- */
-/**
  * Decide si un Registro del SII es de compras o de ventas por sus encabezados.
  * Primero las columnas que solo trae cada uno ("Rut cliente", "Tipo Venta" /
  * "RUT Proveedor", "Tipo Compra"); después, las de las versiones simplificadas.
@@ -439,6 +432,19 @@ function escaparRegex(t) { return String(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&
 /** Notas de crédito: nacional (61) y de exportación (112). */
 function esNotaCredito(f) { return String(f && f.tipo_dte) === "61" || String(f && f.tipo_dte) === "112"; }
 
+/**
+ * Lee el CSV del Registro de Compras o de Ventas que se descarga desde el SII
+ * y lo deja con las mismas columnas que la tabla de facturas.
+ *
+ * Se omiten las filas que no son documentos: la que el SII agrega, sin "Nro" ni montos, con el
+ * segundo "otro impuesto" de un documento (el total del documento ya viene en su fila), y las
+ * que no traen ni una fecha legible ni montos. Cuántas se omitieron queda en `omitidas` del
+ * arreglo devuelto. Una fila con montos pero sin fecha legible se conserva con confianza baja.
+ * @param {string} texto
+ * @param {"compras"|"ventas"} [libro]  si no se indica, se deduce de los encabezados
+ * @param {string} [archivo]
+ * @returns {object[] & {omitidas: number}}
+ */
 export function leerRegistroSII(texto, libro, archivo) {
   const sep = detectarSeparador(texto);
   const lineas = String(texto).split(/\r?\n/).filter(l => l.trim());
@@ -446,6 +452,7 @@ export function leerRegistroSII(texto, libro, archivo) {
   const enc = dividirLineaCSV(lineas[0], sep).map(normalizarEncabezado);
   const esCompras = libro ? libro === "compras" : libroDeEncabezados(enc) === "compras";
   const idx = {
+    nro: enc.indexOf("nro"),
     tipo: buscarColumna(enc, ["tipo_doc"]),
     folio: buscarColumna(enc, ["folio"]),
     fecha: buscarColumna(enc, ["fecha_docto", "fecha"]),
@@ -459,9 +466,12 @@ export function leerRegistroSII(texto, libro, archivo) {
   if (idx.folio === -1 || idx.total === -1) return [];
   const val = (cols, i) => (i === -1 ? "" : cols[i] || "");
   const filas = [];
+  let omitidas = 0;
   for (let i = 1; i < lineas.length; i++) {
     const cols = dividirLineaCSV(lineas[i], sep);
     if (cols.length < 5 || !val(cols, idx.folio)) continue;
+    const montos = [idx.exento, idx.neto, idx.iva, idx.total].map(j => val(cols, j).trim());
+    if (idx.nro !== -1 && !val(cols, idx.nro).trim() && montos.every(x => !x)) { omitidas++; continue; }
     const f = filaVacia(archivo);
     f.tipo_dte = val(cols, idx.tipo);
     f.tipo_documento = TIPOS_DTE[f.tipo_dte] || (f.tipo_dte ? `Otro (${f.tipo_dte})` : "");
@@ -477,8 +487,13 @@ export function leerRegistroSII(texto, libro, archivo) {
     f.monto_total = leerMonto(val(cols, idx.total));
     f.origen = esCompras ? "registro_compras" : "registro_ventas";
     f.confianza = "alta";
+    if (!f.fecha_emision) {
+      if (!f.monto_total && !f.monto_neto && !f.monto_exento && !f.iva) { omitidas++; continue; }
+      f.confianza = "baja"; f.observaciones = "La fecha del documento no se pudo leer.";
+    }
     filas.push(f);
   }
+  filas.omitidas = omitidas;
   return filas;
 }
 
@@ -1122,6 +1137,19 @@ export function tasaPPMLegal(regimen, sobre50milUF, mes) {
 const SIN_EFECTO_TRIBUTARIO = new Set(["52"]);
 
 /**
+ * ¿Dice la cartola algo de lo cobrado en un mes? Sí, si el mes está entre el de su primer y
+ * el de su último movimiento. Una cartola de enero no dice nada de junio: tomar lo cobrado en
+ * junio como $0 daba un PPM de $0.
+ * @param {string} desde  fecha ISO del primer movimiento
+ * @param {string} hasta  fecha ISO del último movimiento
+ * @param {string} mes    aaaa-mm
+ */
+export function cartolaCubreMes(desde, hasta, mes) {
+  if (!desde || !hasta || !mes) return false;
+  return String(desde).slice(0, 7) <= mes && String(hasta).slice(0, 7) >= mes;
+}
+
+/**
  * Estimación del F29 de un mes: el IVA y el PPM, por separado. Es una estimación con
  * datos propios: la declaración la valida y la presenta el contador.
  *
@@ -1131,8 +1159,9 @@ const SIN_EFECTO_TRIBUTARIO = new Set(["52"]);
  * PPM: no es IVA, es un anticipo del impuesto a la renta que se paga en el mismo formulario.
  * La tasa sale del régimen, del tramo y del mes (tasaPPMLegal), salvo que se entregue `tasaPPM`.
  * La base, en los regímenes Pro Pyme, son las ventas cobradas en el mes: se usa `basePPM` si se
- * entrega, o se calcula con `movimientos` (la cartola); sin ninguna de las dos, se usan las ventas
- * facturadas y `base_ppm_tipo` lo dice.
+ * entrega, o se calcula con `movimientos` (la cartola); sin ninguna de las dos, o si la cartola no
+ * llega al mes (`cartola_no_cubre` dice de qué fechas es), se usan las ventas facturadas y
+ * `base_ppm_tipo` lo dice.
  *
  * @param {{ventas:object[], compras:object[], mes:string, regimen?:string, sobre50milUF?:boolean,
  *          tasaPPM?:number, basePPM?:number, movimientos?:object[], remanente?:number,
@@ -1153,10 +1182,13 @@ export function estimarF29(e) {
   const tasaLegal = tasaPPMLegal(regimen, !!e.sobre50milUF, e.mes);
   const manual = e.tasaPPM != null && e.tasaPPM !== "" && !isNaN(Number(e.tasaPPM));
   const tasa = manual ? Number(e.tasaPPM) : tasaLegal != null ? tasaLegal : 1;
-  let base = ventasNetas, baseTipo = "facturado";
+  let base = ventasNetas, baseTipo = "facturado", noCubre = null;
+  const fechasCartola = (e.movimientos || []).map(x => x.fecha).filter(Boolean).sort();
   if (REGIMENES_PPM[regimen].base === "percibido") {
     if (e.basePPM != null) { base = Number(e.basePPM) || 0; baseTipo = "cobrado"; }
-    else if (e.movimientos && e.movimientos.length) {
+    else if (fechasCartola.length && !cartolaCubreMes(fechasCartola[0], fechasCartola.at(-1), e.mes)) {
+      noCubre = { desde: fechasCartola[0], hasta: fechasCartola.at(-1) };
+    } else if (fechasCartola.length) {
       const ventasMes = (e.ventas || []).filter(f => !SIN_EFECTO_TRIBUTARIO.has(String(f.tipo_dte)));
       base = conciliar(e.movimientos, ventasMes.map(f => ({ ...f, libro: "ventas" }))).facturas
         .filter(f => f.estado_pago === "Pagada" && (f.fecha_pago || "").startsWith(e.mes))
@@ -1171,7 +1203,7 @@ export function estimarF29(e) {
     ventas_netas: ventasNetas, iva_debito: debito, iva_credito: credito, remanente_anterior: remanente,
     iva_a_pagar: ivaPagar, remanente_siguiente: Math.max(-ivaDeterminado, 0),
     regimen, regimen_nombre: REGIMENES_PPM[regimen].nombre, tasa_ppm: tasa, tasa_ppm_legal: tasaLegal, tasa_ppm_manual: manual,
-    base_ppm: base, base_ppm_tipo: baseTipo, base_ppm_debe_ser: REGIMENES_PPM[regimen].base === "percibido" ? "cobrado" : "facturado",
+    base_ppm: base, base_ppm_tipo: baseTipo, cartola_no_cubre: noCubre, base_ppm_debe_ser: REGIMENES_PPM[regimen].base === "percibido" ? "cobrado" : "facturado",
     ppm, retencion_honorarios: ret, total_estimado: ivaPagar + ppm + ret,
     notas_credito_venta: v.filter(f => String(f.tipo_dte) === "61").length,
     notas_credito_compra: c.filter(f => String(f.tipo_dte) === "61").length

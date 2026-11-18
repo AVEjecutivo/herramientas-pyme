@@ -141,3 +141,30 @@ test("Cuadratura: un abono no se cruza con una nota de crédito, y un folio con 
   m.conciliar([{ fecha: "2026-06-05", descripcion: "Abono 12(3", referencia: "", cargo: 0, abono: 119000, saldo: "" }],
     [fac("33", 100000, "2026-06-01", { libro: "ventas", folio: "12(3" }), fac("33", 100000, "2026-06-02", { libro: "ventas", folio: "99" })]);
 });
+
+test("F29: una cartola que no llega al mes no da un PPM de $0 cobrado", () => {
+  assert.equal(m.cartolaCubreMes("2026-06-03", "2026-06-03", "2026-06"), true, "un solo movimiento en el mes basta");
+  assert.equal(m.cartolaCubreMes("2026-05-20", "2026-07-02", "2026-06"), true, "la atraviesa");
+  assert.equal(m.cartolaCubreMes("2026-01-01", "2026-01-19", "2026-06"), false);
+  assert.equal(m.cartolaCubreMes("", "", "2026-06"), false);
+  const ventas = [fac("33", 2000000, "2026-06-05", { folio: "502" })];
+  const movimientos = [{ fecha: "2026-01-10", descripcion: "Abono", referencia: "", cargo: 0, abono: 500000, saldo: "" }];
+  const r = m.estimarF29({ ventas, compras: [], mes: "2026-06", movimientos });
+  assert.equal(r.base_ppm_tipo, "facturado"); assert.equal(r.base_ppm, 2000000); assert.equal(r.ppm, 2500);
+  assert.deepEqual(r.cartola_no_cubre, { desde: "2026-01-10", hasta: "2026-01-10" });
+  assert.equal(m.estimarF29({ ventas, compras: [], mes: "2026-06" }).cartola_no_cubre, null);
+});
+
+test("Registro del SII: la fila del segundo impuesto adicional y las filas sin fecha ni montos no son documentos", () => {
+  const enc = "Nro;Tipo Doc;Tipo Venta;Rut cliente;Razon Social;Folio;Fecha Docto;Fecha Recepcion;Fecha Acuse Recibo;Fecha Reclamo;Monto Exento;Monto Neto;Monto IVA;Monto total;Codigo Otro Imp.;Valor Otro Imp.;Tasa Otro Imp.";
+  const r = m.leerRegistroSII([enc,
+    "1;33;Del Giro;76.222.918-8;Cliente Ficticio SpA;101;05/06/2026;05/06/2026;;;0;1000000;190000;1375000;27;100000;10",
+    ";33;Del Giro;76.222.918-8;Cliente Ficticio SpA;101;05/06/2026;;;;;;;;271;85000;18",
+    "2;33;Del Giro;76.222.918-8;Cliente Ficticio SpA;ilegible;fecha-mala;;;;malo;malo;malo;malo;;;",
+    "3;33;Del Giro;76.222.918-8;Cliente Ficticio SpA;103;fecha-mala;;;;0;500000;95000;595000;;;"].join("\n"), null, "ventas.csv");
+  assert.equal(r.length, 2, "el documento 101 una sola vez, y el 103");
+  assert.equal(r.omitidas, 2);
+  assert.equal(r[0].monto_total, 1375000, "el total ya incluye ambos impuestos adicionales");
+  assert.equal(r[1].folio, "103"); assert.equal(r[1].confianza, "baja"); assert.match(r[1].observaciones, /fecha/);
+  assert.equal(m.leerRegistroSII(leer("registros/RegistroVentas_SII_ejemplo.csv")).omitidas, 0, "los ejemplos no pierden filas");
+});

@@ -73,6 +73,7 @@ export async function leerFacturas(rutas, rutEmpresa) {
       } else if ([".csv", ".txt", ".tsv"].includes(ext)) {
         const t = await leerTexto(ruta);
         let r = leerRegistroSII(t, null, nombre);
+        if (r.omitidas) problemas.push(`${nombre}: ${r.omitidas} ${r.omitidas === 1 ? "fila sin montos no se contó como documento" : "filas sin montos no se contaron como documentos"} (el SII las agrega cuando un documento lleva más de un impuesto adicional, o vienen sin fecha).`);
         if (!r.length) r = leerTablaFacturas(t, nombre);
         if (!r.length) problemas.push(`${nombre}: no se reconocieron facturas (use el Registro de Compras o Ventas del SII, XML, PDF o una tabla exportada).`);
         facturas.push(...r);

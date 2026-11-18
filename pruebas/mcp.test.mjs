@@ -65,6 +65,13 @@ test("estimar_f29 separa IVA y PPM, toma la tasa de la ley y usa la cartola para
   assert.equal(t.datos.tasa_ppm, 0.2);
 });
 
+test("estimar_f29 con una cartola que no llega al mes usa lo facturado y lo dice", async () => {
+  const facturas = [ej("registros/RegistroVentas_SII_ejemplo.csv"), ej("registros/RegistroCompras_SII_ejemplo.csv")];
+  const r = await llamar("estimar_f29", { facturas, mes: "2026-04", cartolas: [ej("cartolas/Cartola_BancoEstado_ejemplo.csv")] });
+  assert.equal(r.datos.base_ppm_tipo, "facturado"); assert.ok(r.datos.ppm > 0, "no $0");
+  assert.ok(r.datos.cartola_no_cubre); assert.match(r.datos.aviso_base_ppm, /no llega a 2026-04/);
+});
+
 test("flujo_caja_13_semanas y errores claros", async () => {
   const { datos } = await llamar("flujo_caja_13_semanas", { facturas: [ej("registros/RegistroVentas_SII_ejemplo.csv"), ej("registros/RegistroCompras_SII_ejemplo.csv")], saldo_inicial: 2450000, fecha_inicio: "2026-07-09", gastos_fijos: [{ concepto: "Arriendo", monto: 850000, dia: 26 }] });
   assert.equal(datos.semanas.length, 13);

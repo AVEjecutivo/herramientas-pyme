@@ -204,8 +204,10 @@ servidor.registerTool("estimar_f29", {
   for (const ruta of e.cartolas || []) movimientos.push(...leerCartola(await leerTexto(ruta), basename(ruta)).movimientos);
   const r = estimarF29({ ventas: f.facturas.filter(x => x.libro === "ventas"), compras: f.facturas.filter(x => x.libro === "compras"), mes,
     regimen: e.regimen, sobre50milUF: e.ingresos_sobre_50000_uf, tasaPPM: e.tasa_ppm, movimientos, remanente: e.remanente, retencionHonorarios: e.retencion_honorarios });
-  const avisoBase = r.base_ppm_debe_ser === "cobrado" && r.base_ppm_tipo === "facturado"
-    ? "En este régimen el PPM se calcula sobre lo cobrado en el mes; sin cartola se usó lo facturado. Entregue la cartola para afinarlo." : undefined;
+  const avisoBase = r.base_ppm_debe_ser !== "cobrado" || r.base_ppm_tipo !== "facturado" ? undefined
+    : r.cartola_no_cubre
+      ? `En este régimen el PPM se calcula sobre lo cobrado en el mes, pero la cartola entregada (del ${r.cartola_no_cubre.desde} al ${r.cartola_no_cubre.hasta}) no llega a ${mes}: se usó lo facturado. Entregue la cartola de ese mes para afinarlo.`
+      : "En este régimen el PPM se calcula sobre lo cobrado en el mes; sin cartola se usó lo facturado. Entregue la cartola para afinarlo.";
   return json({ ...r, meses_disponibles: mesesDe(f.facturas), advertencia: "Estimación basada en datos propios. El IVA y el PPM son impuestos distintos que se pagan en el mismo F29. El cálculo definitivo debe validarlo su contador antes de declarar.", aviso_base_ppm: avisoBase, aviso: avisoLibro(f.sinLibro), problemas: f.problemas });
 });
 
